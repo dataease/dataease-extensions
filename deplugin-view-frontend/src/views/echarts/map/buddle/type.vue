@@ -1,12 +1,10 @@
 <template>
-    <div style="position: relative;display: block;top: 5px;">
-        <el-radio value="buddle-map" label="buddle-map" border class="radio-style">
-            <span title="气泡地图">
-            <svg-icon icon-class="buddle-map" class="chart-icon" />
-            </span>
-            <p class="radio-label">气泡地图</p>
-        </el-radio>
-    </div>
+    <el-radio value="buddle-map" label="buddle-map" border class="radio-style">
+        <span title="气泡地图">
+        <svg-icon icon-class="buddle-map" class="chart-icon" />
+        </span>
+        <p class="radio-label">气泡地图</p>
+    </el-radio>
 </template>
 
 <script>

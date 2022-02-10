@@ -13,8 +13,9 @@ public class BubbleMapService extends ViewPluginService {
     @Override
     public PluginViewType viewType() {
         PluginViewType pluginViewType = new PluginViewType();
-        pluginViewType.setName("气泡地图");
         pluginViewType.setRender("echarts");
+        pluginViewType.setCategory("chart.chart_type_space");
+        pluginViewType.setValue("buddle-map");
         return pluginViewType;
     }
 
@@ -26,9 +27,9 @@ public class BubbleMapService extends ViewPluginService {
     @Override
     public List<String> components() {
         List<String> results = new ArrayList<>();
-        results.add("BuddleView");
-        results.add("BuddleData");
-        results.add("BuddleType");
+        results.add("buddle-map-view");
+        results.add("buddle-map-data");
+        results.add("buddle-map-type");
         return results;
     }
 

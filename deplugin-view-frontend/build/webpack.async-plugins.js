@@ -10,9 +10,9 @@ module.exports = {
   entry: {
 
     // PluginDemo: resolve('/src/views/PluginDemo.vue')
-    BuddleView: resolve('/src/views/echarts/map/buddle/index.vue'),
-    BuddleData: resolve('/src/views/echarts/map/buddle/data.vue'),
-    BuddleType: resolve('/src/views/echarts/map/buddle/type.vue')
+    'buddle-map-view': resolve('/src/views/echarts/map/buddle/index.vue'),
+    'buddle-map-data': resolve('/src/views/echarts/map/buddle/data.vue'),
+    'buddle-map-type': resolve('/src/views/echarts/map/buddle/type.vue')
 
   },
   output: {
