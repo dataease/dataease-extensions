@@ -7,32 +7,49 @@ export const BASE_MAP = {
     },
   
     tooltip: {},
-    visualMap: {
-      min: 50,
-      max: 52,
-      text: ['High', 'Low'],
-      realtime: false,
-      calculable: true,
-      inRange: {
-        color: ['lightskyblue', 'yellow', 'orangered']
-      },
-      right: 0
+    geo: {
+        show: true,
+        map: 'BUDDLE_MAP',
+        label: {
+            normal: {
+                show: false
+            },
+            emphasis: {
+                show: true
+            }
+        },
+        roam: true
     },
-    //   legend: {},
     series: [
       {
         name: '',
-        type: 'map',
-        map: 'MAP',
-        roam: true,
-        //   label: {
-        //     show: true
-        //   },
+        type: 'scatter',
+        coordinateSystem: 'geo',        
         data: []
       }
     ]
 }
-export function baseMapOption(chart_option, chart) {
+const convertData = (mapData, chart) => {
+    let maxVal = 0
+    const k = terminalType === 'pc' ? 30 : 15
+    const names = chart.data.x
+    const results = []
+    for (let index = 0; index < names.length; index++) {
+        const name = names[index];
+        results.push({name, value: mapData[name].concat(chart.data.series[0].data[index].value)}) 
+        maxVal = Math.max(maxVal, chart.data.series[0].data[index].value)       
+    }
+    const rate = k / maxVal
+
+    return {
+        value: results,
+        rate: rate
+    }
+}
+
+let terminalType = 'pc'
+export function baseMapOption(chart_option, chart, mapData, terminal = 'pc') {
+    terminalType = terminal
     // 处理shape attr
     let customAttr = {}
     if (chart.customAttr) {
@@ -48,7 +65,7 @@ export function baseMapOption(chart_option, chart) {
         tooltip.formatter = function(params) {
           const a = params.seriesName
           const b = params.name
-          const c = params.value ? params.value : ''
+          const c = params.value ? params.value[2] : ''
           return text.replace(new RegExp('{a}', 'g'), a).replace(new RegExp('{b}', 'g'), b).replace(new RegExp('{c}', 'g'), c)
         }
         chart_option.tooltip = tooltip
@@ -71,44 +88,11 @@ export function baseMapOption(chart_option, chart) {
           }
           chart_option.series[0].labelLine = customAttr.label.labelLine
         }
-        // visualMap
-        const valueArr = chart.data.series[0].data
-        if (valueArr && valueArr.length > 0) {
-          const values = []
-          valueArr.forEach(function(ele) {
-            values.push(ele.value)
-          })
-          chart_option.visualMap.min = Math.min(...values)
-          chart_option.visualMap.max = Math.max(...values)
-          if (chart_option.visualMap.min === chart_option.visualMap.max) {
-            chart_option.visualMap.min = 0
-          }
-        } else {
-          chart_option.visualMap.min = 0
-          chart_option.visualMap.max = 0
-        }
-        if (chart_option.visualMap.min === 0 && chart_option.visualMap.max === 0) {
-          chart_option.visualMap.max = 100
-        }
-        // color
-        if (customAttr.color && customAttr.color.colors) {
-          chart_option.visualMap.inRange.color = customAttr.color.colors
-          chart_option.visualMap.inRange.colorAlpha = customAttr.color.alpha / 100
-        }
-        for (let i = 0; i < valueArr.length; i++) {
-          // const y = {
-          //   name: chart.data.x[i],
-          //   value: valueArr[i]
-          // }
-          const y = valueArr[i]
-          y.name = chart.data.x[i]
-          // color
-          // y.itemStyle = {
-          //   color: hexColorToRGBA(customAttr.color.colors[i % 9], customAttr.color.alpha),
-          //   borderRadius: 0
-          // }
-          chart_option.series[0].data.push(y)
-        }
+        
+        const convert = convertData(mapData, chart)
+        chart_option.series[0].data = convert.value
+        chart_option.series[0].symbolSize = val => val[2] * convert.rate
+        
       }
     }
     // console.log(chart_option);

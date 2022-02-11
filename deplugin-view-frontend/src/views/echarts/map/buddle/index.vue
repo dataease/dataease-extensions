@@ -168,9 +168,13 @@ export default {
     
 
     initMapChart(geoJson, chart) {
-      this.$echarts.registerMap('MAP', geoJson)
+      this.$echarts.registerMap('BUDDLE_MAP', geoJson)
       const base_json = JSON.parse(JSON.stringify(BASE_MAP))
-      const chart_option = baseMapOption(base_json, chart)
+      const mapData = {}
+      geoJson.features.map(function(item){
+          mapData[item.properties.name] = item.properties.center           
+      })
+      const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType)
       this.myEcharts(chart_option)
       const opt = this.myChart.getOption()
       if (opt && opt.series) {
@@ -203,17 +207,13 @@ export default {
     },
     reDrawMap() {
       const chart = this.chart
-      if (chart.type === 'map') {
-        this.preDraw()
-      }
+      this.preDraw()
     },
     trackClick(trackAction) {
       const param = this.pointParam
       if (!param || !param.data || !param.data.dimensionList) {
         // 地图提示没有关联字段 其他没有维度信息的 直接返回
-        if (this.chart.type === 'map') {
-          this.$warning(this.$t('panel.no_drill_field'))
-        }
+         this.$warning(this.$t('panel.no_drill_field'))
         return
       }
       const linkageParam = {
@@ -244,20 +244,20 @@ export default {
     },
     roamMap(flag) {
       let targetZoom = 1
-      const zoom = this.myChart.getOption().series[0].zoom
+      const zoom = this.myChart.getOption().geo[0].zoom
       if (flag) {
         targetZoom = zoom * 1.2
       } else {
         targetZoom = zoom / 1.2
       }
       const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
-      options.series[0].zoom = targetZoom
+      options.geo[0].zoom = targetZoom
       this.myChart.setOption(options)
     },
     resetZoom() {
       const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
-      options.series[0].zoom = 1
-      options.series[0].center = this.mapCenter
+      options.geo[0].zoom = 1
+      options.geo[0].center = this.mapCenter
       this.myChart.setOption(options)
     }
   }
