@@ -230,13 +230,20 @@ export default {
       }
       switch (trackAction) {
         case 'drill':
-          this.$emit('onChartClick', this.pointParam)
+            this.$emit('plugin-call-back', {
+                eventName: 'plugin-chart-click',
+                eventParam: this.pointParam
+            })
+          
           break
         case 'linkage':
           this.$store.commit('addViewTrackFilter', linkageParam)
           break
         case 'jump':
-          this.$emit('onJumpClick', jumpParam)
+            this.$emit('plugin-call-back', {
+                eventName: 'plugin-jump-click',
+                eventParam: jumpParam
+            })
           break
         default:
           break

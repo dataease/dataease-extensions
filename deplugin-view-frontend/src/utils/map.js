@@ -1,9 +1,81 @@
+export const DEFAULT_COLOR_CASE = {
+    value: 'default',
+    colors: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],
+    alpha: 100,
+    tableHeaderBgColor: '#e1eaff',
+    tableItemBgColor: '#ffffff',
+    tableFontColor: '#000000',
+    tableStripe: true,
+    dimensionColor: '#000000',
+    quotaColor: '#000000',
+    tableBorderColor: '#cfdaf4'
+}
+
+export const COLOR_PANEL = [
+    '#ff4500',
+    '#ff8c00',
+    '#ffd700',
+    '#90ee90',
+    '#00ced1',
+    '#1e90ff',
+    '#c71585',
+    '#999999',
+    '#000000',
+    '#FFFFFF'
+]
+
+export const DEFAULT_LABEL = {
+    show: false,
+    position: 'top',
+    color: '#909399',
+    fontSize: '10',
+    formatter: '{c}',
+    gaugeFormatter: '{value}',
+    labelLine: {
+      show: true
+    }
+  }
+  export const DEFAULT_TOOLTIP = {
+    show: true,
+    trigger: 'item',
+    confine: true,
+    textStyle: {
+      fontSize: '10',
+      color: '#909399'
+    },
+    formatter: ''
+  }
+  export const DEFAULT_TITLE_STYLE = {
+    show: true,
+    fontSize: '18',
+    color: '#303133',
+    hPosition: 'center',
+    vPosition: 'top',
+    isItalic: false,
+    isBolder: false
+  }
+  export const DEFAULT_BACKGROUND_COLOR = {
+    color: '#ffffff',
+    alpha: 100,
+    borderRadius: 5
+  }
 export const BASE_MAP = {
     title: {
       text: '',
       textStyle: {
         fontWeight: 'normal'
       }
+    },
+    visualMap: {
+        min: 50,
+        max: 52,
+        text: ['High', 'Low'],
+        realtime: false,
+        calculable: true,
+        inRange: {
+          color: ['lightskyblue', 'yellow', 'orangered']
+        },
+        right: 0
     },
   
     tooltip: {},
@@ -18,6 +90,15 @@ export const BASE_MAP = {
                 show: true
             }
         },
+        itemStyle: {
+            normal: {
+                /* areaColor: '#323c4800', //地图颜色
+                borderWidth: 1 */
+            },
+        },
+        regions:[
+
+        ],
         roam: true
     },
     series: [
@@ -88,6 +169,32 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc') {
           }
           chart_option.series[0].labelLine = customAttr.label.labelLine
         }
+
+         // visualMap
+      const valueArr = chart.data.series[0].data
+      if (valueArr && valueArr.length > 0) {
+        const values = []
+        valueArr.forEach(function(ele) {
+          values.push(ele.value)
+        })
+        chart_option.visualMap.min = Math.min(...values)
+        chart_option.visualMap.max = Math.max(...values)
+        if (chart_option.visualMap.min === chart_option.visualMap.max) {
+          chart_option.visualMap.min = 0
+        }
+      } else {
+        chart_option.visualMap.min = 0
+        chart_option.visualMap.max = 0
+      }
+      if (chart_option.visualMap.min === 0 && chart_option.visualMap.max === 0) {
+        chart_option.visualMap.max = 100
+      }
+      // color
+      if (customAttr.color && customAttr.color.colors) {
+        chart_option.visualMap.inRange.color = customAttr.color.colors
+        chart_option.visualMap.inRange.colorAlpha = customAttr.color.alpha / 100
+      }
+      // chart_option.visualMap = null
         
         const convert = convertData(mapData, chart)
         chart_option.series[0].data = convert.value
@@ -149,128 +256,9 @@ export function componentStyle(chart_option, chart) {
         chart_option.legend.orient = customStyle.legend.orient
         chart_option.legend.icon = customStyle.legend.icon
         chart_option.legend.textStyle = customStyle.legend.textStyle
-        if (chart.type === 'treemap' || chart.type === 'gauge') {
-          chart_option.legend.show = false
-        }
+        
       }
-      if (customStyle.xAxis && (chart.type.includes('bar') || chart.type.includes('line') || chart.type.includes('scatter') || chart.type === 'chart-mix')) {
-        chart_option.xAxis.show = customStyle.xAxis.show
-        chart_option.xAxis.position = customStyle.xAxis.position
-        chart_option.xAxis.name = customStyle.xAxis.name
-        chart_option.xAxis.axisLabel = customStyle.xAxis.axisLabel
-        chart_option.xAxis.splitLine = customStyle.xAxis.splitLine
-        chart_option.xAxis.nameTextStyle = customStyle.xAxis.nameTextStyle
-  
-        chart_option.xAxis.axisLabel.showMaxLabel = true
-        chart_option.xAxis.axisLabel.showMinLabel = true
-  
-        if (!customStyle.xAxis.show) {
-          chart_option.xAxis.axisLabel.show = false
-        }
-  
-        // 轴值设置
-        delete chart_option.xAxis.min
-        delete chart_option.xAxis.max
-        delete chart_option.xAxis.split
-        if (chart.type.includes('horizontal')) {
-          if (customStyle.xAxis.axisValue && !customStyle.xAxis.axisValue.auto) {
-            customStyle.xAxis.axisValue.min && (chart_option.xAxis.min = parseFloat(customStyle.xAxis.axisValue.min))
-            customStyle.xAxis.axisValue.max && (chart_option.xAxis.max = parseFloat(customStyle.xAxis.axisValue.max))
-            customStyle.xAxis.axisValue.split && (chart_option.xAxis.interval = parseFloat(customStyle.xAxis.axisValue.split))
-          }
-        }
-      }
-      if (customStyle.yAxis && (chart.type.includes('bar') || chart.type.includes('line') || chart.type.includes('scatter'))) {
-        chart_option.yAxis.show = customStyle.yAxis.show
-        chart_option.yAxis.position = customStyle.yAxis.position
-        chart_option.yAxis.name = customStyle.yAxis.name
-        chart_option.yAxis.axisLabel = customStyle.yAxis.axisLabel
-        chart_option.yAxis.splitLine = customStyle.yAxis.splitLine
-        chart_option.yAxis.nameTextStyle = customStyle.yAxis.nameTextStyle
-  
-        chart_option.yAxis.axisLabel.showMaxLabel = true
-        chart_option.yAxis.axisLabel.showMinLabel = true
-  
-        if (!customStyle.yAxis.show) {
-          chart_option.yAxis.axisLabel.show = false
-        }
-  
-        // 轴值设置
-        delete chart_option.yAxis.min
-        delete chart_option.yAxis.max
-        delete chart_option.yAxis.split
-        if (!chart.type.includes('horizontal')) {
-          if (customStyle.yAxis.axisValue && !customStyle.yAxis.axisValue.auto) {
-            customStyle.yAxis.axisValue.min && (chart_option.yAxis.min = parseFloat(customStyle.yAxis.axisValue.min))
-            customStyle.yAxis.axisValue.max && (chart_option.yAxis.max = parseFloat(customStyle.yAxis.axisValue.max))
-            customStyle.yAxis.axisValue.split && (chart_option.yAxis.interval = parseFloat(customStyle.yAxis.axisValue.split))
-          }
-        }
-      }
-      if (customStyle.yAxis && chart.type === 'chart-mix') {
-        chart_option.yAxis[0].show = customStyle.yAxis.show
-        chart_option.yAxis[0].position = customStyle.yAxis.position
-        chart_option.yAxis[0].name = customStyle.yAxis.name
-        chart_option.yAxis[0].axisLabel = customStyle.yAxis.axisLabel
-        chart_option.yAxis[0].splitLine = customStyle.yAxis.splitLine
-        chart_option.yAxis[0].nameTextStyle = customStyle.yAxis.nameTextStyle
-  
-        chart_option.yAxis[0].axisLabel.showMaxLabel = true
-        chart_option.yAxis[0].axisLabel.showMinLabel = true
-  
-        if (!customStyle.yAxis.show) {
-          chart_option.yAxis[0].axisLabel.show = false
-        }
-  
-        // 轴值设置
-        delete chart_option.yAxis[0].min
-        delete chart_option.yAxis[0].max
-        delete chart_option.yAxis[0].split
-        if (!chart.type.includes('horizontal')) {
-          if (customStyle.yAxis.axisValue && !customStyle.yAxis.axisValue.auto) {
-            customStyle.yAxis.axisValue.min && (chart_option.yAxis[0].min = parseFloat(customStyle.yAxis.axisValue.min))
-            customStyle.yAxis.axisValue.max && (chart_option.yAxis[0].max = parseFloat(customStyle.yAxis.axisValue.max))
-            customStyle.yAxis.axisValue.split && (chart_option.yAxis[0].interval = parseFloat(customStyle.yAxis.axisValue.split))
-          }
-        }
-  
-        // axis ext
-        !customStyle.yAxisExt && (customStyle.yAxisExt = JSON.parse(JSON.stringify(DEFAULT_YAXIS_EXT_STYLE)))
-        chart_option.yAxis[1].show = customStyle.yAxisExt.show
-        chart_option.yAxis[1].position = customStyle.yAxisExt.position
-        chart_option.yAxis[1].name = customStyle.yAxisExt.name
-        chart_option.yAxis[1].axisLabel = customStyle.yAxisExt.axisLabel
-        chart_option.yAxis[1].splitLine = customStyle.yAxisExt.splitLine
-        chart_option.yAxis[1].nameTextStyle = customStyle.yAxisExt.nameTextStyle
-  
-        chart_option.yAxis[1].axisLabel.showMaxLabel = true
-        chart_option.yAxis[1].axisLabel.showMinLabel = true
-  
-        if (!customStyle.yAxisExt.show) {
-          chart_option.yAxis[1].axisLabel.show = false
-        }
-  
-        // 轴值设置
-        delete chart_option.yAxis[1].min
-        delete chart_option.yAxis[1].max
-        delete chart_option.yAxis[1].split
-        if (!chart.type.includes('horizontal')) {
-          if (customStyle.yAxisExt.axisValue && !customStyle.yAxisExt.axisValue.auto) {
-            customStyle.yAxisExt.axisValue.min && (chart_option.yAxis[1].min = parseFloat(customStyle.yAxisExt.axisValue.min))
-            customStyle.yAxisExt.axisValue.max && (chart_option.yAxis[1].max = parseFloat(customStyle.yAxisExt.axisValue.max))
-            customStyle.yAxisExt.axisValue.split && (chart_option.yAxis[1].interval = parseFloat(customStyle.yAxisExt.axisValue.split))
-          }
-        }
-      }
-      if (customStyle.split && chart.type.includes('radar')) {
-        chart_option.radar.name = customStyle.split.name
-        chart_option.radar.splitNumber = customStyle.split.splitNumber
-        chart_option.radar.axisLine = customStyle.split.axisLine
-        chart_option.radar.axisTick = customStyle.split.axisTick
-        chart_option.radar.axisLabel = customStyle.split.axisLabel
-        chart_option.radar.splitLine = customStyle.split.splitLine
-        chart_option.radar.splitArea = customStyle.split.splitArea
-      }
+      
       if (customStyle.background) {
         chart_option.backgroundColor = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
       }

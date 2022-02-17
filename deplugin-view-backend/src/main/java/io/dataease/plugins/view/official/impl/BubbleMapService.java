@@ -30,6 +30,7 @@ public class BubbleMapService extends ViewPluginService {
         results.add("buddle-map-view");
         results.add("buddle-map-data");
         results.add("buddle-map-type");
+        results.add("buddle-map-style");
         return results;
     }
 

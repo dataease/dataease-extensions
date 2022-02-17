@@ -88,6 +88,77 @@
             </div>
         </el-row>
 
+        <el-row class="padding-lr" style="margin-top: 6px;">
+            <span>{{ $t('chart.result_filter') }}</span>
+            
+            <draggable
+                v-model="view.customFilter"
+                :disabled="!hasDataPermission('manage',param.privileges)"
+                group="drag"
+                animation="300"
+                :move="onMove"
+                class="theme-item-class"
+                style="padding:2px 0 0 0;width:100%;min-height: 32px;border-radius: 4px;border: 1px solid #DCDFE6;overflow-x: auto;display: flex;align-items: center;background-color: white;"
+                @add="addCustomFilter"
+                @update="calcData(true)"
+            >
+            <transition-group class="draggable-group">
+                <filter-item
+                    v-for="(item,index) in view.customFilter"
+                    :key="item.id"
+                    :param="param"
+                    :index="index"
+                    :item="item"
+                    :dimension-data="dimensionData"
+                    :quota-data="quotaData"
+                    @onFilterItemRemove="filterItemRemove"
+                    @editItemFilter="showEditFilter"
+                />
+            </transition-group>
+            </draggable>
+            <div v-if="!view.customFilter || view.customFilter.length === 0" class="drag-placeholder-style">
+            <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
+            </div>
+        </el-row>
+        
+        <el-row
+            class="padding-lr"
+            style="margin-top: 6px;"
+        >
+            <span style="width: 80px;text-align: right;">
+            <span>{{ $t('chart.drill') }}</span>
+            /
+            <span>{{ $t('chart.dimension') }}</span>
+            </span>
+            <draggable
+                v-model="view.drillFields"
+                :disabled="!hasDataPermission('manage',param.privileges)"
+                group="drag"
+                animation="300"
+                :move="onMove"
+                class="drag-block-style"
+                @add="addDrill"
+                @update="calcData(true)"
+            >
+            <transition-group class="draggable-group">
+                <drill-item
+                    v-for="(item,index) in view.drillFields"
+                    :key="item.id"
+                    :param="param"
+                    :index="index"
+                    :item="item"
+                    :dimension-data="dimensionData"
+                    :quota-data="quotaData"
+                    @onDimensionItemChange="drillItemChange"
+                    @onDimensionItemRemove="drillItemRemove"
+                />
+            </transition-group>
+            </draggable>
+            <div v-if="!view.drillFields || view.drillFields.length === 0" class="drag-placeholder-style">
+            <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
+            </div>
+        </el-row>
+
 
        
     </div>
@@ -96,6 +167,8 @@
 <script>
 import DimensionItem from '@/components/views/DimensionItem'
 import QuotaItem from '@/components/views/QuotaItem'
+import FilterItem from '@/components/views/FilterItem'
+import DrillItem from '@/components/views/DrillItem'
 export default {
     props: {
        
@@ -104,12 +177,13 @@ export default {
             default: () => {}
         }
     },
-    components: {DimensionItem, QuotaItem},
+    components: {DimensionItem, QuotaItem, FilterItem, DrillItem},
     data() {
         return {
             widgets: [],
             places: [],
-            moveId: -1
+            moveId: -1,
+            showDrill: false
         }
     },
     computed: {
@@ -121,6 +195,12 @@ export default {
         },
         chart() {
             return this.obj.chart
+        },
+        dimensionData() {
+            return this.obj.dimensionData
+        },
+        quotaData() {
+            return this.obj.quotaData
         }
     },
     created() {
@@ -175,7 +255,7 @@ export default {
                 this.dragCheckType(this.view.xaxis, 'd')
             }
             this.dragMoveDuplicate(this.view.xaxis, e)
-            if ((this.view.type === 'map' || this.view.type === 'word-cloud') && this.view.xaxis.length > 1) {
+            if (this.view.xaxis.length > 1) {
                 this.view.xaxis = [this.view.xaxis[0]]
             }
             this.calcData(true)
@@ -183,7 +263,7 @@ export default {
         addYaxis(e) {
             this.dragCheckType(this.view.yaxis, 'q')
             this.dragMoveDuplicate(this.view.yaxis, e)
-            if ((this.view.type === 'map' || this.view.type === 'waterfall' || this.view.type === 'word-cloud') && this.view.yaxis.length > 1) {
+            if ( this.view.yaxis.length > 1) {
                 this.view.yaxis = [this.view.yaxis[0]]
             }
             this.calcData(true)
@@ -262,6 +342,40 @@ export default {
             if (dup && dup.length > 1) {
                 list.splice(e.newDraggableIndex, 1)
             }
+        },
+        addCustomFilter(e) {
+            // 记录数等自动生成字段不做为过滤条件
+            if (this.view.customFilter && this.view.customFilter.length > 0) {
+                for (let i = 0; i < this.view.customFilter.length; i++) {
+                if (this.view.customFilter[i].id === 'count') {
+                    this.view.customFilter.splice(i, 1)
+                }
+                }
+            }
+            this.dragMoveDuplicate(this.view.customFilter, e)
+            this.calcData(true)
+        },
+        filterItemRemove(item) {
+            this.view.customFilter.splice(item.index, 1)
+            this.calcData(true)
+        },
+        showEditFilter(item) {
+            this.$emit('plugin-call-back', {
+                eventName: 'show-edit-filter',
+                eventParam: item
+            })
+        },
+        addDrill(e) {
+            this.dragCheckType(this.view.drillFields, 'd')
+            this.dragMoveDuplicate(this.view.drillFields, e)
+            this.calcData(true)
+        },
+        drillItemChange(item) {
+            this.calcData(true)
+        },
+        drillItemRemove(item) {
+            this.view.drillFields.splice(item.index, 1)
+            this.calcData(true)
         },
         
         

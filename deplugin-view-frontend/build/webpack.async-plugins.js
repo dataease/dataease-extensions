@@ -12,7 +12,8 @@ module.exports = {
     // PluginDemo: resolve('/src/views/PluginDemo.vue')
     'buddle-map-view': resolve('/src/views/echarts/map/buddle/index.vue'),
     'buddle-map-data': resolve('/src/views/echarts/map/buddle/data.vue'),
-    'buddle-map-type': resolve('/src/views/echarts/map/buddle/type.vue')
+    'buddle-map-type': resolve('/src/views/echarts/map/buddle/type.vue'),
+    'buddle-map-style': resolve('/src/views/echarts/map/buddle/style.vue')
 
   },
   output: {
