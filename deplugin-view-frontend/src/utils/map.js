@@ -117,8 +117,9 @@ const convertData = (mapData, chart) => {
     const results = []
     for (let index = 0; index < names.length; index++) {
         const name = names[index];
-        results.push({name, value: mapData[name].concat(chart.data.series[0].data[index].value)}) 
-        maxVal = Math.max(maxVal, chart.data.series[0].data[index].value)       
+        const item = chart.data.series[0].data[index]
+        results.push({name, value:  (mapData[name] ? mapData[name].concat(item.value) : []), dimensionList: item.dimensionList, quotaList: item.quotaList}) 
+        maxVal = Math.max(maxVal, item.value)       
     }
     const rate = k / maxVal
 

@@ -156,23 +156,41 @@ export default {
           this.myChart.clear()
           return
         }
-        const cCode =  customAttr.areaCode
+        const cCode = this.dynamicAreaCode || customAttr.areaCode
        
+        const geoMap = !!localStorage.getItem('geoMap') ? JSON.parse(localStorage.getItem('geoMap')) : {}
+        if (geoMap[cCode]) {
+            this.initMapChart(geoMap[cCode], chart)
+            return
+        }
         const url = '/geo/' + cCode + '_full.json'
         this.executeAxios(url, 'get', null, res => {
-            this.initMapChart(res, chart)
+            if (res && Object.keys(res).length > 0) {
+                geoMap[cCode] = res
+                localStorage.setItem("geoMap", JSON.stringify(geoMap))
+                this.initMapChart(res, chart)
+            }
+            
         })
 
         
+    },
+
+    registerDynamicMap(areaCode) {
+      this.dynamicAreaCode = areaCode
     },
     
 
     initMapChart(geoJson, chart) {
       this.$echarts.registerMap('BUDDLE_MAP', geoJson)
       const base_json = JSON.parse(JSON.stringify(BASE_MAP))
-      const mapData = {}
+      let mapData = {}
+      debugger
+      if ( !geoJson || !geoJson.features ||  !geoJson.features.length === 0) {
+          return
+      }
       geoJson.features.map(function(item){
-          mapData[item.properties.name] = item.properties.center           
+          mapData[item.properties.name] = item.properties.centroid || item.properties.center           
       })
       const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType)
       this.myEcharts(chart_option)
@@ -210,6 +228,7 @@ export default {
       this.preDraw()
     },
     trackClick(trackAction) {
+      debugger
       const param = this.pointParam
       if (!param || !param.data || !param.data.dimensionList) {
         // 地图提示没有关联字段 其他没有维度信息的 直接返回
@@ -237,7 +256,11 @@ export default {
           
           break
         case 'linkage':
-          this.$store.commit('addViewTrackFilter', linkageParam)
+          // this.$store.commit('addViewTrackFilter', linkageParam)
+          this.$emit('plugin-call-back', {
+                eventName: 'plugin-add-view-track-filter',
+                eventParam: linkageParam
+            })
           break
         case 'jump':
             this.$emit('plugin-call-back', {
@@ -266,6 +289,10 @@ export default {
       options.geo[0].zoom = 1
       options.geo[0].center = this.mapCenter
       this.myChart.setOption(options)
+    },
+    // 切换底图
+    switchMap(param) {
+
     }
   }
 }
