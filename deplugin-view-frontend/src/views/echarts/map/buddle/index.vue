@@ -185,7 +185,6 @@ export default {
       this.$echarts.registerMap('BUDDLE_MAP', geoJson)
       const base_json = JSON.parse(JSON.stringify(BASE_MAP))
       let mapData = {}
-      debugger
       if ( !geoJson || !geoJson.features ||  !geoJson.features.length === 0) {
           return
       }
@@ -228,7 +227,7 @@ export default {
       this.preDraw()
     },
     trackClick(trackAction) {
-      debugger
+     this.pointParam.viewId = this.chart.id
       const param = this.pointParam
       if (!param || !param.data || !param.data.dimensionList) {
         // 地图提示没有关联字段 其他没有维度信息的 直接返回
@@ -289,10 +288,6 @@ export default {
       options.geo[0].zoom = 1
       options.geo[0].center = this.mapCenter
       this.myChart.setOption(options)
-    },
-    // 切换底图
-    switchMap(param) {
-
     }
   }
 }

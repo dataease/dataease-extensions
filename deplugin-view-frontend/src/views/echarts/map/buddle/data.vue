@@ -2,7 +2,7 @@
     <div>
         <el-row class="padding-lr" v-if="places && places.length > 0">
             <span style="width: 80px;text-align: right;">
-                <span>地图范围</span>
+                <span>{{ $t('chart.map_range') }}</span>
             </span>
             <span class="tree-select-span">
                 <treeselect
@@ -22,7 +22,7 @@
         
         <el-row class="padding-lr">                  
             <span style="width: 80px;text-align: right;">
-                <span >地区</span>/<span >维度</span>                                            
+                <span >{{ $t('chart.area')}}</span>/<span >{{ $t('chart.dimension') }}</span>                                            
             </span>
             <draggable
                 v-model="view.xaxis"
@@ -55,7 +55,7 @@
 
         <el-row class="padding-lr" style="margin-top: 6px;">
             <span style="width: 80px;text-align: right;">                        
-                <span >{{ $t('chart.chart_data') }}</span>/<span>{{ $t('chart.quota') }}</span>                                                                        
+                <span >{{ $t('chart.bubble_size') }}</span>/<span>{{ $t('chart.quota') }}</span>                                                                        
             </span>
             <draggable
                 v-model="view.yaxis"
