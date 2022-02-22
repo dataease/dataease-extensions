@@ -294,7 +294,7 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .map-zoom-box {
     position: absolute;
     z-index: 999;
@@ -308,6 +308,9 @@ export default {
   .chart-class {
     height: 100%;
     padding: 10px;
+  }
+  .track-bar >>> ul {
+       width: 80px !important;
   }
 
 </style>
