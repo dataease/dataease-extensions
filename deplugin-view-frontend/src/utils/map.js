@@ -79,28 +79,46 @@ export const BASE_MAP = {
     },
   
     tooltip: {},
-    geo: {
-        show: true,
-        map: 'BUDDLE_MAP',
-        label: {
-            normal: {
-                show: false
+    geo: [
+        {
+            show: true,
+            map: 'BUDDLE_MAP_BORDER',
+            label: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: true
+                }
             },
-            emphasis: {
-                show: true
-            }
-        },
-        itemStyle: {
-            normal: {
-                /* areaColor: '#323c4800', //地图颜色
-                borderWidth: 1 */
+            itemStyle: {
+                borderWidth: 2,
+                borderColor: '#d1d1d1',
+                borderType: 'solid'
             },
+            
+            roam: true
         },
-        regions:[
-
-        ],
-        roam: true
-    },
+        {
+            show: true,
+            map: 'BUDDLE_MAP',
+            label: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            itemStyle: {
+                areaColor: '#f3f3f3', 
+                borderType: 'dashed',
+                borderColor: '#fff'
+            },
+            
+            roam: true
+        }
+    ],
     series: [
       {
         name: '',

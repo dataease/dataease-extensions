@@ -160,15 +160,16 @@ export default {
        
         const geoMap = !!localStorage.getItem('geoMap') ? JSON.parse(localStorage.getItem('geoMap')) : {}
         if (geoMap[cCode]) {
-            this.initMapChart(geoMap[cCode], chart)
+            this.initMapChart(cCode, geoMap[cCode], chart)
             return
         }
+       
         const url = '/geo/' + cCode + '_full.json'
         this.executeAxios(url, 'get', null, res => {
             if (res && Object.keys(res).length > 0) {
                 geoMap[cCode] = res
                 localStorage.setItem("geoMap", JSON.stringify(geoMap))
-                this.initMapChart(res, chart)
+                this.initMapChart(cCode, res, chart)
             }
             
         })
@@ -181,8 +182,27 @@ export default {
     },
     
 
-    initMapChart(geoJson, chart) {
+    initMapChart(cCode, geoJson, chart) {
+        const geoBorderMap = !!localStorage.getItem('geoBorderMap') ? JSON.parse(localStorage.getItem('geoBorderMap')) : {}
+    
+        if (geoBorderMap[cCode]) {
+            this.setTwoMap(geoJson, geoBorderMap[cCode], chart)
+            return
+        }
+
+        const url = '/geo/' + cCode + '.json'
+        this.executeAxios(url, 'get', null, res => {
+            if (res && Object.keys(res).length > 0) {
+                geoBorderMap[cCode] = res
+                localStorage.setItem("geoBorderMap", JSON.stringify(geoBorderMap))
+                this.setTwoMap(geoJson, geoBorderMap[cCode],chart)
+            }
+        })
+    },
+    setTwoMap(geoJson, geoJsonBorder,chart) {
+      console.log("渲染地图")
       this.$echarts.registerMap('BUDDLE_MAP', geoJson)
+      this.$echarts.registerMap('BUDDLE_MAP_BORDER', geoJsonBorder)
       const base_json = JSON.parse(JSON.stringify(BASE_MAP))
       let mapData = {}
       if ( !geoJson || !geoJson.features ||  !geoJson.features.length === 0) {
@@ -273,20 +293,25 @@ export default {
     },
     roamMap(flag) {
       let targetZoom = 1
-      const zoom = this.myChart.getOption().geo[0].zoom
+      const zoom = this.myChart.getOption().geo[1].zoom
       if (flag) {
         targetZoom = zoom * 1.2
       } else {
         targetZoom = zoom / 1.2
       }
       const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
-      options.geo[0].zoom = targetZoom
+      options.geo.forEach(item =>{ item.zoom = targetZoom})
+      // options.geo[0].zoom = targetZoom
       this.myChart.setOption(options)
     },
     resetZoom() {
       const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
-      options.geo[0].zoom = 1
-      options.geo[0].center = this.mapCenter
+      /* options.geo[0].zoom = 1
+      options.geo[0].center = this.mapCenter */
+       options.geo.forEach(item =>{
+            item.zoom = 1
+            item.center = this.mapCenter
+       })
       this.myChart.setOption(options)
     }
   }
