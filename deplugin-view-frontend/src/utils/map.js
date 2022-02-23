@@ -97,7 +97,7 @@ export const BASE_MAP = {
                 borderType: 'solid'
             },
             
-            roam: true
+            roam: false
         },
         {
             show: true,
@@ -107,7 +107,7 @@ export const BASE_MAP = {
                     show: false
                 },
                 emphasis: {
-                    show: true
+                    show: false
                 }
             },
             itemStyle: {
@@ -116,7 +116,7 @@ export const BASE_MAP = {
                 borderColor: '#fff'
             },
             
-            roam: true
+            roam: false
         }
     ],
     series: [
