@@ -183,7 +183,7 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc') {
           chart_option.series[0].label.formatter = function(params) {
             const a = params.seriesName
             const b = params.name
-            const c = params.value ? params.value : ''
+            const c = params.value ? params.value[2] : ''
             return text.replace(new RegExp('{a}', 'g'), a).replace(new RegExp('{b}', 'g'), b).replace(new RegExp('{c}', 'g'), c)
           }
           chart_option.series[0].labelLine = customAttr.label.labelLine
