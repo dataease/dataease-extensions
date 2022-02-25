@@ -6,12 +6,12 @@
           <el-checkbox v-model="tooltipForm.show" @change="changeTooltipAttr">{{ $t('chart.show') }}</el-checkbox>
         </el-form-item>
         <div v-show="tooltipForm.show">
-          <el-form-item :label="$t('chart.trigger_position')" class="form-item">
+          <!-- <el-form-item :label="$t('chart.trigger_position')" class="form-item">
             <el-radio-group v-model="tooltipForm.trigger" size="mini" @change="changeTooltipAttr">
               <el-radio-button label="item">{{ $t('chart.tooltip_item') }}</el-radio-button>
               <el-radio-button label="axis">{{ $t('chart.tooltip_axis') }}</el-radio-button>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item :label="$t('chart.text_fontsize')" class="form-item">
             <el-select v-model="tooltipForm.textStyle.fontSize" :placeholder="$t('chart.text_fontsize')" size="mini" @change="changeTooltipAttr">
               <el-option v-for="option in fontSize" :key="option.value" :label="option.name" :value="option.value" />
