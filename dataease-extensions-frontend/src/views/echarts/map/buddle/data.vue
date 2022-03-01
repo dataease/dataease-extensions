@@ -26,7 +26,7 @@
             </span>
             <draggable
                 v-model="view.xaxis"
-                :disabled="!hasDataPermission('manage',param.privileges)"
+                
                 group="drag"
                 animation="300"
                 :move="onMove"
@@ -59,7 +59,7 @@
             </span>
             <draggable
                 v-model="view.yaxis"
-                :disabled="!hasDataPermission('manage',param.privileges)"
+                
                 group="drag"
                 animation="300"
                 :move="onMove"
@@ -93,7 +93,6 @@
             
             <draggable
                 v-model="view.customFilter"
-                :disabled="!hasDataPermission('manage',param.privileges)"
                 group="drag"
                 animation="300"
                 :move="onMove"
@@ -132,7 +131,7 @@
             </span>
             <draggable
                 v-model="view.drillFields"
-                :disabled="!hasDataPermission('manage',param.privileges)"
+                
                 group="drag"
                 animation="300"
                 :move="onMove"
