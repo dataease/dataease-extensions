@@ -8,8 +8,7 @@
             <el-row>
                 <el-radio-group
                 v-model="view.stylePriority"
-                class="radio-span"
-                :disabled="!hasDataPermission('manage',param.privileges)"
+                class="radio-span"                
                 size="mini"
                 @change="calcStyle"
                 >
