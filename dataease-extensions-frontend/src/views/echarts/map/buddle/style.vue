@@ -147,7 +147,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.padding-lr {
+  padding: 0 6px;
+}
 span {
   font-size: 12px;
+}
+.el-radio {
+  margin: 5px;
+}
+.radio-span > > > .el-radio__label {
+  margin-left: 2px;
 }
 </style>
