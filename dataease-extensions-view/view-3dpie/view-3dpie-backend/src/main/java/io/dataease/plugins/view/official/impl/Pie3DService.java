@@ -1,6 +1,6 @@
 package io.dataease.plugins.view.official.impl;
 
-
+import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.view.entity.PluginViewType;
 import io.dataease.plugins.view.service.ViewPluginService;
 import org.springframework.stereotype.Service;
@@ -32,6 +32,16 @@ public class Pie3DService extends ViewPluginService {
         results.add("3d-pie-data");
         results.add("3d-pie-type");
         results.add("3d-pie-style");
+        return results;
+    }
+
+    @Override
+    public List<StaticResource> staticResources() {
+        List<StaticResource> results = new ArrayList<>();
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("3d-pie");
+        staticResource.setSuffix("svg");
+        results.add(staticResource);
         return results;
     }
 

@@ -1,7 +1,7 @@
 <template>
     <el-radio value="buddle-map" label="buddle-map" border class="radio-style">
         <span title="气泡地图">
-        <svg-icon icon-class="buddle-map" class="chart-icon" />
+        <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" />
         </span>
         <p class="radio-label">气泡地图</p>
     </el-radio>
@@ -9,19 +9,33 @@
 
 <script>
 export default {
-    
+  data() {
+    return {
+      svgName: 'buddle-map'
+    }
+  },
+  computed: {
+    isDev() {
+      return process.env.NODE_ENV === 'development'
+    },
+    dynamicSvgName() {
+      return '/api/pluginCommon/staticInfo/' + this.svgName + '/svg'
+    }
+  }
+
 }
 </script>
 
 <style lang="scss" scoped>
-.radio-style {
+.radio-style {buddle-map.svg
   width: 80px;
   height: 60px;
   padding: 0;
 }
 .chart-icon{
-  width: 80px;
+  width: 40px;
   height: 40px;
+  margin-left: 20px;
 }
 .radio-label{
   display: block;
