@@ -1,5 +1,6 @@
 package io.dataease.plugins.view.official.impl;
 
+import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.view.entity.PluginViewParam;
 import io.dataease.plugins.view.entity.PluginViewType;
 import io.dataease.plugins.view.service.ViewPluginService;
@@ -32,6 +33,16 @@ public class BubbleMapService extends ViewPluginService {
         results.add("buddle-map-data");
         results.add("buddle-map-type");
         results.add("buddle-map-style");
+        return results;
+    }
+
+    @Override
+    public List<StaticResource> staticResources() {
+        List<StaticResource> results = new ArrayList<>();
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("buddle-map");
+        staticResource.setSuffix("svg");
+        results.add(staticResource);
         return results;
     }
 

@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const utils = require('./utils')
-
+const CopyPlugin = require("copy-webpack-plugin");
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -21,7 +21,7 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json', '.svg'],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src')
@@ -83,6 +83,9 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
-    })
+    }),
+    new CopyPlugin([
+        {from: 'src/icons/svg/'}
+    ]),
   ]
 }

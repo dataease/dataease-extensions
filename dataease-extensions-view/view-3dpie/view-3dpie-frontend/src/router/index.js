@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import BuddleType from '@/views/echarts/map/buddle/type'
-import BuddleData from '@/views/echarts/map/test'
+import Pie3D from '@/views/highcharts/3dpie/type'
 
 Vue.use(Router)
 
@@ -14,14 +13,9 @@ export default new Router({
       component: HelloWorld
     },
     {
-        path: '/buddle-type',
-        name: 'buddle-type',
-        component: BuddleType
-    },
-    {
-        path: '/buddle-data',
-        name: 'buddle-data',
-        component: BuddleData
+        path: '/3d-pie',
+        name: '3d-pie',
+        component: Pie3D
     }
   ]
 })
