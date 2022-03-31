@@ -1,7 +1,7 @@
 <template>
   <el-radio value="3d-pie" label="3d-pie" border class="radio-style">
         <span title="3D饼图">
-        <svg-icon icon-class="3d-pie" class="chart-icon" />
+          <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" />
         </span>
     <p class="radio-label">3D饼图</p>
   </el-radio>
@@ -9,6 +9,19 @@
 
 <script>
   export default {
+    data() {
+      return {
+        svgName: '3d-pie'
+      }
+    },
+    computed: {
+      isDev() {
+        return process.env.NODE_ENV === 'development'
+      },
+      dynamicSvgName() {
+        return '/api/pluginCommon/staticInfo/' + this.svgName + '/svg'
+      }
+    }
 
   }
 </script>
@@ -20,9 +33,11 @@
     padding: 0;
   }
   .chart-icon{
-    width: 80px;
+    width: 40px;
     height: 40px;
+    margin-left: 20px;
   }
+
   .radio-label{
     display: block;
     position: absolute;

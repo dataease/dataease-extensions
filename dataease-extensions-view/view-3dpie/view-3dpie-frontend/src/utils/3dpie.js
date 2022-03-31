@@ -103,7 +103,6 @@ export const BASE_PIE = {
 
 let terminalType = 'pc'
 export function basePieOption(chart_option, chart, terminal = 'pc') {
-  debugger
   terminalType = terminal
   let customAttr = {}
   if (chart.customAttr) {

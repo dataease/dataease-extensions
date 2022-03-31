@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const utils = require('./utils')
-
+const CopyPlugin = require("copy-webpack-plugin");
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -9,7 +9,6 @@ function resolve (dir) {
 module.exports = {
   entry: {
 
-    // PluginDemo: resolve('/src/views/PluginDemo.vue')
     'buddle-map-view': resolve('/src/views/echarts/map/buddle/index.vue'),
     'buddle-map-data': resolve('/src/views/echarts/map/buddle/data.vue'),
     'buddle-map-type': resolve('/src/views/echarts/map/buddle/type.vue'),
@@ -21,7 +20,7 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json', '.svg'],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src')
@@ -83,25 +82,10 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
-    })
+    }),
+    new CopyPlugin([
+      {from: 'src/icons/svg/'}
+    ])
 
-  ]/* ,
-  chainWebpack: config => {
-    config.module.rules.delete('svg') // 删除默认配置中处理svg,
-    
-    config.module
-      .rule('svg-sprite-loader')
-      .test(/\.svg$/)
-      .include
-      .add(resolve('src/icons')) // 处理svg目录
-      .end()
-      .use('svg-sprite-loader')
-      .loader('svg-sprite-loader')
-      .options({
-        symbolId: 'icon-[name]'
-      })
-    if (process.env.NODE_ENV === 'production') {
-     
-    }
-  } */
+  ]
 }

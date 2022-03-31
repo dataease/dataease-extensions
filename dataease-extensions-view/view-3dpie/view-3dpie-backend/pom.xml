@@ -89,7 +89,7 @@
                             <target>
                                 <move todir="src/main/resources/static">
                                     <fileset dir="../view-3dpie-frontend/static">
-                                        <include name="*.js"/>
+                                        <include name="*.*"/>
                                     </fileset>
                                 </move>
 

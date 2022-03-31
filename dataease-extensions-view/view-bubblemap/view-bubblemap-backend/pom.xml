@@ -93,7 +93,7 @@
                             <target>
                                 <move todir="src/main/resources/static">
                                     <fileset dir="../view-bubblemap-frontend/static">
-                                        <include name="*.js"/>
+                                        <include name="*.*"/>
                                     </fileset>
                                 </move>
 
