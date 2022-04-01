@@ -2,7 +2,7 @@
     <div>
         <el-row class="padding-lr" v-if="places && places.length > 0">
             <span style="width: 80px;text-align: right;">
-                <span>{{ $t('chart.map_range') }}</span>
+                <span>{{ $t('plugin_view_buddle_map.area_range') }}</span>
             </span>
             <span class="tree-select-span">
                 <treeselect
@@ -22,7 +22,7 @@
         
         <el-row class="padding-lr">                  
             <span style="width: 80px;text-align: right;">
-                <span >{{ $t('chart.area')}}</span>/<span >{{ $t('chart.dimension') }}</span>                                            
+                <span >{{ $t('plugin_view_buddle_map.area')}}</span>/<span >{{ $t('chart.dimension') }}</span>                                            
             </span>
             <draggable
                 v-model="view.xaxis"
@@ -55,7 +55,7 @@
 
         <el-row class="padding-lr" style="margin-top: 6px;">
             <span style="width: 80px;text-align: right;">                        
-                <span >{{ $t('chart.bubble_size') }}</span>/<span>{{ $t('chart.quota') }}</span>                                                                        
+                <span >{{ $t('plugin_view_buddle_map.buddle_size') }}</span>/<span>{{ $t('chart.quota') }}</span>                                                                        
             </span>
             <draggable
                 v-model="view.yaxis"
@@ -168,6 +168,7 @@ import DimensionItem from '@/components/views/DimensionItem'
 import QuotaItem from '@/components/views/QuotaItem'
 import FilterItem from '@/components/views/FilterItem'
 import DrillItem from '@/components/views/DrillItem'
+import messages from '@/de-base/lang/messages'
 export default {
     props: {
        
@@ -203,6 +204,7 @@ export default {
         }
     },
     created() {
+        this.$emit('on-add-languanges', messages)
         this.initAreas()
     },
     methods: {

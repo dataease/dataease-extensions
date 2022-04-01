@@ -1,17 +1,19 @@
 <template>
-  <el-radio value="3d-pie" label="3d-pie" border class="radio-style">
-        <span title="3D饼图">
-          <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" />
+  <el-radio :value="value" :label="value" border class="radio-style">
+        <span :title="$t('plugin_view_3d_pie.type_title')">
+          <svg-icon :icon-class="isDev ? value : dynamicSvgName" class="chart-icon" />
         </span>
-    <p class="radio-label">3D饼图</p>
+    <p class="radio-label">{{$t('plugin_view_3d_pie.type_title')}}</p>
   </el-radio>
 </template>
 
 <script>
+
+import messages from '@/de-base/lang/messages'
   export default {
     data() {
       return {
-        svgName: '3d-pie'
+        value: '3d-pie'
       }
     },
     computed: {
@@ -19,9 +21,15 @@
         return process.env.NODE_ENV === 'development'
       },
       dynamicSvgName() {
-        return '/api/pluginCommon/staticInfo/' + this.svgName + '/svg'
+        return window.origin + '/api/pluginCommon/staticInfo/' + this.value + '/svg'
       }
+    },
+
+    created() {
+      
+      this.$emit('on-add-languanges', messages)
     }
+    
 
   }
 </script>

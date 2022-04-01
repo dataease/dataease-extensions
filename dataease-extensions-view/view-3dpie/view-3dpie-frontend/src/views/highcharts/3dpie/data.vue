@@ -3,7 +3,7 @@
 
     <el-row class="padding-lr">
             <span style="width: 80px;text-align: right;">
-                <span >{{ $t('chart.x_axis')}}</span>/<span >{{ $t('chart.dimension') }}</span>
+                <span >{{ $t('plugin_view_3d_pie.label')}}</span>/<span >{{ $t('chart.dimension') }}</span>
             </span>
       <draggable
         v-model="view.xaxis"
@@ -36,7 +36,7 @@
 
     <el-row class="padding-lr" style="margin-top: 6px;">
             <span style="width: 80px;text-align: right;">
-                <span >{{ $t('chart.y_axis') }}</span>/<span>{{ $t('chart.quota') }}</span>
+                <span >{{ $t('plugin_view_3d_pie.angle') }}</span>/<span>{{ $t('chart.quota') }}</span>
             </span>
       <draggable
         v-model="view.yaxis"
@@ -149,6 +149,8 @@
   import QuotaItem from '@/components/views/QuotaItem'
   import FilterItem from '@/components/views/FilterItem'
   import DrillItem from '@/components/views/DrillItem'
+  import messages from '@/de-base/lang/messages'
+
   export default {
     props: {
 
@@ -183,7 +185,8 @@
         return this.obj.quotaData
       }
     },
-    created() {
+    created() {        
+      this.$emit('on-add-languanges', messages)
     },
     methods: {
       executeAxios (url, type, data, callBack) {
