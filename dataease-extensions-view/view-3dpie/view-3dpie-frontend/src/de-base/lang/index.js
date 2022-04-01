@@ -5,23 +5,22 @@ import elementEnLocale from 'element-ui/lib/locale/lang/en' // element-ui lang
 import elementZhLocale from 'element-ui/lib/locale/lang/zh-CN'// element-ui lang
 import elementTWLocale from 'element-ui/lib/locale/lang/zh-TW'// element-ui lang
 
-import enLocale from './en'
-import zhLocale from './zh'
-import twLocale from './tw'
+import localMessages from './messages'
+
 
 Vue.use(VueI18n)
 
 const messages = {
   en_US: {
-    ...enLocale,
+    ...localMessages['en_US'],
     ...elementEnLocale
   },
   zh_CN: {
-    ...zhLocale,
+    ...localMessages['zh_CN'],
     ...elementZhLocale
   },
   zh_TW: {
-    ...twLocale,
+    ...localMessages['zh_TW'],
     ...elementTWLocale
   }
 }

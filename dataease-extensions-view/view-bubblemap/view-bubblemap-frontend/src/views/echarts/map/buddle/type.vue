@@ -1,17 +1,18 @@
 <template>
-    <el-radio value="buddle-map" label="buddle-map" border class="radio-style">
-        <span title="气泡地图">
-        <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" />
+    <el-radio :value="value" :label="value" border class="radio-style">
+        <span :title="$t('plugin_view_buddle_map.type_title')">
+            <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" />
         </span>
-        <p class="radio-label">气泡地图</p>
+        <p class="radio-label">{{$t('plugin_view_buddle_map.type_title')}}</p>
     </el-radio>
 </template>
 
 <script>
+import messages from '@/de-base/lang/messages'
 export default {
   data() {
     return {
-      svgName: 'buddle-map'
+      value: 'buddle-map'
     }
   },
   computed: {
@@ -19,15 +20,18 @@ export default {
       return process.env.NODE_ENV === 'development'
     },
     dynamicSvgName() {
-      return '/api/pluginCommon/staticInfo/' + this.svgName + '/svg'
+      return '/api/pluginCommon/staticInfo/' + this.value + '/svg'
     }
+  },
+  created() {      
+    this.$emit('on-add-languanges', messages)
   }
 
 }
 </script>
 
 <style lang="scss" scoped>
-.radio-style {buddle-map.svg
+.radio-style {
   width: 80px;
   height: 60px;
   padding: 0;
