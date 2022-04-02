@@ -1,4 +1,4 @@
-# DateEase官方插件
+# DateEase 官方插件
 
 目前，DataEase 提供的插件有：
 
