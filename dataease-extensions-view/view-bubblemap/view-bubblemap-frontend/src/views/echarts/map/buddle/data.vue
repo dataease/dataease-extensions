@@ -41,6 +41,8 @@
                     :param="param"
                     :index="index"
                     :item="item"
+                    :dimension-data="dimensionData"
+                    :quota-data="quotaData"
                     @onDimensionItemChange="dimensionItemChange"
                     @onDimensionItemRemove="dimensionItemRemove"
                     @editItemFilter="showDimensionEditFilter"
@@ -75,6 +77,8 @@
                         :index="index"
                         :item="item"
                         :chart="chart"
+                        :dimension-data="dimensionData"
+                        :quota-data="quotaData"
                         @onQuotaItemChange="quotaItemChange"
                         @onQuotaItemRemove="quotaItemRemove"
                         @editItemFilter="showQuotaEditFilter"
@@ -377,10 +381,7 @@ export default {
         drillItemRemove(item) {
             this.view.drillFields.splice(item.index, 1)
             this.calcData(true)
-        },
-        
-        
-        
+        }
         
     }
     
