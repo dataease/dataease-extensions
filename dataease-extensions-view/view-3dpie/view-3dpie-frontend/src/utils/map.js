@@ -54,6 +54,17 @@ export const DEFAULT_LABEL = {
     isItalic: false,
     isBolder: false
   }
+  export const DEFAULT_LEGEND_STYLE = {
+    show: true,
+    hPosition: 'center',
+    vPosition: 'bottom',
+    orient: 'horizontal',
+    icon: 'circle',
+    textStyle: {
+      color: '#333333',
+      fontSize: '12'
+    }
+  }
   export const DEFAULT_BACKGROUND_COLOR = {
     color: '#ffffff',
     alpha: 100,
