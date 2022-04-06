@@ -209,6 +209,7 @@ export default {
     },
     created() {
         this.$emit('on-add-languanges', messages)
+        this.initAreaCode()
         this.initAreas()
     },
     methods: {
@@ -236,6 +237,11 @@ export default {
             Object.keys(this.places).length === 0 && this.executeAxios('/api/map/areaEntitys/0','get', {}, res => {
                 this.places = res.data
             })
+        },
+        initAreaCode() {
+            if (this.view && this.view.customAttr && !this.view.customAttr.areaCode) {
+                this.view.customAttr.areaCode = "100000"
+            }
         },
         normalizer(node) {
             const resultNode = {
