@@ -38,7 +38,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-dropdown-item>
-          <el-dropdown-item v-show="chart.type !== 'table-info'" :divided="chart.type === 'chart-mix'">
+          <el-dropdown-item  :divided="chart.type === 'chart-mix'">
             <el-dropdown placement="right-start" size="mini" style="width: 100%" @command="summary">
               <span class="el-dropdown-link inner-dropdown-menu">
                 <span>
@@ -61,7 +61,7 @@
           </el-dropdown-item>
 
           <!--同比/环比-->
-          <el-dropdown-item v-show="chart.type !== 'table-info'">
+          <el-dropdown-item >
             <el-dropdown placement="right-start" size="mini" style="width: 100%" @command="quickCalc">
               <span class="el-dropdown-link inner-dropdown-menu">
                 <span>
@@ -172,12 +172,17 @@ export default {
       }
     },
     isEnableCompare() {
-      const xAxis = JSON.parse(this.chart.xaxis)
+      let xAxis = null
+      if (Object.prototype.toString.call(this.chart.xaxis) === '[object Array]') {
+        xAxis = JSON.parse(JSON.stringify(this.chart.xaxis))
+      } else {
+        xAxis = JSON.parse(this.chart.xaxis)
+      }
       const t1 = xAxis.filter(ele => {
         return ele.deType === 1
       })
-      // 暂时只支持类别轴/维度的时间类型字段，且视图中有且只有一个时间字段
-      if (t1.length === 1 && this.chart.type !== 'text' && this.chart.type !== 'gauge' && this.chart.type !== 'liquid') {
+      // 暂时只支持类别轴/维度的时间类型字段
+      if (t1.length > 0) {
         this.disableEditCompare = false
       } else {
         this.disableEditCompare = true
