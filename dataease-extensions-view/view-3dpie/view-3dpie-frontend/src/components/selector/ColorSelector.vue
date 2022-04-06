@@ -3,7 +3,7 @@
     <el-col>
       <el-form ref="colorForm" :model="colorForm" label-width="80px" size="mini" >
         <div v-if="sourceType==='view' || sourceType==='panelEchart'">
-          <el-form-item v-show="chart.type && !chart.type.includes('table') && !chart.type.includes('text')" :label="$t('chart.color_case')" class="form-item">
+          <el-form-item :label="$t('chart.color_case')" class="form-item">
             <el-popover
               placement="bottom"
               width="400"
@@ -46,33 +46,9 @@
             </el-popover>
           </el-form-item>
 
-          <el-form-item v-show="(chart.type && chart.type.includes('text')) || sourceType==='panelTable'" :label="$t('chart.quota_color')" class="form-item">
-            <el-color-picker v-model="colorForm.quotaColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
-          </el-form-item>
-          <el-form-item v-show="(chart.type && chart.type.includes('text')) || sourceType==='panelTable'" :label="$t('chart.dimension_color')" class="form-item">
-            <el-color-picker v-model="colorForm.dimensionColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
-          </el-form-item>
-        </div>
-        <div v-if="sourceType==='view' || sourceType==='panelTable'">
-          <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.table_header_bg')" class="form-item">
-            <el-color-picker v-model="colorForm.tableHeaderBgColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
-          </el-form-item>
-          <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.table_item_bg')" class="form-item">
-            <el-color-picker v-model="colorForm.tableItemBgColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
-          </el-form-item>
-          <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.table_item_font_color')" class="form-item">
-            <el-color-picker v-model="colorForm.tableFontColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
-          </el-form-item>
-          <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.table_border_color')" class="form-item">
-            <el-color-picker v-model="colorForm.tableBorderColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
-          </el-form-item>
-          <!--              暂时不支持该功能-->
-          <!--              <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.stripe')" class="form-item">-->
-          <!--                <el-checkbox v-model="colorForm.tableStripe" @change="changeColorCase">{{ $t('chart.stripe') }}</el-checkbox>-->
-          <!--              </el-form-item>-->
-        </div>
+          
 
-        <el-form-item v-show="chart.type && !chart.type.includes('text')" :label="$t('chart.not_alpha')" class="form-item form-item-slider">
+        <el-form-item :label="$t('chart.not_alpha')" class="form-item form-item-slider">
           <el-slider v-model="colorForm.alpha" show-input :show-input-controls="false" input-size="mini" @change="changeColorCase" />
         </el-form-item>
       </el-form>
@@ -244,7 +220,6 @@ export default {
             this.colorIndex = 0
           }
 
-          this.colorForm.tableBorderColor = this.colorForm.tableBorderColor ? this.colorForm.tableBorderColor : DEFAULT_COLOR_CASE.tableBorderColor
         }
       }
     },
