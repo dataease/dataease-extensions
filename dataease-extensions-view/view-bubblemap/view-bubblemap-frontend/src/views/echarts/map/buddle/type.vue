@@ -1,7 +1,8 @@
 <template>
     <el-radio :value="value" :label="value" border class="radio-style">
         <span :title="$t('plugin_view_buddle_map.type_title')">
-            <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" />
+            <!-- <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" /> -->
+            <svg-icon icon-class="buddle-map" class="chart-icon" />
         </span>
         <p class="radio-label">{{$t('plugin_view_buddle_map.type_title')}}</p>
     </el-radio>
@@ -37,9 +38,8 @@ export default {
   padding: 0;
 }
 .chart-icon{
-  width: 40px;
+  width: 80px;
   height: 40px;
-  margin-left: 20px;
 }
 .radio-label{
   display: block;
