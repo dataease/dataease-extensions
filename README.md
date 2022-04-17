@@ -1,2 +1,2 @@
-# deplugin-view
-DateEase官方视图插件
+# dataease-plugin
+DateEase 官方插件
