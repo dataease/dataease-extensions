@@ -9,7 +9,6 @@ import i18n from './de-base/lang'
 import draggable from 'vuedraggable'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import '@/icons' // icon
 Vue.config.productionTip = false
 Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium',
@@ -18,7 +17,7 @@ Vue.use(ElementUI, {
 Vue.component('Treeselect', Treeselect)
 Vue.component('draggable', draggable)
 Vue.prototype.hasDataPermission = function(pTarget, pSource) {
-  
+
   if (pSource && pTarget) {
     return pSource.indexOf(pTarget) > -1
   }
