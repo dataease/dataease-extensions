@@ -27,6 +27,6 @@ public class MaxcomputeService extends DatasourceService {
 
     @Override
     public DataSourceType getDataSourceType() {
-        return new DataSourceType("maxcompute", "Mxcompute" , true , "", DatasourceCalculationMode.DIRECT);
+        return new DataSourceType("maxcompute", "Maxcompute" , true , "", DatasourceCalculationMode.DIRECT);
     }
 }
