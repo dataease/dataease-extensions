@@ -7,6 +7,6 @@
     "version":"1.0-SNAPSHOT",
     "creator":"DATAEASE",
     "moduleName":"maxcompute-backend",
-    "require":"1.9.0",
+    "require":"1.10.0",
     "dsType":"maxcompute"
 }
