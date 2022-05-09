@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>maxcompute</module>
+        <module>presto</module>
     </modules>
 
     <artifactId>dataease-extensions-datasource</artifactId>
