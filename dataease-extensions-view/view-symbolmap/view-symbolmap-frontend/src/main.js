@@ -10,6 +10,7 @@ import draggable from 'vuedraggable'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import '@/icons' // icon
+import { GaodeMap } from '@antv/l7-maps'
 Vue.config.productionTip = false
 Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium',
@@ -24,6 +25,7 @@ Vue.prototype.hasDataPermission = function(pTarget, pSource) {
   }
   return false
 }
+Vue.prototype.$gaodeMap = GaodeMap
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

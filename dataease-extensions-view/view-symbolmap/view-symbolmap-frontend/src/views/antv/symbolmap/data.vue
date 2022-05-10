@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row class="padding-lr">
+   <!--  <el-row class="padding-lr">
             <span style="width: 80px;text-align: right;">
                 <span >{{ $t('plugin_view_symbol_map.map_type')}}</span>
             </span>
@@ -13,7 +13,7 @@
         </el-option>
       </el-select>
 
-    </el-row>
+    </el-row> -->
 
 
     <el-row class="padding-lr">
@@ -140,6 +140,7 @@
         <transition-group class="draggable-group">
           <chart-drag-item
             v-for="(item,index) in view.extBubble"
+            :conf="'summary'"
             :key="item.id"
             :param="param"
             :index="index"
@@ -189,48 +190,6 @@
         <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
       </div>
     </el-row>
-
-    <!--
-    符号地图没有下钻功能
-    <el-row
-      class="padding-lr"
-      style="margin-top: 6px;"
-    >
-            <span style="width: 80px;text-align: right;">
-            <span>{{ $t('chart.drill') }}</span>
-            /
-            <span>{{ $t('chart.dimension') }}</span>
-            </span>
-      <draggable
-        v-model="view.drillFields"
-
-        group="drag"
-        animation="300"
-        :move="onMove"
-        class="drag-block-style"
-        @add="addDrill"
-        @update="calcData(true)"
-      >
-        <transition-group class="draggable-group">
-          <drill-item
-            v-for="(item,index) in view.drillFields"
-            :key="item.id"
-            :param="param"
-            :index="index"
-            :item="item"
-            :dimension-data="dimensionData"
-            :quota-data="quotaData"
-            @onDimensionItemChange="drillItemChange"
-            @onDimensionItemRemove="drillItemRemove"
-          />
-        </transition-group>
-      </draggable>
-      <div v-if="!view.drillFields || view.drillFields.length === 0" class="drag-placeholder-style">
-        <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
-      </div>
-    </el-row>
-    -->
-
 
   </div>
 </template>

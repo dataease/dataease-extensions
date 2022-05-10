@@ -70,6 +70,9 @@ export const DEFAULT_LABEL = {
     alpha: 100,
     borderRadius: 5
   }
+  export const DEFAULT_BASE_MAP_STYLE = {
+    baseMapTheme: 'light'
+  }
 export const BASE_MAP = {
     title: {
       text: '',
