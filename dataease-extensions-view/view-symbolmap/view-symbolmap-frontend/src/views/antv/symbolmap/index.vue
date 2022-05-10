@@ -9,10 +9,7 @@
 </template>
 
 <script>
-  import { Scene, PointLayer, Popup } from '@antv/l7';
-  import { Mapbox } from '@antv/l7-maps';
-
-
+  import { Scene, PointLayer, Popup } from '@antv/l7'
   import { uuid, hexColorToRGBA} from '@/utils/symbolmap'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
 
@@ -58,7 +55,8 @@
         trackBarStyle: {
           position: 'absolute',
           left: '0px',
-          top: '0px'
+          top: '0px',
+          zIndex: 99
         },
         pointParam: null,
         dynamicAreaCode: null,
@@ -66,6 +64,8 @@
         chartHeight: '100%',
         titleClass: {
           margin: '0 0',
+          position: 'absolute',
+          zIndex: 1,
           width: '100%',
           fontSize: '18px',
           color: '#303133',
@@ -102,13 +102,10 @@
       }
     },
     created() {
-      debugger
-      if (!this.$scene) {
-        this.$scene = Scene
-        this.$pointLayer = PointLayer
-        this.$mapbox = Mapbox
-        this.$popup = Popup
-      }
+      
+      !this.$scene && (this.$scene = Scene)
+      !this.$pointLayer && (this.$pointLayer = PointLayer)
+      !this.$popup && (this.$popup = Popup)
     },
     mounted() {
       this.preDraw()
@@ -118,40 +115,82 @@
     },
     methods: {
       preDraw() {
-        this.initMap(() => {
-          this.initTitle()
-          this.calcHeightDelay()
-          new Promise((resolve) => { resolve() }).then(() => {
-            this.drawView()
-          })
-          const that = this
-          window.onresize = function() {
-            that.calcHeightDelay()
-          }
-        })
+        this.initTitle()
+        this.calcHeightDelay()
+        this.initMap()
+        
+        const that = this
+        window.onresize = function() {
+          that.calcHeightDelay()
+        }
 
       },
-      initMap(callBack) {
-
+      initMap() {
         if (!this.myChart) {
+          let theme = this.getMapTheme(this.chart)
           this.myChart = new this.$scene({
             id: this.chartId,
-            map: new this.$mapbox({
+            map: new this.$gaodeMap({
               pitch: 0,
-              style: 'light',
-              center: [ 116.276227, 35.256776 ],
-              logoVisible: false,
+              style: theme,
+              center: [ 121.434765, 31.256735 ],
               zoom: 6
-            })
-
+              // token: 'pk.eyJ1IjoiZml0MmNsb3VkLWNoZW55dyIsImEiOiJjbDJ0cjFmbWswNzF4M2RvNmYzem02dGg4In0.zCshDn_jswZscaYCGON7fQ'
+              // token: 'a5d10d5d05a3a0868cec67c4d66cf025'
+            }),
+            logoVisible: false
           })
-          callBack && callBack()
-        }
+          const chart = this.chart
+        
+
+          this.antVRenderStatus = true
+          if (!chart.data || !chart.data.datas) {
+            chart.data = {
+                datas: [{}]
+            }
+          }
+          this.myChart.on('loaded', () => {
+            this.addGlobalImage()
+            const data = chart.data.datas
+            this.pointLayer = new this.$pointLayer({autoFit: true})
+            this.pointLayer.source(data, {
+                parser: {
+                    type: 'json',
+                    x: 'longitude',
+                    y: 'latitude'
+                }
+            }).shape('marker').active(true)
+            this.myChart.addLayer(this.pointLayer);
+            this.drawView()
+
+            this.myChart.off('click')
+            this.pointLayer.on('click', ev => {
+              const param = {...ev, ...{'data': ev.feature}}
+              this.pointParam = param
+              if (this.trackMenu.length < 2) { // 只有一个事件直接调用
+                this.trackClick(this.trackMenu[0])
+              } else { // 视图关联多个事件
+                this.trackBarStyle.left = ev.target.offsetX + 'px'
+                this.trackBarStyle.top = (ev.target.offsetY - 15) + 'px'
+                this.$refs.viewTrack.trackButtonClick()
+              }
+            })               
+          })                    
+        }       
+      },
+      drawView() {
+        this.setLayerAttr(this.chart)
+        this.setBackGroundBorder()
       },
       addGlobalImage() {
         this.myChart.addImage('marker','/api/pluginCommon/staticInfo/map-marker/svg')
       },
-      setLayerAttr (layer, chart) {
+      setLayerAttr (chart) {
+        if (chart.data.datas) {
+            this.pointLayer.setData(chart.data.datas)
+        }
+        const theme = this.getMapTheme(chart)
+        this.myChart && this.myChart.setMapStyle && this.myChart.setMapStyle(theme)
         const colors = []
         let customAttr = {}
         if (chart.customAttr) {
@@ -161,92 +200,51 @@
             c.colors.forEach(ele => {
               colors.push(hexColorToRGBA(ele, c.alpha))
             })
-            if (customAttr.singeColor) {
-              layer.color(colors[0])
-            }else {
-              layer.color('value', colors)
-            }
-
+            this.pointLayer.color(colors[0])
           }
           if (customAttr.tooltip) {
             const t = JSON.parse(JSON.stringify(customAttr.tooltip))
-            layer.on('mousemove', event => {
-              const popup = new this.$popup({
-                offsets: [ 0, 0 ]
-              }).setText('hello');
-              popup.setLnglat(event.lngLat)
-              this.myChart.addPopup(popup)
-              // popup.open()
-            })
-
-            //tooltipColor = t.textStyle.color
-            //tooltipFontsize = t.textStyle.fontSize
-
-          }
-
-          layer.size('value', [10, 25])
-        }
-        return layer
-
-
-      },
-      drawView() {
-        const chart = this.chart
-
-        this.antVRenderStatus = true
-        if (!chart.data || (!chart.data.datas && !chart.data.series)) {
-          chart.data = {
-            datas: [{}],
-            series: [
-              {
-                data: [0]
-              }
-            ]
-          }
-        }
-        debugger
-
-        this.myChart.on('loaded', () => {
-          debugger
-          this.addGlobalImage()
-
-
-          const data = chart.data.datas
-          const pointLayer = new this.$pointLayer({autoFit: true})
-          pointLayer.source(data, {
-            parser: {
-              type: 'json',
-              x: 'longitude',
-              y: 'latitude'
+            if (t.show) {
+                const fontSize = t.textStyle.fontSize
+                const fontColor = t.textStyle.color
+                
+                const htmlPrefix = '<span style=\'font-size:'+fontSize+'px;color:'+fontColor+';\'>'
+                const htmlSuffix = '</span>'
+                this.pointLayer.on('mousemove', event => {
+                    if (!t.show) {
+                        return
+                    }
+                    const content = event.feature.category + '：' + event.feature.value
+                    const innerHtml = htmlPrefix + content + htmlSuffix
+                    const popup = new this.$popup({
+                        offsets: [ 0, 0 ],
+                        closeButton: false
+                    }).setHTML(innerHtml);
+                    popup.setLnglat(event.lngLat)
+                    this.myChart.addPopup(popup)
+                })
+                this.pointLayer.on('mouseout', event => {
+                    this.myChart.popupService.popup && this.myChart.popupService.popup.remove()
+                })
             }
-          }).shape('marker')
-            .active(true)
-          this.setLayerAttr(pointLayer, chart )
-
-          this.myChart.addLayer(pointLayer);
-        })
-
-
-        if (this.myChart && this.searchCount > 0) {
-          this.myChart.options.animation = false
+          }
+          this.pointLayer.size('value', [10,25])
         }
-
-        if (this.antVRenderStatus) {
-          this.myChart.render()
-        }
-        this.setBackGroundBorder()
+        this.myChart.render()
       },
 
-      antVAction(param) {
-        this.pointParam = param.data
-        if (this.trackMenu.length < 2) { // 只有一个事件直接调用
-          this.trackClick(this.trackMenu[0])
-        } else { // 视图关联多个事件
-          this.trackBarStyle.left = param.x + 'px'
-          this.trackBarStyle.top = (param.y + 10) + 'px'
-          this.$refs.viewTrack.trackButtonClick()
-        }
+      getMapTheme(chart) {
+            let theme = 'light'
+            if (chart.customStyle) {
+                const customStyle = JSON.parse(chart.customStyle)
+                if (customStyle.baseMapStyle && customStyle.baseMapStyle.baseMapTheme) {
+                    theme = customStyle.baseMapStyle.baseMapTheme
+                }
+            }
+            return theme
       },
+      
+
       setBackGroundBorder() {
         if (this.chart.customStyle) {
           const customStyle = JSON.parse(this.chart.customStyle)
@@ -333,5 +331,7 @@
 </script>
 
 <style scoped lang="scss">
-
+  .track-bar >>> ul {
+    width: 80px !important;
+  }
 </style>
