@@ -161,13 +161,13 @@
           this.antVRenderStatus = true
           if (!chart.data || !chart.data.datas) {
             chart.data = {
-                datas: [{}]
+                datas: []
             }
           }
           this.myChart.on('loaded', () => {
             this.addGlobalImage()
             const data = chart.data.datas
-            this.pointLayer = new this.$pointLayer({autoFit: true})
+            this.pointLayer = this.pointLayer || new this.$pointLayer({autoFit: true})
             this.pointLayer.source(data, {
                 parser: {
                     type: 'json',

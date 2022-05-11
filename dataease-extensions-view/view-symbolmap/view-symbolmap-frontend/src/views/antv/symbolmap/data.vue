@@ -1,33 +1,51 @@
 <template>
   <div>
-
+    <!-- 经度 -->
     <el-row class="padding-lr">
       <span style="width: 80px;text-align: right;">
         <span>{{ $t('plugin_view_symbol_map.longitude')}}</span>
       </span>
-      <draggable v-model="view.xaxis" group="drag" animation="300" :move="onMove" class="drag-block-style"
-        @add="addXaxis" @update="calcData(true)">
+      <draggable v-model="longitudes" group="drag" animation="300" :move="onMove" class="drag-block-style"
+        @add="addLongitudes" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <location-x-item v-for="(item,index) in view.xaxis" :key="item.id" :param="param" :index="index" :item="item"
-            :dimension-data="dimensionData" :quota-data="quotaData" @onLocationXItemRemove="locationItemRemove"
-            @onNameEdit="showRename" />
+          <location-x-item v-for="(item,index) in longitudes" :key="item.id" :param="param" :index="index" :item="item" :dimension-data="dimensionData" :quota-data="quotaData"
+            @onLocationXItemRemove="locationItemRemove" @onNameEdit="showRename" />
         </transition-group>
       </draggable>
-      <div v-if="!view.xaxis || view.xaxis.length === 0" class="drag-placeholder-style">
+      <div v-if="!longitudes || longitudes.length === 0" class="drag-placeholder-style">
         <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
       </div>
     </el-row>
 
+    <!-- 纬度 -->
     <el-row class="padding-lr" style="margin-top: 6px;">
       <span style="width: 80px;text-align: right;">
         <span>{{ $t('plugin_view_symbol_map.latitude') }}</span>
       </span>
+      <draggable v-model="latitudes" group="drag" animation="300" :move="onMove" class="drag-block-style"
+        @add="addLatitudes" @update="calcData(true)">
+        <transition-group class="draggable-group">
+          <location-y-item v-for="(item,index) in latitudes" :key="item.id" :param="param" :index="index" :item="item" :chart="chart" :dimension-data="dimensionData"
+            :quota-data="quotaData" @onLocationYItemRemove="locationItemRemove" @onNameEdit="showRename" />
+        </transition-group>
+      </draggable>
+      <div v-if="!latitudes || latitudes.length === 0" class="drag-placeholder-style">
+        <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
+      </div>
+    </el-row>
+
+    <!-- 符号大小 -->
+    <el-row class="padding-lr" style="margin-top: 6px;">
+      <span style="width: 80px;text-align: right;">
+        <span>{{ $t('plugin_view_symbol_map.mark_size') }}</span>/<span>{{ $t('chart.quota') }}</span>
+      </span>
       <draggable v-model="view.yaxis" group="drag" animation="300" :move="onMove" class="drag-block-style"
         @add="addYaxis" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <location-y-item v-for="(item,index) in view.yaxis" :key="item.id" :param="param" :index="index" :item="item"
-            :chart="chart" :dimension-data="dimensionData" :quota-data="quotaData"
-            @onLocationYItemRemove="locationItemRemove" @onNameEdit="showRename" />
+          <quota-item v-for="(item,index) in view.yaxis" :key="item.id" :param="param" :index="index" :item="item"
+            :chart="chart" :dimension-data="dimensionData" :quota-data="quotaData" @onQuotaItemChange="quotaItemChange"
+            @onQuotaItemRemove="quotaItemRemove" @editItemFilter="showQuotaEditFilter" @onNameEdit="showRename"
+            @editItemCompare="showQuotaEditCompare" />
         </transition-group>
       </draggable>
       <div v-if="!view.yaxis || view.yaxis.length === 0" class="drag-placeholder-style">
@@ -35,26 +53,7 @@
       </div>
     </el-row>
 
-    <el-row class="padding-lr" style="margin-top: 6px;">
-      <span style="width: 80px;text-align: right;">
-        <span>{{ $t('plugin_view_symbol_map.mark_size') }}</span>
-        /
-        <span>{{ $t('chart.quota') }}</span>
-
-      </span>
-      <draggable v-model="view.extBubble" group="drag" animation="300" :move="onMove" class="drag-block-style"
-        @add="addBubble" @update="calcData(true)">
-        <transition-group class="draggable-group">
-          <chart-drag-item v-for="(item,index) in view.extBubble" :conf="'summary'" :key="item.id" :param="param"
-            :index="index" :item="item" :dimension-data="dimensionData" :quota-data="quotaData"
-            @onItemChange="bubbleItemChange" @onItemRemove="bubbleItemRemove" />
-        </transition-group>
-      </draggable>
-      <div v-if="!view.extBubble || view.extBubble.length === 0" class="drag-placeholder-style">
-        <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
-      </div>
-    </el-row>
-
+    <!-- 结果过滤器 -->
     <el-row class="padding-lr" style="margin-top: 6px;">
       <span>{{ $t('chart.result_filter') }}</span>
 
@@ -78,9 +77,8 @@
 <script>
   import LocationXItem from '@/components/views/LocationXItem'
   import LocationYItem from '@/components/views/LocationYItem'
-  import ChartDragItem from '@/components/views/ChartDragItem'
+  import QuotaItem from '@/components/views/QuotaItem'
   import FilterItem from '@/components/views/FilterItem'
-  import DrillItem from '@/components/views/DrillItem'
   import messages from '@/de-base/lang/messages'
 
   export default {
@@ -94,9 +92,8 @@
     components: {
       LocationXItem,
       LocationYItem,
-      ChartDragItem,
-      FilterItem,
-      DrillItem
+      QuotaItem,
+      FilterItem
     },
     data() {
       return {
@@ -112,7 +109,9 @@
             value: 'line',
             label: '线'
           }
-        ]
+        ],
+        longitudes: [],
+        latitudes: []
       }
     },
     computed: {
@@ -133,8 +132,17 @@
       }
     },
     created() {
-
+      this.longitudes = this.view.xaxis && this.view.xaxis.length && [this.view.xaxis[0]] || []
+      this.latitudes = this.view.xaxis && this.view.xaxis.length > 1 && [this.view.xaxis[1]] || []
       this.$emit('on-add-languanges', messages)
+    },
+    watch: {
+      longitudes(val) {
+          this.view.xaxis = [...this.longitudes, ...this.latitudes]   
+      },
+      latitudes(val) {
+          this.view.xaxis = [...this.longitudes, ...this.latitudes]   
+      }
     },
     methods: {
       executeAxios(url, type, data, callBack) {
@@ -163,22 +171,36 @@
         this.moveId = e.draggedContext.element.id
         return true
       },
-      addXaxis(e) {
 
-        this.dragMoveDuplicate(this.view.xaxis, e)
-        if (this.view.xaxis.length > 1) {
-          this.view.xaxis = [this.view.xaxis[0]]
+      addLongitudes(e) {
+        this.dragMoveDuplicate(this.longitudes, e)
+        if (this.longitudes.length > 1) {
+          this.longitudes = [this.longitudes[0]]
         }
         this.calcData(true)
       },
-      addXaxisExt(e) {
-        this.dragCheckType(this.view.xaxisExt, 'd')
-        this.dragMoveDuplicate(this.view.xaxisExt, e)
-
+      addLatitudes(e) {
+        this.dragMoveDuplicate(this.latitudes, e)
+        if (this.latitudes.length > 1) {
+          this.latitudes = [this.latitudes[0]]
+        }
         this.calcData(true)
       },
+      /* addLabelItems(e) {
+        this.dragMoveDuplicate(this.labelItems, e)
+        if (this.labelItems.length > 1) {
+          this.labelItems = [this.labelItems[0]]
+        }
+        this.calcData(true)
+      },
+      addTooltipItems(e) {
+        this.dragMoveDuplicate(this.tooltipItems, e)
+        if (this.tooltipItems.length > 1) {
+          this.tooltipItems = [this.tooltipItems[0]]
+        }
+        this.calcData(true)
+      }, */
       addYaxis(e) {
-        debugger
         this.dragMoveDuplicate(this.view.yaxis, e)
         if (this.view.yaxis.length > 1) {
           this.view.yaxis = [this.view.yaxis[0]]
@@ -186,6 +208,8 @@
         this.calcData(true)
       },
       calcData(cache) {
+        this.view.xaxis = [...this.longitudes, ...this.latitudes]       
+       
         this.$emit('plugin-call-back', {
           eventName: 'calc-data',
           eventParam: {
@@ -196,11 +220,9 @@
 
       locationItemRemove(item) {
         if (item.removeType === 'locationX') {
-          this.view.xaxis.splice(item.index, 1)
+          this.longitudes.splice(item.index, 1)
         } else if (item.removeType === 'locationY') {
-          this.view.yaxis.splice(item.index, 1)
-        } else if (item.removeType === 'locationLine') {
-          this.view.xaxisExt.splice(item.index, 1)
+          this.latitudes.splice(item.index, 1)
         }
         this.calcData(true)
       },
@@ -283,39 +305,8 @@
           eventName: 'show-edit-filter',
           eventParam: item
         })
-      },
-      addDrill(e) {
-        this.dragCheckType(this.view.drillFields, 'd')
-        this.dragMoveDuplicate(this.view.drillFields, e)
-        this.calcData(true)
-      },
-      addBubble(e) {
-        this.dragCheckType(this.view.extBubble, 'q')
-        if (this.view.extBubble && this.view.extBubble.length > 1) {
-          this.view.extBubble = [this.view.extBubble[0]]
-        }
-        this.calcData(true)
-      },
-      drillItemChange(item) {
-        this.calcData(true)
-      },
-      drillItemRemove(item) {
-        this.view.drillFields.splice(item.index, 1)
-        this.calcData(true)
-      },
-      bubbleItemChange(item) {
-        this.calcData(true)
-      },
-      bubbleItemRemove(item) {
-        this.view.extBubble.splice(item.index, 1)
-        this.calcData(true)
       }
-
-
-
-
     }
-
   }
 
 </script>
