@@ -5,6 +5,21 @@
       <p style="padding:6px 10px 0 10px;margin: 0;overflow: hidden;white-space: pre;text-overflow: ellipsis;">{{ chart.title }}</p>
     </span>
     <div :id="chartId" style="width: 100%;overflow: hidden;" :style="{height:chartHeight}" />
+    
+    <div class="map-zoom-box">
+      <div style="margin-bottom: 0.5em;">
+        <el-button size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
+      </div>
+
+      <div style="margin-bottom: 0.5em;">
+        <el-button size="mini" icon="el-icon-refresh" circle @click="resetZoom()" />
+      </div>
+
+      <div>
+        <el-button size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -185,6 +200,7 @@
       addGlobalImage() {
         this.myChart.addImage('marker','/api/pluginCommon/staticInfo/map-marker/svg')
       },
+      
       setLayerAttr (chart) {
         if (chart.data.datas) {
             this.pointLayer.setData(chart.data.datas)
@@ -325,12 +341,29 @@
         setTimeout(() => {
           this.calcHeightRightNow()
         }, 100)
+      },
+
+      roamMap(flag) {
+          return flag ? this.myChart.zoomIn() : this.myChart.zoomOut()          
+      },
+      resetZoom() {
+        this.pointLayer.fitBounds()
       }
     }
   }
 </script>
 
 <style scoped lang="scss">
+  .map-zoom-box {
+    position: absolute;
+    z-index: 999;
+    left: 2%;
+    bottom: 10px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px
+  }
   .track-bar >>> ul {
     width: 80px !important;
   }
