@@ -54,6 +54,7 @@ export default {
         { name: this.$t('plugin_view_symbol_map.pentagon'), value: 'pentagon' },
         { name: this.$t('plugin_view_symbol_map.hexagon'), value: 'hexagon' },
         { name: this.$t('plugin_view_symbol_map.octogon'), value: 'octogon' },
+        { name: this.$t('plugin_view_symbol_map.hexagram'), value: 'hexagram' },
         { name: this.$t('chart.line_symbol_diamond'), value: 'rhombus' }
       ]
     }
