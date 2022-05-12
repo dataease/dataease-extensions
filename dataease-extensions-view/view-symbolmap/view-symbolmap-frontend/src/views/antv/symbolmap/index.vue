@@ -166,30 +166,11 @@
           }
           this.myChart.on('loaded', () => {
             this.addGlobalImage()
-            const data = chart.data.datas
-            this.pointLayer = this.pointLayer || new this.$pointLayer({autoFit: true})
-            this.pointLayer.source(data, {
-                parser: {
-                    type: 'json',
-                    x: 'longitude',
-                    y: 'latitude'
-                }
-            }).shape('marker').active(true)
-            this.myChart.addLayer(this.pointLayer);
+            
             this.drawView()
 
             this.myChart.off('click')
-            this.pointLayer.on('click', ev => {
-              const param = {...ev, ...{'data': ev.feature}}
-              this.pointParam = param
-              if (this.trackMenu.length < 2) { // 只有一个事件直接调用
-                this.trackClick(this.trackMenu[0])
-              } else { // 视图关联多个事件
-                this.trackBarStyle.left = ev.target.offsetX + 'px'
-                this.trackBarStyle.top = (ev.target.offsetY - 15) + 'px'
-                this.$refs.viewTrack.trackButtonClick()
-              }
-            })               
+                           
           })                    
         }       
       },
@@ -202,15 +183,53 @@
       },
       
       setLayerAttr (chart) {
-        if (chart.data.datas) {
-            this.pointLayer.setData(chart.data.datas)
+        
+        let defaultSymbol = 'marker'
+        let customAttr = {}
+        let layerStyle = {}
+        if (chart.customAttr) {
+            customAttr = JSON.parse(chart.customAttr)
+            if (customAttr.size && customAttr.size.scatterSymbol) {
+                defaultSymbol = customAttr.size.scatterSymbol
+            }
+            if (customAttr.size && customAttr.size.symbolOpacity) {
+                layerStyle.opacity = customAttr.size.symbolOpacity / 10
+            }
+            if (customAttr.size && customAttr.size.symbolStrokeWidth) {
+                layerStyle.strokeWidth = customAttr.size.symbolStrokeWidth
+            }
         }
+        this.myChart.layerService.layerList && this.myChart.layerService.layerList.length && this.myChart.layerService.removeAllLayers()
+        const data = chart.data && chart.data.datas || []
+        this.pointLayer = new this.$pointLayer({autoFit: true})
+        this.pointLayer.source(data, {
+            parser: {
+                type: 'json',
+                x: 'longitude',
+                y: 'latitude'
+            }
+        }).shape(defaultSymbol).active(true).style(layerStyle)
+        this.myChart.addLayer(this.pointLayer);
+
+        this.pointLayer.on('click', ev => {
+            const param = {...ev, ...{'data': ev.feature}}
+            this.pointParam = param
+            if (this.trackMenu.length < 2) { // 只有一个事件直接调用
+            this.trackClick(this.trackMenu[0])
+            } else { // 视图关联多个事件
+            this.trackBarStyle.left = ev.target.offsetX + 'px'
+            this.trackBarStyle.top = (ev.target.offsetY - 15) + 'px'
+            this.$refs.viewTrack.trackButtonClick()
+            }
+        })
+
+        this.pointLayer && this.pointLayer.off('mousemove')
+        
         const theme = this.getMapTheme(chart)
         this.myChart && this.myChart.setMapStyle && this.myChart.setMapStyle(theme)
         const colors = []
-        let customAttr = {}
-        if (chart.customAttr) {
-          customAttr = JSON.parse(chart.customAttr)
+       
+        if (customAttr) {
           if (customAttr.color) {
             const c = JSON.parse(JSON.stringify(customAttr.color))
             c.colors.forEach(ele => {
@@ -218,6 +237,9 @@
             })
             this.pointLayer.color(colors[0])
           }
+          const yaxis = JSON.parse(chart.yaxis)
+          const hasYaxis =  yaxis && yaxis.length
+
           if (customAttr.tooltip) {
             const t = JSON.parse(JSON.stringify(customAttr.tooltip))
             if (t.show) {
@@ -230,7 +252,11 @@
                     if (!t.show) {
                         return
                     }
-                    const content = event.feature.category + '：' + event.feature.value
+                    let content = event.feature.longitude + ',' + event.feature.latitudes
+                    if (event.feature.category && event.feature.value) {
+                        content = event.feature.category + '：' + event.feature.value
+                    }
+                    
                     const innerHtml = htmlPrefix + content + htmlSuffix
                     const popup = new this.$popup({
                         offsets: [ 0, 0 ],
@@ -244,9 +270,14 @@
                 })
             }
           }
-          this.pointLayer.size('value', [10,25])
+          let defaultSize = 15
+          if (customAttr.size && customAttr.size.scatterSymbolSize) {
+              defaultSize = customAttr.size.scatterSymbolSize
+          }
+          hasYaxis && this.pointLayer.size('value', [10,25]) || this.pointLayer.size(defaultSize)
         }
         this.myChart.render()
+        this.pointLayer && this.resetZoom()
       },
 
       getMapTheme(chart) {

@@ -3,7 +3,7 @@
     <!-- 经度 -->
     <el-row class="padding-lr">
       <span style="width: 80px;text-align: right;">
-        <span>{{ $t('plugin_view_symbol_map.longitude')}}</span>
+        <span>{{ $t('plugin_view_symbol_map.longitude')}}</span>/<span >{{ $t('chart.dimension') }}</span>
       </span>
       <draggable v-model="longitudes" group="drag" animation="300" :move="onMove" class="drag-block-style"
         @add="addLongitudes" @update="calcData(true)">
@@ -20,7 +20,7 @@
     <!-- 纬度 -->
     <el-row class="padding-lr" style="margin-top: 6px;">
       <span style="width: 80px;text-align: right;">
-        <span>{{ $t('plugin_view_symbol_map.latitude') }}</span>
+        <span>{{ $t('plugin_view_symbol_map.latitude') }}</span>/<span >{{ $t('chart.dimension') }}</span>
       </span>
       <draggable v-model="latitudes" group="drag" animation="300" :move="onMove" class="drag-block-style"
         @add="addLatitudes" @update="calcData(true)">
@@ -38,6 +38,12 @@
     <el-row class="padding-lr" style="margin-top: 6px;">
       <span style="width: 80px;text-align: right;">
         <span>{{ $t('plugin_view_symbol_map.mark_size') }}</span>/<span>{{ $t('chart.quota') }}</span>
+        <el-tooltip class="item" effect="dark" placement="bottom">
+            <div slot="content">
+            该指标生效时，样式大小中的气泡大小属性将失效
+            </div>
+            <i class="el-icon-info" style="cursor: pointer;color: #606266;" />
+        </el-tooltip>
       </span>
       <draggable v-model="view.yaxis" group="drag" animation="300" :move="onMove" class="drag-block-style"
         @add="addYaxis" @update="calcData(true)">

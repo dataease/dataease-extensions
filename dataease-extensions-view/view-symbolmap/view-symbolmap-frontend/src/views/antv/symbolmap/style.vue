@@ -25,6 +25,15 @@
           <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange" />
         </el-collapse-item>
 
+        <el-collapse-item name="size" :title="$t('chart.size')" >                                         
+          <size-selector-ant-v
+              :param="param"
+              class="attr-selector"
+              :chart="chart"
+              @onSizeChange="onSizeChange"
+          />
+        </el-collapse-item>
+
 
         <el-collapse-item name="tooltip" :title="$t('chart.tooltip')" >
           <tooltip-selector-ant-v
@@ -66,12 +75,14 @@
 
 <script>
   import ColorSelector from '@/components/selector/ColorSelector'
+  import SizeSelectorAntV from '@/components/selector/SizeSelectorAntV'
   import TitleSelector from '@/components/selector/TitleSelector'
   import TooltipSelectorAntV from '@/components/selector/TooltipSelectorAntV'
   import BaseMapStyleSelector from '@/components/selector/BaseMapStyleSelector'
   export default {
     components: {
       ColorSelector,
+      SizeSelectorAntV,
       TitleSelector,
       TooltipSelectorAntV,
       BaseMapStyleSelector
@@ -112,7 +123,6 @@
       },
 
       onTooltipChange(val) {
-        debugger
         this.view.customAttr.tooltip = val
         this.calcStyle()
       },
@@ -131,6 +141,10 @@
       },
       onLegendChange(val) {
         this.view.customStyle.legend = val
+        this.calcStyle()
+      },
+      onSizeChange(val) {
+        this.view.customAttr.size = val
         this.calcStyle()
       },
       calcStyle() {
