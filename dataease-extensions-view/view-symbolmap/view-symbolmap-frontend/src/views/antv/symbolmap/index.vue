@@ -252,7 +252,7 @@
                     if (!t.show) {
                         return
                     }
-                    let content = event.feature.longitude + ',' + event.feature.latitudes
+                    let content = event.feature.longitude + ',' + event.feature.latitude
                     if (event.feature.category && event.feature.value) {
                         content = event.feature.category + '：' + event.feature.value
                     }
