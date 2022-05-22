@@ -25,19 +25,18 @@
           <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange" />
         </el-collapse-item>
 
-
-        <!--<el-collapse-item name="label" :title="$t('chart.label')">
-          <label-selector
-            :param="param"
-            class="attr-selector"
-            :chart="chart"
-            @onLabelChange="onLabelChange"
+        <el-collapse-item name="size" :title="$t('chart.size')" >                                         
+          <size-selector-ant-v
+              :param="param"
+              class="attr-selector"
+              :chart="chart"
+              @onSizeChange="onSizeChange"
           />
-        </el-collapse-item>-->
+        </el-collapse-item>
 
 
         <el-collapse-item name="tooltip" :title="$t('chart.tooltip')" >
-          <tooltip-selector
+          <tooltip-selector-ant-v
             :param="param"
             class="attr-selector"
             :chart="chart"
@@ -61,25 +60,12 @@
           />
         </el-collapse-item>
 
-        <!--<el-collapse-item
-          name="legend"
-          :title="$t('chart.legend')"
-        >
-          <legend-selector
-
+        <el-collapse-item  name="background" :title="$t('chart.background')">
+          <base-map-style-selector
             :param="param"
             class="attr-selector"
             :chart="chart"
-            @onLegendChange="onLegendChange"
-          />
-        </el-collapse-item>-->
-
-        <el-collapse-item name="background" :title="$t('chart.background')">
-          <background-color-selector
-            :param="param"
-            class="attr-selector"
-            :chart="chart"
-            @onChangeBackgroundForm="onChangeBackgroundForm"
+            @onChangeBaseMapForm="onChangeBaseMapForm"
           />
         </el-collapse-item>
       </el-collapse>
@@ -89,19 +75,17 @@
 
 <script>
   import ColorSelector from '@/components/selector/ColorSelector'
-  import LabelSelector from '@/components/selector/LabelSelector'
-  import LegendSelector from '@/components/selector/LegendSelector'
+  import SizeSelectorAntV from '@/components/selector/SizeSelectorAntV'
   import TitleSelector from '@/components/selector/TitleSelector'
-  import TooltipSelector from '@/components/selector/TooltipSelector'
-  import BackgroundColorSelector from '@/components/selector/BackgroundColorSelector'
+  import TooltipSelectorAntV from '@/components/selector/TooltipSelectorAntV'
+  import BaseMapStyleSelector from '@/components/selector/BaseMapStyleSelector'
   export default {
     components: {
       ColorSelector,
-      LabelSelector,
-      LegendSelector,
+      SizeSelectorAntV,
       TitleSelector,
-      TooltipSelector,
-      BackgroundColorSelector
+      TooltipSelectorAntV,
+      BaseMapStyleSelector
     },
     data() {
       return {
@@ -147,12 +131,20 @@
         this.view.title = val.title
         this.calcStyle()
       },
+      onChangeBaseMapForm(val) {
+        this.view.customStyle.baseMapStyle = val
+        this.calcStyle()
+      },
       onChangeBackgroundForm(val) {
         this.view.customStyle.background = val
         this.calcStyle()
       },
       onLegendChange(val) {
         this.view.customStyle.legend = val
+        this.calcStyle()
+      },
+      onSizeChange(val) {
+        this.view.customAttr.size = val
         this.calcStyle()
       },
       calcStyle() {

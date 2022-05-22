@@ -10,7 +10,56 @@ export const DEFAULT_COLOR_CASE = {
     quotaColor: '#000000',
     tableBorderColor: '#cfdaf4'
 }
-
+export const DEFAULT_SIZE = {
+    barDefault: true,
+    barWidth: 40,
+    barGap: 0.4,
+    lineWidth: 2,
+    lineType: 'solid',
+    lineSymbol: 'marker',
+    lineSymbolSize: 4,
+    lineSmooth: true,
+    lineArea: false,
+    pieInnerRadius: 0,
+    pieOuterRadius: 80,
+    pieRoseType: 'radius',
+    pieRoseRadius: 5,
+    funnelWidth: 80,
+    radarShape: 'polygon',
+    radarSize: 80,
+    tableTitleFontSize: 12,
+    tableItemFontSize: 12,
+    tableTitleHeight: 36,
+    tableItemHeight: 36,
+    tablePageSize: '20',
+    tableColumnMode: 'custom',
+    tableColumnWidth: 100,
+    tableHeaderAlign: 'left',
+    tableItemAlign: 'right',
+    gaugeMin: 0,
+    gaugeMax: 100,
+    gaugeStartAngle: 225,
+    gaugeEndAngle: -45,
+    dimensionFontSize: 18,
+    quotaFontSize: 18,
+    spaceSplit: 10,
+    dimensionShow: true,
+    quotaShow: true,
+    scatterSymbol: 'marker',
+    scatterSymbolSize: 15,
+    symbolOpacity: 0.7,
+    symbolStrokeWidth: 2,
+    treemapWidth: 80,
+    treemapHeight: 80,
+    liquidMax: 100,
+    liquidSize: 80,
+    liquidOutlineBorder: 4,
+    liquidOutlineDistance: 8,
+    liquidWaveLength: 128,
+    liquidWaveCount: 3,
+    liquidShape: 'circle',
+    tablePageMode: 'page'
+}
 export const COLOR_PANEL = [
     '#ff4500',
     '#ff8c00',
@@ -69,6 +118,9 @@ export const DEFAULT_LABEL = {
     color: '#ffffff',
     alpha: 100,
     borderRadius: 5
+  }
+  export const DEFAULT_BASE_MAP_STYLE = {
+    baseMapTheme: 'light'
   }
 export const BASE_MAP = {
     title: {
