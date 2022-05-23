@@ -183,17 +183,33 @@
       },
 
       addTextLayer(originData, chart) {
-        debugger
         let customAttr = {}
         let TextSize = 5
         let textColor = null
-        if (chart.customAttr) {
-            customAttr = JSON.parse(chart.customAttr)
-            if (customAttr.label && customAttr.label.show) {
-                TextSize = customAttr.label.fontSize
-                textColor = customAttr.label.color
-            }
+        if (!chart.customAttr) {
+            return
         }
+        customAttr = JSON.parse(chart.customAttr)
+        if (!customAttr.label || !customAttr.label.show) {
+            return
+        }
+        TextSize = customAttr.label.fontSize
+        textColor = customAttr.label.color
+        originData.forEach(item => {
+            const properties = item.properties
+            properties.longitude = item.longitude
+            properties.latitude = item.latitude
+            const defaultTemplate = "`经度：${properties.longitude}，纬度：${properties.latitude}`"
+            const labelTemplate = customAttr.label.labelTemplate || defaultTemplate
+            try {
+                item.labelResult = eval(labelTemplate)
+            } catch (error) {
+                
+            }
+            item.labelResult = item.labelResult || eval(defaultTemplate)
+            item.labelResult = item.labelResult.replaceAll('\n', ' ')
+        })
+
         this.textLayer = new this.$pointLayer({})
             .source(originData,
             {
@@ -204,19 +220,19 @@
                 }
             }
             )
-            .shape("busiValue", 'text')
+            .shape("labelResult", 'text')
             .size(TextSize)
             .color(textColor || '#ffffff')
             .style({
                 textAnchor: 'center', // 文本相对锚点的位置 center|left|right|top|bottom|top-left
-                textOffset: [ 5, -10 ], // 文本相对锚点的偏移量 [水平, 垂直]
-                spacing: 1, // 字符间距
-                padding: [ 1, 1 ], // 文本包围盒 padding [水平，垂直]，影响碰撞检测结果，避免相邻文本靠的太近
+                textOffset: [ 5, -5 ], // 文本相对锚点的偏移量 [水平, 垂直]
+                spacing: 2, // 字符间距
+                padding: [ 1, 4 ], // 文本包围盒 padding [水平，垂直]，影响碰撞检测结果，避免相邻文本靠的太近
                 stroke: '#ffffff', // 描边颜色
                 strokeWidth: 0.3, // 描边宽度
                 strokeOpacity: 1.0,
                 fontFamily: 'Times New Roman',
-                textAllowOverlap: true
+                textAllowOverlap: false
             });
         this.myChart.addLayer(this.textLayer);
       },
@@ -288,17 +304,24 @@
                 const fontSize = t.textStyle.fontSize
                 const fontColor = t.textStyle.color
                 
-                const htmlPrefix = '<span style=\'font-size:'+fontSize+'px;color:'+fontColor+';\'>'
-                const htmlSuffix = '</span>'
+                const htmlPrefix = '<div style=\'font-size:'+fontSize+'px;color:'+fontColor+';\'>'
+                const htmlSuffix = '</div>'
                 this.pointLayer.on('mousemove', event => {
                     if (!t.show) {
                         return
                     }
                     let content = event.feature.longitude + ',' + event.feature.latitude
-                    if (event.feature.category && event.feature.value) {
-                        content = event.feature.category + '：' + event.feature.value
+                    if (event.feature.properties && customAttr.tooltip.tooltipTemplate) {
+                        const properties = event.feature.properties
+                        const tooltipTemplate = customAttr.tooltip.tooltipTemplate
+                        try {
+                            content =eval(tooltipTemplate)
+                        } catch (error) {
+                            
+                        }
+                        content = content || event.feature.longitude + ',' + event.feature.latitude                        
                     }
-                    
+                    content = content.replaceAll('\n', '<br>')
                     const innerHtml = htmlPrefix + content + htmlSuffix
                     const popup = new this.$popup({
                         offsets: [ 0, 0 ],

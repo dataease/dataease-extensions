@@ -9,7 +9,6 @@ import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-
 import javax.annotation.PostConstruct;
 
 import javax.annotation.Resource;
@@ -34,6 +33,7 @@ public class SymbolMapService extends ViewPluginService {
                     "tooltip-selector-ant-v",
                     "title-selector-ant-v"
             };
+
 
     private static final Map<String, String[]> VIEW_STYLE_PROPERTY_INNER = new HashMap();
 
@@ -128,31 +128,6 @@ public class SymbolMapService extends ViewPluginService {
             return null;
         }
 
-        /*
-         * List<PluginViewField> labelAxis =
-         * pluginViewParam.getFieldsByType("labelAxis");
-         * List<PluginViewField> tooltipAxis =
-         * pluginViewParam.getFieldsByType("tooltipAxis");
-         *
-         *
-         * yAxis = (null == yAxis) ? new ArrayList<PluginViewField>() : yAxis;
-         *
-         * Boolean yAxisChange = false;
-         * if (CollectionUtils.isNotEmpty(labelAxis)) {
-         * yAxis.addAll(labelAxis);
-         * yAxisChange = true;
-         * }
-         * if (CollectionUtils.isNotEmpty(tooltipAxis)) {
-         * yAxis.addAll(tooltipAxis);
-         * yAxisChange = true;
-         * }
-         * if (yAxisChange) {
-         * yAxis.forEach(item -> {
-         * item.setTypeField("yAxis");
-         * });
-         * addFields2Param(pluginViewParam, yAxis, "yAxis");
-         * }
-         */
 
         if (CollectionUtils.isNotEmpty(yAxis))
             return super.generateSQL(pluginViewParam);
@@ -160,20 +135,6 @@ public class SymbolMapService extends ViewPluginService {
         return symbolMapStatHandler.build(pluginViewParam, this);
 
     }
-
-    /*
-     * private void addFields2Param(PluginViewParam pluginViewParam,
-     * List<PluginViewField> axis, String type) {
-     * List<PluginViewField> pluginViewFields =
-     * pluginViewParam.getPluginViewFields();
-     *
-     * List<PluginViewField> resultFields = pluginViewFields.stream()
-     * .filter(item -> StringUtils.equals(item.getTypeField(),
-     * type)).collect(Collectors.toList());
-     * resultFields.addAll(axis);
-     * pluginViewParam.setPluginViewFields(resultFields);
-     * }
-     */
 
     @Override
     public Map<String, Object> formatResult(PluginViewParam pluginViewParam, List<String[]> data, Boolean isDrill) {

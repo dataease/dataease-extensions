@@ -1,5 +1,7 @@
 package io.dataease.plugins.view.official.dto;
 
+import java.util.Map;
+
 import io.dataease.plugins.common.dto.chart.AxisChartDataAntVDTO;
 import lombok.Data;
 
@@ -11,4 +13,6 @@ public class SymbolMapResultDTO extends AxisChartDataAntVDTO {
     private String latitude;
 
     private Object busiValue;
+
+    private Map<String, Object> properties;
 }

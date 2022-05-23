@@ -87,34 +87,28 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                     datas.add(axisChartDataDTO);
                 }
             } else {
-                for (int i = xAxis.size(); i < xAxis.size() + yAxis.size(); i++) {
-                    SymbolMapResultDTO axisChartDataDTO = new SymbolMapResultDTO();
-                    axisChartDataDTO.setField(a.toString());
-                    axisChartDataDTO.setName(a.toString());
+                SymbolMapResultDTO axisChartDataDTO = new SymbolMapResultDTO();
+                axisChartDataDTO.setField(a.toString());
+                axisChartDataDTO.setName(a.toString());
 
-                    List<ChartDimensionDTO> dimensionList = new ArrayList<>();
-                    List<ChartQuotaDTO> quotaList = new ArrayList<>();
+                List<ChartDimensionDTO> dimensionList = new ArrayList<>();
 
-                    for (int j = 0; j < xAxis.size(); j++) {
-                        ChartDimensionDTO chartDimensionDTO = new ChartDimensionDTO();
-                        chartDimensionDTO.setId(xAxis.get(j).getId());
-                        chartDimensionDTO.setValue(row[j]);
-                        dimensionList.add(chartDimensionDTO);
-                    }
-                    axisChartDataDTO.setDimensionList(dimensionList);
-
-                    int j = i - xAxis.size();
+                for (int j = 0; j < xAxis.size(); j++) {
+                    ChartDimensionDTO chartDimensionDTO = new ChartDimensionDTO();
+                    chartDimensionDTO.setId(xAxis.get(j).getId());
+                    chartDimensionDTO.setValue(row[j]);
+                    dimensionList.add(chartDimensionDTO);
+                }
+                axisChartDataDTO.setDimensionList(dimensionList);
+                axisChartDataDTO.setQuotaList(new ArrayList<>());
+                axisChartDataDTO.setProperties(new HashMap<>());
+                int step = xAxis.size();
+                for (int i = 0; i < yAxis.size(); i++) {
+                    PluginViewField curY = yAxis.get(i);
                     ChartQuotaDTO chartQuotaDTO = new ChartQuotaDTO();
-                    chartQuotaDTO.setId(yAxis.get(j).getId());
-                    quotaList.add(chartQuotaDTO);
-                    axisChartDataDTO.setQuotaList(quotaList);
-                    try {
-                        axisChartDataDTO.setBusiValue(row[i]);
-                        axisChartDataDTO.setValue(StringUtils.isEmpty(row[i]) ? null : new BigDecimal(row[i]));
-                    } catch (Exception e) {
-                        axisChartDataDTO.setValue(new BigDecimal(0));
-                    }
-                    axisChartDataDTO.setCategory(yAxis.get(j).getName());
+                    chartQuotaDTO.setId(curY.getId());
+                    axisChartDataDTO.getQuotaList().add(chartQuotaDTO);
+                    axisChartDataDTO.getProperties().put(curY.getName(), row[i + step]);
                     axisChartDataDTO.setLongitude(dimensionList.get(0).getValue());
                     axisChartDataDTO.setLatitude(dimensionList.get(1).getValue());
                     datas.add(axisChartDataDTO);
