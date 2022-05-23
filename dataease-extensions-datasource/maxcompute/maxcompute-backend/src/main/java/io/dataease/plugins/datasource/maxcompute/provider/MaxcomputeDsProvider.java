@@ -1,14 +1,18 @@
 package io.dataease.plugins.datasource.maxcompute.provider;
 
 import com.google.gson.Gson;
+import io.dataease.plugins.common.base.domain.DeDriver;
+import io.dataease.plugins.common.base.mapper.DeDriverMapper;
 import io.dataease.plugins.common.dto.datasource.TableDesc;
 import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.plugins.common.exception.DataEaseException;
 import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.datasource.provider.DefaultJdbcProvider;
+import io.dataease.plugins.datasource.provider.ExtendedJdbcClassLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +21,9 @@ import java.util.Properties;
 
 @Component()
 public class MaxcomputeDsProvider extends DefaultJdbcProvider {
+
+    @Resource
+    private DeDriverMapper deDriverMapper;
 
     @Override
     public String getType() {
@@ -30,20 +37,36 @@ public class MaxcomputeDsProvider extends DefaultJdbcProvider {
 
     @Override
     public Connection getConnection(DatasourceRequest datasourceRequest) throws Exception {
-        Properties props = new Properties();
+
         MaxcomputeConfig maxcomputeConfig = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), MaxcomputeConfig.class);
         String username = maxcomputeConfig.getAccess_id();
         String password = maxcomputeConfig.getAccess_key();
-        String driver = maxcomputeConfig.getDriver();
-        String url = maxcomputeConfig.getJdbc();
-        Driver driverClass = (Driver) extendedJdbcClassLoader.loadClass(driver).newInstance();
 
+        Properties props = new Properties();
         if (StringUtils.isNotBlank(username)) {
             props.setProperty("user", username);
             if (StringUtils.isNotBlank(password)) {
                 props.setProperty("password", password);
             }
         }
+
+        String defaultDriver = maxcomputeConfig.getDriver();
+        String customDriver = maxcomputeConfig.getCustomDriver();
+        String url = maxcomputeConfig.getJdbc();
+
+        DeDriver deDriver;
+        String driverClassName ;
+        ExtendedJdbcClassLoader jdbcClassLoader;
+        if(!isDefaultClassLoader(customDriver)){
+            deDriver = deDriverMapper.selectByPrimaryKey(customDriver);
+            driverClassName = deDriver.getDriverClass();
+            jdbcClassLoader = getCustomJdbcClassLoader(deDriver);
+        }else {
+            driverClassName = defaultDriver;
+            jdbcClassLoader = extendedJdbcClassLoader;
+        }
+
+        Driver driverClass = (Driver) jdbcClassLoader.loadClass(driverClassName).newInstance();
         Connection conn = driverClass.connect(url, props);
         return conn;
     }

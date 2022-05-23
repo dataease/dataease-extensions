@@ -14,6 +14,40 @@
           <el-form-item :label="$t('chart.text_color')" class="form-item">
             <el-color-picker v-model="tooltipForm.textStyle.color" class="color-picker-style" :predefine="predefineColors" @change="changeTooltipAttr" />
           </el-form-item>
+
+          <el-form-item :label="$t('chart.label')" class="form-item">
+            <el-select v-model="values" placeholder="请选择" multiple collapse-tags @change="changeFields">
+    
+                <el-option-group
+                    v-for="group in fieldOptions"
+                    :key="group.label"
+                    :label="group.label"
+                >
+                    <el-option
+                        v-for="item in group.options"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-option-group>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item class="form-item">
+            <span slot="tooltip">
+              <span class="span-box">
+                <span>{{ $t('chart.content_formatter') }}</span>
+                <el-tooltip class="item" effect="dark" placement="bottom">
+                  <div slot="content">
+                    可以{fieldName}形式读字段值，标签和提示种字段互相通用
+                  </div>
+                  <i class="el-icon-info" style="cursor: pointer;" />
+                </el-tooltip>
+              </span>
+            </span>
+            <el-input v-model="tooltipForm.tooltipTemplate" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeTooltipAttr" />
+          </el-form-item>
+
         </div>
       </el-form>
     </el-col>
@@ -33,14 +67,44 @@ export default {
     chart: {
       type: Object,
       required: true
+    },
+    dimensionData: {
+      type: Array,
+      required: true
+    },
+    quotaData: {
+      type: Array,
+      required: true
+    },
+    view: {
+      type: Object,
+      required: true
     }
+  },
+  computed: {
+      fieldOptions() {
+          return [
+            {
+              label: this.$t('chart.dimension'),
+              options: this.dimensionData
+            },
+            {
+              label: this.$t('chart.quota'),
+              options: this.quotaData
+            }]            
+      },
+      tooltipFields() {
+          return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
+      }
   },
   data() {
     return {
       tooltipForm: JSON.parse(JSON.stringify(DEFAULT_TOOLTIP)),
       fontSize: [],
       isSetting: false,
-      predefineColors: COLOR_PANEL
+      predefineColors: COLOR_PANEL,
+      values: null,
+      busiType: 'tooltipAxis'
     }
   },
   watch: {
@@ -56,6 +120,7 @@ export default {
   },
   methods: {
     initData() {
+      debugger
       const chart = JSON.parse(JSON.stringify(this.chart))
       if (chart.customAttr) {
         let customAttr = null
@@ -66,6 +131,10 @@ export default {
         }
         if (customAttr.tooltip) {
           this.tooltipForm = customAttr.tooltip
+          if (this.tooltipForm.show) {
+              const tooltips = JSON.parse(JSON.stringify(this.tooltipFields))
+              this.values = tooltips.map(item => item.id)
+          }
         }
       }
     },
@@ -80,12 +149,28 @@ export default {
       this.fontSize = arr
     },
     changeTooltipAttr() {
-        debugger
       if (!this.tooltipForm.show) {
         this.isSetting = false
       }
       this.$emit('onTooltipChange', this.tooltipForm)
-    }
+    },
+    clearBusiTypeFields() {
+        this.view.viewFields = this.view.viewFields.filter(field => field.busiType !== this.busiType)
+    },
+    changeFields(vals) {
+        this.clearBusiTypeFields()
+        const allFields = [...JSON.parse(JSON.stringify(this.dimensionData)), ... JSON.parse(JSON.stringify(this.quotaData))]
+        allFields.forEach(field => {
+            if (vals.includes(field.id)) {
+                const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
+                item.summary = 'group_concat'
+                this.view.viewFields.push(item)
+            }
+        })
+               
+        this.$emit('onRefreshViewFields',this.view.viewFields)
+        
+    },
   }
 }
 </script>

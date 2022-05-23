@@ -34,13 +34,29 @@
           />
         </el-collapse-item>
 
+        <el-collapse-item name="label" :title="$t('chart.label')" >
+          <label-selector
+            :param="param"
+            class="attr-selector"
+            :chart="chart"
+            :view="view"
+            :dimension-data="dimensionData"
+            :quota-data="quotaData"
+            @onLabelChange="onLabelChange"
+            @onRefreshViewFields="onRefreshViewFields"
+          />
+        </el-collapse-item>
 
         <el-collapse-item name="tooltip" :title="$t('chart.tooltip')" >
           <tooltip-selector-ant-v
             :param="param"
             class="attr-selector"
             :chart="chart"
+            :view="view"
+            :dimension-data="dimensionData"
+            :quota-data="quotaData"
             @onTooltipChange="onTooltipChange"
+            @onRefreshViewFields="onRefreshViewFields"
           />
         </el-collapse-item>
       </el-collapse>
@@ -79,13 +95,15 @@
   import TitleSelector from '@/components/selector/TitleSelector'
   import TooltipSelectorAntV from '@/components/selector/TooltipSelectorAntV'
   import BaseMapStyleSelector from '@/components/selector/BaseMapStyleSelector'
+  import LabelSelector from '@/components/selector/LabelSelector.vue'
   export default {
     components: {
       ColorSelector,
       SizeSelectorAntV,
       TitleSelector,
       TooltipSelectorAntV,
-      BaseMapStyleSelector
+      BaseMapStyleSelector,
+      LabelSelector
     },
     data() {
       return {
@@ -110,6 +128,12 @@
       },
       chart() {
         return this.obj.chart
+      },
+      dimensionData() {
+        return this.obj.dimensionData
+      },
+      quotaData() {
+        return this.obj.quotaData
       }
     },
     methods: {
@@ -117,7 +141,12 @@
         this.view.customAttr.color = val
         this.calcStyle()
       },
-      onLabelChange(val) {
+      onRefreshViewFields(val) {
+        this.view.viewFields = val
+        this.calcStyle()
+        this.calcData()
+      },
+      onLabelChange(val) {         
         this.view.customAttr.label = val
         this.calcStyle()
       },
@@ -151,6 +180,16 @@
         this.$emit('plugin-call-back', {
           eventName: 'plugins-calc-style',
           eventParam: this.view
+        })
+      },
+      calcData(cache) {
+        this.view.xaxis = [...this.longitudes, ...this.latitudes]       
+       
+        this.$emit('plugin-call-back', {
+          eventName: 'calc-data',
+          eventParam: {
+            cache
+          }
         })
       },
     }

@@ -1,14 +1,19 @@
 package io.dataease.plugins.datasource.maxcompute.provider;
 
 import com.google.gson.Gson;
+import io.dataease.plugins.common.base.domain.DeDriver;
+import io.dataease.plugins.common.base.mapper.DeDriverMapper;
 import io.dataease.plugins.common.dto.datasource.TableDesc;
 import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.plugins.common.exception.DataEaseException;
 import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.datasource.provider.DefaultJdbcProvider;
+import io.dataease.plugins.datasource.provider.ExtendedJdbcClassLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +22,8 @@ import java.util.Properties;
 
 @Component()
 public class PrestoDsProvider extends DefaultJdbcProvider {
+    @Resource
+    private DeDriverMapper deDriverMapper;
 
     @Override
     public String getType() {
@@ -30,21 +37,64 @@ public class PrestoDsProvider extends DefaultJdbcProvider {
 
     @Override
     public Connection getConnection(DatasourceRequest datasourceRequest) throws Exception {
-
-        Properties props = new Properties();
         PrestoConfig prestoConfig = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), PrestoConfig.class);
-        String username = prestoConfig.getUsername();
-        String password = prestoConfig.getPassword();
-        String driver = prestoConfig.getDriver();
+
+        String defaultDriver = prestoConfig.getDriver();
+        String customDriver = prestoConfig.getCustomDriver();
+
         String url = prestoConfig.getJdbc();
-        Driver driverClass = (Driver) extendedJdbcClassLoader.loadClass(driver).newInstance();
-        if (StringUtils.isNotBlank(username)) {
-            props.setProperty("user", username);
-            if (StringUtils.isNotBlank(password)) {
-                props.setProperty("password", password);
+        Properties props = new Properties();
+        DeDriver deDriver = null;
+        if(StringUtils.isNotEmpty(prestoConfig.getAuthMethod()) && prestoConfig.getAuthMethod().equalsIgnoreCase("kerberos")){
+            System.setProperty("java.security.krb5.conf", "/opt/dataease/conf/krb5.conf");
+            ExtendedJdbcClassLoader classLoader;
+            if(isDefaultClassLoader(customDriver)){
+                classLoader = extendedJdbcClassLoader;
+            }else {
+                deDriver = deDriverMapper.selectByPrimaryKey(customDriver);
+                classLoader = getCustomJdbcClassLoader(deDriver);
+            }
+            Class<?> ConfigurationClass =  classLoader.loadClass("org.apache.hadoop.conf.Configuration");
+            Method set =  ConfigurationClass.getMethod("set",String.class, String.class) ;
+            Object obj = ConfigurationClass.newInstance();
+            set.invoke(obj, "hadoop.security.authentication", "Kerberos");
+
+            Class<?> UserGroupInformationClass =  classLoader.loadClass("org.apache.hadoop.security.UserGroupInformation");
+            Method setConfiguration =  UserGroupInformationClass.getMethod("setConfiguration",ConfigurationClass) ;
+            Method loginUserFromKeytab =  UserGroupInformationClass.getMethod("loginUserFromKeytab",String.class, String.class) ;
+            setConfiguration.invoke(null, obj);
+            loginUserFromKeytab.invoke(null, prestoConfig.getUsername(), "/opt/dataease/conf/" + prestoConfig.getPassword());
+        }else {
+            if (StringUtils.isNotBlank(prestoConfig.getUsername())) {
+                props.setProperty("user", prestoConfig.getUsername());
+                if (StringUtils.isNotBlank(prestoConfig.getPassword())) {
+                    props.setProperty("password", prestoConfig.getPassword());
+                }
             }
         }
-        Connection conn = driverClass.connect(url, props);
+
+        Connection conn;
+        String driverClassName ;
+        ExtendedJdbcClassLoader jdbcClassLoader;
+        if(isDefaultClassLoader(customDriver)){
+            driverClassName = defaultDriver;
+            jdbcClassLoader = extendedJdbcClassLoader;
+        }else {
+            driverClassName = deDriver.getDriverClass();
+            jdbcClassLoader = getCustomJdbcClassLoader(deDriver);
+        }
+
+        Driver driverClass = (Driver) jdbcClassLoader.loadClass(driverClassName).newInstance();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(jdbcClassLoader);
+            conn= driverClass.connect(url, props);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }finally {
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
         return conn;
     }
 
