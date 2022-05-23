@@ -9,4 +9,6 @@ public class SymbolMapResultDTO extends AxisChartDataAntVDTO {
     private String longitude;
 
     private String latitude;
+
+    private Object busiValue;
 }

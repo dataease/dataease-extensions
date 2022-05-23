@@ -20,23 +20,41 @@
               <el-option v-for="option in labelPosition" :key="option.value" :label="option.name" :value="option.value" />
             </el-select>
           </el-form-item> -->
+
+          <el-form-item :label="$t('chart.label')" class="form-item">
+            <el-select v-model="values" placeholder="请选择" multiple collapse-tags @change="changeFields">
+    
+                <el-option-group
+                    v-for="group in fieldOptions"
+                    :key="group.label"
+                    :label="group.label"
+                >
+                    <el-option
+                        v-for="item in group.options"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-option-group>
+            </el-select>
+          </el-form-item>
+          
           <el-form-item class="form-item">
             <span slot="label">
               <span class="span-box">
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                    字符串模板 模板变量有：<br>{a}：系列名。<br>{b}：数据名。<br>{c}：数据值。<br>{d}：百分比（用于饼图等）。
+                    可以{fieldName}形式读字段值，标签和提示种字段互相通用
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
               </span>
             </span>
-            <el-input v-model="labelForm.formatter" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr" />
+            <el-input v-model="labelForm.labelTemplate" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr" />
           </el-form-item>
         </div>
       </el-form>
-
       
     </el-col>
   </div>
@@ -55,7 +73,35 @@ export default {
     chart: {
       type: Object,
       required: true
+    },
+    dimensionData: {
+      type: Array,
+      required: true
+    },
+    quotaData: {
+      type: Array,
+      required: true
+    },
+    view: {
+      type: Object,
+      required: true
     }
+  },
+  computed: {
+      fieldOptions() {
+          return [
+            {
+              label: this.$t('chart.dimension'),
+              options: this.dimensionData
+            },
+            {
+              label: this.$t('chart.quota'),
+              options: this.quotaData
+            }]            
+      },
+      labelFields() {
+          return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
+      }
   },
   data() {
     return {
@@ -67,7 +113,9 @@ export default {
         { name: this.$t('chart.inside'), value: 'inside' },
         { name: this.$t('chart.outside'), value: 'outside' }
       ],
-      predefineColors: COLOR_PANEL
+      predefineColors: COLOR_PANEL,
+      values: null,
+      busiType: 'labelAxis'
     }
   },
   watch: {
@@ -85,6 +133,7 @@ export default {
   },
   methods: {
     initData() {
+        debugger
       const chart = JSON.parse(JSON.stringify(this.chart))
       if (chart.customAttr) {
         let customAttr = null
@@ -95,6 +144,10 @@ export default {
         }
         if (customAttr.label) {
           this.labelForm = customAttr.label
+          if (this.labelForm.show) {
+              const labes = JSON.parse(JSON.stringify(this.labelFields))
+              this.values = labes.map(item => item.id)
+          }
           if (!this.labelForm.labelLine) {
             this.labelForm.labelLine = JSON.parse(JSON.stringify(DEFAULT_LABEL.labelLine))
           }
@@ -115,7 +168,25 @@ export default {
       if (!this.labelForm.show) {
         this.isSetting = false
       }
-      this.$emit('onLabelChange', this.labelForm)
+      this.$emit('onLabelChange',this.labelForm)
+    },
+
+    clearBusiTypeFields() {
+        this.view.viewFields = this.view.viewFields.filter(field => field.busiType !== this.busiType)
+    },
+    changeFields(vals) {
+        this.clearBusiTypeFields()
+        const allFields = [...JSON.parse(JSON.stringify(this.dimensionData)), ... JSON.parse(JSON.stringify(this.quotaData))]
+        allFields.forEach(field => {
+            if (vals.includes(field.id)) {
+                const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
+                item.summary = 'group_concat'
+                this.view.viewFields.push(item)
+            }
+        })
+               
+        this.$emit('onRefreshViewFields',this.view.viewFields)
+        
     },
     initOptions() {
       const type = this.chart.type

@@ -75,6 +75,7 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                         quotaList.add(chartQuotaDTO);
                         axisChartDataDTO.setQuotaList(quotaList);
                         try {
+                            axisChartDataDTO.setBusiValue(row[i]);
                             axisChartDataDTO.setValue(StringUtils.isEmpty(row[i]) ? null : new BigDecimal(row[i]));
                         } catch (Exception e) {
                             axisChartDataDTO.setValue(new BigDecimal(0));
@@ -108,6 +109,7 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                     quotaList.add(chartQuotaDTO);
                     axisChartDataDTO.setQuotaList(quotaList);
                     try {
+                        axisChartDataDTO.setBusiValue(row[i]);
                         axisChartDataDTO.setValue(StringUtils.isEmpty(row[i]) ? null : new BigDecimal(row[i]));
                     } catch (Exception e) {
                         axisChartDataDTO.setValue(new BigDecimal(0));

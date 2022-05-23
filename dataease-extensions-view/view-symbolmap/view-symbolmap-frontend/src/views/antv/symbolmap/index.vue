@@ -181,6 +181,48 @@
       addGlobalImage() {
         this.myChart.addImage('marker','/api/pluginCommon/staticInfo/map-marker/svg')
       },
+
+      addTextLayer(originData, chart) {
+        debugger
+        let customAttr = {}
+        let TextSize = 5
+        let textColor = null
+        if (chart.customAttr) {
+            customAttr = JSON.parse(chart.customAttr)
+            if (customAttr.label && customAttr.label.show) {
+                TextSize = customAttr.label.fontSize
+                textColor = customAttr.label.color
+            }
+        }
+        this.textLayer = new this.$pointLayer({})
+            .source(originData,
+            {
+                parser: {
+                type: 'json',
+                x: 'longitude',
+                y: 'latitude'
+                }
+            }
+            )
+            .shape("busiValue", 'text')
+            .size(TextSize)
+            .color(textColor || '#ffffff')
+            .style({
+                textAnchor: 'center', // 文本相对锚点的位置 center|left|right|top|bottom|top-left
+                textOffset: [ 5, -10 ], // 文本相对锚点的偏移量 [水平, 垂直]
+                spacing: 1, // 字符间距
+                padding: [ 1, 1 ], // 文本包围盒 padding [水平，垂直]，影响碰撞检测结果，避免相邻文本靠的太近
+                stroke: '#ffffff', // 描边颜色
+                strokeWidth: 0.3, // 描边宽度
+                strokeOpacity: 1.0,
+                fontFamily: 'Times New Roman',
+                textAllowOverlap: true
+            });
+        this.myChart.addLayer(this.textLayer);
+      },
+      removeTextLayer() {
+          this.myChart.layerService.removeLayer(this.textLayer)
+      },
       
       setLayerAttr (chart) {
         
@@ -210,7 +252,7 @@
             }
         }).shape(defaultSymbol).active(true).style(layerStyle)
         this.myChart.addLayer(this.pointLayer);
-
+        this.addTextLayer(data, chart)
         this.pointLayer.on('click', ev => {
             const param = {...ev, ...{'data': ev.feature}}
             this.pointParam = param

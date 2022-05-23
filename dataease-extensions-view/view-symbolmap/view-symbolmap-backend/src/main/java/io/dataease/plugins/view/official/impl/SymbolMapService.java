@@ -8,6 +8,8 @@ import io.dataease.plugins.view.official.handler.SymbolMapStatHandler;
 import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.*;
@@ -22,13 +24,13 @@ public class SymbolMapService extends ViewPluginService {
     private SymbolMapRSHandler symbolMapRSHandler;
 
     private static final String VIEW_TYPE_VALUE = "symbol-map";
-    /*下版这些常量移到sdk*/
+    /* 下版这些常量移到sdk */
     private static final String TYPE = "-type";
     private static final String DATA = "-data";
     private static final String STYLE = "-style";
     private static final String VIEW = "-view";
     private static final String SUFFIX = "svg";
-    /*下版这些常量移到sdk*/
+    /* 下版这些常量移到sdk */
     private static final String VIEW_TYPE = VIEW_TYPE_VALUE + TYPE;
     private static final String VIEW_DATA = VIEW_TYPE_VALUE + DATA;
     private static final String VIEW_STYLE = VIEW_TYPE_VALUE + STYLE;
@@ -82,13 +84,53 @@ public class SymbolMapService extends ViewPluginService {
         return resourceAsStream;
     }
 
+    private static List<String> trans2Ykeys = new ArrayList<String>();
+
+    @PostConstruct
+    public void init() {
+        trans2Ykeys.add("labelAxis");
+        trans2Ykeys.add("tooltipAxis");
+    }
+
     @Override
     public String generateSQL(PluginViewParam pluginViewParam) {
+        pluginViewParam.getPluginViewFields().forEach(field -> {
+            if (trans2Ykeys.contains(field.getTypeField())) {
+                field.setTypeField("yAxis");
+            }
+        });
         List<PluginViewField> xAxis = pluginViewParam.getFieldsByType("xAxis");
         List<PluginViewField> yAxis = pluginViewParam.getFieldsByType("yAxis");
         if (CollectionUtils.isEmpty(xAxis) || xAxis.size() < 2) {
             return null;
         }
+
+        /*
+         * List<PluginViewField> labelAxis =
+         * pluginViewParam.getFieldsByType("labelAxis");
+         * List<PluginViewField> tooltipAxis =
+         * pluginViewParam.getFieldsByType("tooltipAxis");
+         * 
+         * 
+         * yAxis = (null == yAxis) ? new ArrayList<PluginViewField>() : yAxis;
+         * 
+         * Boolean yAxisChange = false;
+         * if (CollectionUtils.isNotEmpty(labelAxis)) {
+         * yAxis.addAll(labelAxis);
+         * yAxisChange = true;
+         * }
+         * if (CollectionUtils.isNotEmpty(tooltipAxis)) {
+         * yAxis.addAll(tooltipAxis);
+         * yAxisChange = true;
+         * }
+         * if (yAxisChange) {
+         * yAxis.forEach(item -> {
+         * item.setTypeField("yAxis");
+         * });
+         * addFields2Param(pluginViewParam, yAxis, "yAxis");
+         * }
+         */
+
         if (CollectionUtils.isNotEmpty(yAxis))
             return super.generateSQL(pluginViewParam);
         // 下面考虑符号大小为空的情况
@@ -96,6 +138,19 @@ public class SymbolMapService extends ViewPluginService {
 
     }
 
+    /*
+     * private void addFields2Param(PluginViewParam pluginViewParam,
+     * List<PluginViewField> axis, String type) {
+     * List<PluginViewField> pluginViewFields =
+     * pluginViewParam.getPluginViewFields();
+     * 
+     * List<PluginViewField> resultFields = pluginViewFields.stream()
+     * .filter(item -> StringUtils.equals(item.getTypeField(),
+     * type)).collect(Collectors.toList());
+     * resultFields.addAll(axis);
+     * pluginViewParam.setPluginViewFields(resultFields);
+     * }
+     */
 
     @Override
     public Map<String, Object> formatResult(PluginViewParam pluginViewParam, List<String[]> data, Boolean isDrill) {
