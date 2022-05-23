@@ -16,6 +16,15 @@ import java.util.List;
 public class BubbleMapService extends ViewPluginService {
 
     private static final String VIEW_TYPE_VALUE = "buddle-map";
+    private static final String[] VIEW_STYLE_PROPERTIES =
+            {
+                    "size-selector",
+                    "label-selector",
+                    "tooltip-selector",
+                    "x-axis-selector",
+                    "y-axis-selector",
+                    "title-selector"
+            };
     /*下版这些常量移到sdk*/
     private static final String TYPE = "-type";
     private static final String DATA = "-data";
@@ -35,6 +44,7 @@ public class BubbleMapService extends ViewPluginService {
         pluginViewType.setRender("echarts");
         pluginViewType.setCategory("chart.chart_type_space");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
+        pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
         return pluginViewType;
     }
 

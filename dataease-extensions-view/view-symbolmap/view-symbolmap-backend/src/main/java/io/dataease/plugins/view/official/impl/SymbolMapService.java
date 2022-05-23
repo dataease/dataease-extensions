@@ -9,7 +9,9 @@ import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+
 import javax.annotation.PostConstruct;
+
 import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.*;
@@ -24,7 +26,18 @@ public class SymbolMapService extends ViewPluginService {
     private SymbolMapRSHandler symbolMapRSHandler;
 
     private static final String VIEW_TYPE_VALUE = "symbol-map";
-    /* 下版这些常量移到sdk */
+
+
+    private static final String[] VIEW_STYLE_PROPERTIES =
+            {
+                    "size-selector-ant-v",
+                    "label-selector-ant-v",
+                    "tooltip-selector-ant-v",
+                    "x-axis-selector-ant-v",
+                    "y-axis-selector-ant-v",
+                    "title-selector-ant-v"
+            };
+
     private static final String TYPE = "-type";
     private static final String DATA = "-data";
     private static final String STYLE = "-style";
@@ -42,6 +55,7 @@ public class SymbolMapService extends ViewPluginService {
         pluginViewType.setRender("antv");
         pluginViewType.setCategory("chart.chart_type_space");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
+        pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
         return pluginViewType;
     }
 

@@ -27,6 +27,6 @@ public class PrestoService extends DatasourceService {
 
     @Override
     public DataSourceType getDataSourceType() {
-        return new DataSourceType("presto", "Presto" , true , "", DatasourceCalculationMode.DIRECT);
+        return new DataSourceType("presto", "Presto" , true , "", DatasourceCalculationMode.DIRECT, true);
     }
 }
