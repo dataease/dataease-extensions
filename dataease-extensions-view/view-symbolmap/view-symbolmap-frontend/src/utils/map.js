@@ -82,7 +82,9 @@ export const DEFAULT_LABEL = {
     gaugeFormatter: '{value}',
     labelLine: {
       show: true
-    }
+    },
+    fields: null,
+    labelTemplate: '{busiValue}'
   }
   export const DEFAULT_TOOLTIP = {
     show: true,
@@ -92,7 +94,8 @@ export const DEFAULT_LABEL = {
       fontSize: '10',
       color: '#909399'
     },
-    formatter: ''
+    formatter: '',
+    tooltipTemplate: '{busiValue}'
   }
   export const DEFAULT_TITLE_STYLE = {
     show: true,
