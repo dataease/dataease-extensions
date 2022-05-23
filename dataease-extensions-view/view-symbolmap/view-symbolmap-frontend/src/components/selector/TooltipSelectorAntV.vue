@@ -15,8 +15,8 @@
             <el-color-picker v-model="tooltipForm.textStyle.color" class="color-picker-style" :predefine="predefineColors" @change="changeTooltipAttr" />
           </el-form-item>
 
-          <el-form-item :label="$t('chart.label')" class="form-item">
-            <el-select v-model="values" placeholder="请选择" multiple collapse-tags @change="changeFields">
+          <el-form-item :label="$t('chart.tooltip')" class="form-item">
+            <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags @change="changeFields">
     
                 <el-option-group
                     v-for="group in fieldOptions"
@@ -39,7 +39,7 @@
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                    可以{fieldName}形式读字段值，标签和提示种字段互相通用
+                    可以${properties.fieldName}形式读字段值，标签和提示种字段互相通用
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
@@ -120,7 +120,6 @@ export default {
   },
   methods: {
     initData() {
-      debugger
       const chart = JSON.parse(JSON.stringify(this.chart))
       if (chart.customAttr) {
         let customAttr = null
@@ -158,6 +157,7 @@ export default {
         this.view.viewFields = this.view.viewFields.filter(field => field.busiType !== this.busiType)
     },
     changeFields(vals) {
+        // let temp = ''
         this.clearBusiTypeFields()
         const allFields = [...JSON.parse(JSON.stringify(this.dimensionData)), ... JSON.parse(JSON.stringify(this.quotaData))]
         allFields.forEach(field => {
@@ -165,9 +165,10 @@ export default {
                 const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
                 item.summary = 'group_concat'
                 this.view.viewFields.push(item)
+                // temp += (item.name +'：${properties.'+item.name+'}<br>')
             }
         })
-               
+        // this.tooltipForm.tooltipTemplate = temp 
         this.$emit('onRefreshViewFields',this.view.viewFields)
         
     },

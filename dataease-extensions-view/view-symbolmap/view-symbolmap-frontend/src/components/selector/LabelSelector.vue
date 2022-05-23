@@ -22,7 +22,7 @@
           </el-form-item> -->
 
           <el-form-item :label="$t('chart.label')" class="form-item">
-            <el-select v-model="values" placeholder="请选择" multiple collapse-tags @change="changeFields">
+            <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags @change="changeFields">
     
                 <el-option-group
                     v-for="group in fieldOptions"
@@ -45,7 +45,7 @@
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                    可以{fieldName}形式读字段值，标签和提示种字段互相通用
+                    可以${properties.fieldName}形式读字段值，标签和提示种字段互相通用（标签不支持换行）
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
@@ -133,7 +133,6 @@ export default {
   },
   methods: {
     initData() {
-        debugger
       const chart = JSON.parse(JSON.stringify(this.chart))
       if (chart.customAttr) {
         let customAttr = null
