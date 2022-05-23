@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BubbleMapService extends ViewPluginService {
@@ -18,13 +20,21 @@ public class BubbleMapService extends ViewPluginService {
     private static final String VIEW_TYPE_VALUE = "buddle-map";
     private static final String[] VIEW_STYLE_PROPERTIES =
             {
-                    "size-selector",
+                    "color-selector",
                     "label-selector",
                     "tooltip-selector",
-                    "x-axis-selector",
-                    "y-axis-selector",
                     "title-selector"
             };
+
+    private static final Map<String, String[]> VIEW_STYLE_PROPERTY_INNER = new HashMap();
+
+    static {
+        VIEW_STYLE_PROPERTY_INNER.put("color-selector", new String[]{"value", "alpha"});
+        VIEW_STYLE_PROPERTY_INNER.put("label-selector", new String[]{"show", "fontSize", "color", "position", "formatter"});
+        VIEW_STYLE_PROPERTY_INNER.put("tooltip-selector", new String[]{"show", "textStyle", "formatter"});
+        VIEW_STYLE_PROPERTY_INNER.put("title-selector", new String[]{"show", "title", "fontSize", "color", "hPosition", "vPosition", "isItalic", "isBolder"});
+    }
+
     /*下版这些常量移到sdk*/
     private static final String TYPE = "-type";
     private static final String DATA = "-data";
@@ -45,6 +55,7 @@ public class BubbleMapService extends ViewPluginService {
         pluginViewType.setCategory("chart.chart_type_space");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
         pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
+        pluginViewType.setPropertyInner(VIEW_STYLE_PROPERTY_INNER);
         return pluginViewType;
     }
 
@@ -83,7 +94,7 @@ public class BubbleMapService extends ViewPluginService {
     public String generateSQL(PluginViewParam param) {
         List<PluginViewField> xAxis = param.getFieldsByType("xAxis");
         List<PluginViewField> yAxis = param.getFieldsByType("yAxis");
-        if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)){
+        if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)) {
             return null;
         }
         return super.generateSQL(param);
