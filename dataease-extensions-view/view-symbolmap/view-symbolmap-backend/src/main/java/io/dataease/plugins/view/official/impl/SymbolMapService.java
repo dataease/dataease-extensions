@@ -26,13 +26,22 @@ public class SymbolMapService extends ViewPluginService {
 
     private static final String[] VIEW_STYLE_PROPERTIES =
             {
+                    "color-selector",
                     "size-selector-ant-v",
-                    "label-selector-ant-v",
                     "tooltip-selector-ant-v",
-                    "x-axis-selector-ant-v",
-                    "y-axis-selector-ant-v",
                     "title-selector-ant-v"
             };
+
+    private static final Map<String, String[]> VIEW_STYLE_PROPERTY_INNER = new HashMap();
+
+    static {
+        VIEW_STYLE_PROPERTY_INNER.put("color-selector", new String[]{"value", "alpha"});
+        VIEW_STYLE_PROPERTY_INNER.put("size-selector-ant-v", new String[]{"scatterSymbolSize", "symbolOpacity", "symbolStrokeWidth"});
+//        VIEW_STYLE_PROPERTY_INNER.put("size-selector-ant-v", new String[]{"scatterSymbol", "scatterSymbolSize","symbolOpacity","symbolStrokeWidth"});
+        VIEW_STYLE_PROPERTY_INNER.put("tooltip-selector-ant-v", new String[]{"show", "textStyle", "formatter"});
+        VIEW_STYLE_PROPERTY_INNER.put("title-selector-ant-v", new String[]{"show", "title", "fontSize", "color", "hPosition", "vPosition", "isItalic", "isBolder"});
+    }
+
     /*下版这些常量移到sdk*/
     private static final String TYPE = "-type";
     private static final String DATA = "-data";
@@ -52,6 +61,7 @@ public class SymbolMapService extends ViewPluginService {
         pluginViewType.setCategory("chart.chart_type_space");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
         pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
+        pluginViewType.setPropertyInner(VIEW_STYLE_PROPERTY_INNER);
         return pluginViewType;
     }
 
