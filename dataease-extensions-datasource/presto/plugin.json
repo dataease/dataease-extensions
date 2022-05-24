@@ -1,7 +1,7 @@
 {
     "name":"Presto 数据源插件",
     "free":0,
-    "store":"thirdpart",
+    "store":"default",
     "cost":0,
     "category":"datasource",
     "descript":"Presto 插件，值得拥有",
