@@ -47,16 +47,18 @@ public class PrestoQueryProvider extends QueryProvider {
     @Override
     public Integer transFieldType(String field) {
         field = field.contains("(") ? field.split("\\(")[0] : field;
+        field = field.toUpperCase();
         switch (field) {
-            // 文本
             case "DATE":
             case "DATETIME":
             case "TIMESTAMP":
+            case "TIME":
                 return DeTypeConstants.DE_TIME;// 时间
             case "TINYINT":
             case "SMALLINT":
             case "INT":
             case "BIGINT":
+            case "INTEGER":
                 return DeTypeConstants.DE_INT;// 整型
             case "FLOAT":
             case "DOUBLE":
@@ -118,8 +120,7 @@ public class PrestoQueryProvider extends QueryProvider {
                     }
                 } else {
                     if (f.getDeType() == DeTypeConstants.DE_TIME) {
-                        String cast = String.format(PrestoConstants.CAST, originField, "bigint");
-                        fieldName = String.format( PrestoConstants.FROM_UNIXTIME, cast);
+                        fieldName = String.format(PrestoConstants.FORMAT_DATETIME, String.format(PrestoConstants.FROM_UNIXTIME, originField + "/1000"), PrestoConstants.DEFAULT_DATE_FORMAT);
                     } else if (f.getDeType() == DeTypeConstants.DE_INT) {
                         fieldName = String.format(PrestoConstants.CAST, originField, PrestoConstants.DEFAULT_INT_FORMAT);
                     } else {
