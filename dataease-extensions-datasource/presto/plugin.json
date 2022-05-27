@@ -8,6 +8,6 @@
     "version":"1.0-SNAPSHOT",
     "creator":"DATAEASE",
     "moduleName":"presto-backend",
-    "require":"1.10.0",
+    "require":"1.11.0",
     "dsType":"presto"
 }
