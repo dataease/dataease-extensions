@@ -399,6 +399,25 @@ export const DEFAULT_YAXIS_EXT_STYLE = {
     }
 }
 
+export const getDefaultTemplate = (chart, type, feed , showKey) => {
+    if(!chart || !chart.viewFields || !type) return null;
+    let viewFields = []
+    if (chart.viewFields instanceof Array) {
+        viewFields = JSON.parse(JSON.stringify(chart.viewFields))
+    }else {
+        viewFields = JSON.parse(chart.viewFields)
+    }
+    const separator = feed ? '\n' : ' '
+    return viewFields.filter(field => field.busiType && field.busiType === type).map(field => {              
+        const fieldName = field.name
+        let template = "${"+ field.name +"}"
+        if(showKey) {
+          template = fieldName + "：${"+ field.name +"}"
+        }              
+        return template
+    }).join(separator)
+}
+
 export function uuid() {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 }

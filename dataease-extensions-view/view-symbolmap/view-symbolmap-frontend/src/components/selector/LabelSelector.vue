@@ -45,13 +45,13 @@
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                    可以${properties.fieldName}形式读字段值，标签和提示种字段互相通用（标签不支持换行）
+                    可以${fieldName}形式读字段值，标签和提示中字段互相通用（标签不支持换行）
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
               </span>
             </span>
-            <el-input v-model="labelForm.labelTemplate" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr" />
+            <el-input v-model="labelForm.labelTemplate" type="textarea" :placeholder="defaultPlaceholder" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr" />
           </el-form-item>
         </div>
       </el-form>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { COLOR_PANEL, DEFAULT_LABEL } from '@/utils/map'
+import { COLOR_PANEL, DEFAULT_LABEL, getDefaultTemplate } from '@/utils/map'
 
 export default {
   name: 'LabelSelector',
@@ -101,6 +101,9 @@ export default {
       },
       labelFields() {
           return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
+      },
+      defaultPlaceholder() {
+          return getDefaultTemplate(this.chart, 'labelAxis', false, false)
       }
   },
   data() {
@@ -174,12 +177,16 @@ export default {
         this.view.viewFields = this.view.viewFields.filter(field => field.busiType !== this.busiType)
     },
     changeFields(vals) {
+        debugger
         this.clearBusiTypeFields()
         const allFields = [...JSON.parse(JSON.stringify(this.dimensionData)), ... JSON.parse(JSON.stringify(this.quotaData))]
         allFields.forEach(field => {
             if (vals.includes(field.id)) {
                 const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
                 item.summary = 'group_concat'
+                if(item && item.groupType && item.groupType === 'q') {
+                    item.summary = 'sum'
+                }
                 this.view.viewFields.push(item)
             }
         })

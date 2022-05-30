@@ -16,8 +16,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
+
+    private static List<String> trans2Ykeys = new ArrayList<String>();
+
+    @PostConstruct
+    public void init() {
+        trans2Ykeys.add("labelAxis");
+        trans2Ykeys.add("tooltipAxis");
+    }
+
+    public List<String> getTrans2Ykeys() {
+        return trans2Ykeys;
+    }
 
     @Override
     public Map format(PluginViewParam pluginViewParam, List<String[]> data, boolean isDrill) {
@@ -28,7 +42,8 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
             if (StringUtils.equals(pluginViewField.getTypeField(), "xAxis")) {
                 xAxis.add(pluginViewField);
             }
-            if (StringUtils.equals(pluginViewField.getTypeField(), "yAxis")) {
+            if (StringUtils.equals(pluginViewField.getTypeField(), "yAxis")
+                    || trans2Ykeys.contains(pluginViewField.getTypeField())) {
                 yAxis.add(pluginViewField);
             }
         });
@@ -103,6 +118,7 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                 axisChartDataDTO.setQuotaList(new ArrayList<>());
                 axisChartDataDTO.setProperties(new HashMap<>());
                 int step = xAxis.size();
+                Boolean valueFilled = false;
                 for (int i = 0; i < yAxis.size(); i++) {
                     PluginViewField curY = yAxis.get(i);
                     ChartQuotaDTO chartQuotaDTO = new ChartQuotaDTO();
@@ -111,8 +127,13 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                     axisChartDataDTO.getProperties().put(curY.getName(), row[i + step]);
                     axisChartDataDTO.setLongitude(dimensionList.get(0).getValue());
                     axisChartDataDTO.setLatitude(dimensionList.get(1).getValue());
-                    datas.add(axisChartDataDTO);
+                    if (StringUtils.equals(curY.getTypeField(), "yAxis") && !valueFilled) {
+                        axisChartDataDTO.setCategory(curY.getName());
+                        axisChartDataDTO.setBusiValue(row[i + step]);
+                        valueFilled = true;
+                    }
                 }
+                datas.add(axisChartDataDTO);
             }
         }
         map.put("datas", datas);
