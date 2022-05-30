@@ -143,7 +143,7 @@
       },
       onRefreshViewFields(val) {
         this.view.viewFields = val
-        this.calcStyle()
+        // this.calcStyle()
         this.calcData()
       },
       onLabelChange(val) {         
@@ -182,9 +182,7 @@
           eventParam: this.view
         })
       },
-      calcData(cache) {
-        this.view.xaxis = [...this.longitudes, ...this.latitudes]       
-       
+      calcData(cache) {       
         this.$emit('plugin-call-back', {
           eventName: 'calc-data',
           eventParam: {

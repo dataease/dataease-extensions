@@ -27,7 +27,7 @@
   import { Scene, PointLayer, Popup } from '@antv/l7'
   import { uuid, hexColorToRGBA} from '@/utils/symbolmap'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
-
+  import { getDefaultTemplate } from '@/utils/map'
 
   export default {
     name: 'ChartComponentG2',
@@ -168,9 +168,9 @@
             this.addGlobalImage()
             
             this.drawView()
-
-            this.myChart.off('click')
-                           
+            this.myChart.on('click', ev => {
+                this.$emit('trigger-edit-click', ev.originEvent)
+            })           
           })                    
         }       
       },
@@ -181,6 +181,17 @@
       addGlobalImage() {
         this.myChart.addImage('marker','/api/pluginCommon/staticInfo/map-marker/svg')
       },
+
+      fillStrTemplate(template, properties) {
+          if(!template) return null
+          const regex = /\$\{([^}]+)\}/g
+          const replacer = (match, item) => {
+              return properties[item]
+          }
+          return template.replace(regex, replacer)
+      },
+
+     
 
       addTextLayer(originData, chart) {
         let customAttr = {}
@@ -195,18 +206,23 @@
         }
         TextSize = customAttr.label.fontSize
         textColor = customAttr.label.color
+
+        const defaultTemplate = "经度：${longitude}，纬度：${latitude}"
+        const templateWithField = getDefaultTemplate(chart, 'labelAxis', false, false)        
+        const labelTemplate = customAttr.label.labelTemplate || templateWithField || defaultTemplate
+
         originData.forEach(item => {
             const properties = item.properties
             properties.longitude = item.longitude
             properties.latitude = item.latitude
-            const defaultTemplate = "`经度：${properties.longitude}，纬度：${properties.latitude}`"
-            const labelTemplate = customAttr.label.labelTemplate || defaultTemplate
+            
+            
             try {
-                item.labelResult = eval(labelTemplate)
-            } catch (error) {
-                
-            }
-            item.labelResult = item.labelResult || eval(defaultTemplate)
+                item.labelResult = this.fillStrTemplate(labelTemplate, properties)
+            }catch (error) {
+
+            }            
+            item.labelResult = item.labelResult || this.fillStrTemplate(defaultTemplate, properties)
             item.labelResult = item.labelResult.replaceAll('\n', ' ')
         })
 
@@ -297,6 +313,7 @@
           }
           const yaxis = JSON.parse(chart.yaxis)
           const hasYaxis =  yaxis && yaxis.length
+          
 
           if (customAttr.tooltip) {
             const t = JSON.parse(JSON.stringify(customAttr.tooltip))
@@ -306,16 +323,19 @@
                 
                 const htmlPrefix = '<div style=\'font-size:'+fontSize+'px;color:'+fontColor+';\'>'
                 const htmlSuffix = '</div>'
+
+                const templateWithField = getDefaultTemplate(chart, 'tooltipAxis', true, true)    
+
                 this.pointLayer.on('mousemove', event => {
                     if (!t.show) {
                         return
                     }
                     let content = event.feature.longitude + ',' + event.feature.latitude
-                    if (event.feature.properties && customAttr.tooltip.tooltipTemplate) {
+                    if (event.feature.properties && (customAttr.tooltip.tooltipTemplate || templateWithField)) {
                         const properties = event.feature.properties
-                        const tooltipTemplate = customAttr.tooltip.tooltipTemplate
+                        const tooltipTemplate = customAttr.tooltip.tooltipTemplate || templateWithField
                         try {
-                            content =eval(tooltipTemplate)
+                            content = this.fillStrTemplate(tooltipTemplate, properties)
                         } catch (error) {
                             
                         }
@@ -339,7 +359,8 @@
           if (customAttr.size && customAttr.size.scatterSymbolSize) {
               defaultSize = customAttr.size.scatterSymbolSize
           }
-          hasYaxis && this.pointLayer.size('value', [10,25]) || this.pointLayer.size(defaultSize)
+          
+          hasYaxis && this.pointLayer.size('busiValue', [10,25]) || this.pointLayer.size(defaultSize)
         }
         this.myChart.render()
         this.pointLayer && this.resetZoom()
