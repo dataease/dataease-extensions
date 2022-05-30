@@ -33,7 +33,7 @@
           </el-form-item>
 
           <el-form-item :label="$t('password')" >
-            <el-input v-model="form.configuration.password" autocomplete="off"/>
+            <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
           </el-form-item>
 
         </el-form>
