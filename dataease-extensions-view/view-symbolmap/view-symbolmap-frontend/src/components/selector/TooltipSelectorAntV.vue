@@ -34,18 +34,18 @@
           </el-form-item>
 
           <el-form-item class="form-item">
-            <span slot="tooltip">
+            <span slot="label">
               <span class="span-box">
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                    可以${properties.fieldName}形式读字段值，标签和提示种字段互相通用
+                        可以${fieldName}形式读字段值，标签和提示中字段互相通用
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
               </span>
             </span>
-            <el-input v-model="tooltipForm.tooltipTemplate" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeTooltipAttr" />
+            <el-input v-model="tooltipForm.tooltipTemplate" type="textarea" :placeholder="defaultPlaceholder" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeTooltipAttr" />
           </el-form-item>
 
         </div>
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { COLOR_PANEL, DEFAULT_TOOLTIP } from '@/utils/map'
+import { COLOR_PANEL, DEFAULT_TOOLTIP, getDefaultTemplate } from '@/utils/map'
 
 export default {
   name: 'TooltipSelectorAntV',
@@ -95,6 +95,9 @@ export default {
       },
       tooltipFields() {
           return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
+      },
+      defaultPlaceholder() {
+          return getDefaultTemplate(this.chart, 'tooltipAxis', true, true)
       }
   },
   data() {
@@ -164,6 +167,9 @@ export default {
             if (vals.includes(field.id)) {
                 const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
                 item.summary = 'group_concat'
+                if(item && item.groupType && item.groupType === 'q') {
+                    item.summary = 'sum'
+                }
                 this.view.viewFields.push(item)
                 // temp += (item.name +'：${properties.'+item.name+'}<br>')
             }
