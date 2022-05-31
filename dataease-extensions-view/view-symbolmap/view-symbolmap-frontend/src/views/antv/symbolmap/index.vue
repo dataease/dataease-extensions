@@ -212,7 +212,7 @@
         const labelTemplate = customAttr.label.labelTemplate || templateWithField || defaultTemplate
 
         originData.forEach(item => {
-            const properties = item.properties
+            const properties = item.properties || {}
             properties.longitude = item.longitude
             properties.latitude = item.latitude
             
