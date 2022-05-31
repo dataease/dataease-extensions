@@ -17,7 +17,7 @@
           <el-slider v-model="sizeForm.scatterSymbolSize" show-input :show-input-controls="false" input-size="mini" :min="1" :max="40" @change="changeBarSizeCase" />
         </el-form-item>
         <el-form-item :label="$t('chart.not_alpha')" class="form-item form-item-slider">
-          <el-slider v-model="sizeForm.symbolOpacity" show-input :show-input-controls="false" input-size="mini" :min="0" :max="10" @change="changeBarSizeCase" />
+          <el-slider v-model="sizeForm.symbolOpacity" show-input :show-input-controls="false" input-size="mini" :min="1" :max="10" @change="changeBarSizeCase" />
         </el-form-item>
          <el-form-item v-if="sizeForm.scatterSymbol && sizeForm.scatterSymbol !== 'marker'" :label="$t('plugin_view_symbol_map.border')" class="form-item form-item-slider">
           <el-slider v-model="sizeForm.symbolStrokeWidth" show-input :show-input-controls="false" input-size="mini" :min="0" :max="5" @change="changeBarSizeCase" />

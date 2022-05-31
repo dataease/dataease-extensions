@@ -241,7 +241,7 @@
             .color(textColor || '#ffffff')
             .style({
                 textAnchor: 'center', // 文本相对锚点的位置 center|left|right|top|bottom|top-left
-                textOffset: [ 5, -5 ], // 文本相对锚点的偏移量 [水平, 垂直]
+                textOffset: [ 5, -15 ], // 文本相对锚点的偏移量 [水平, 垂直]
                 spacing: 2, // 字符间距
                 padding: [ 1, 4 ], // 文本包围盒 padding [水平，垂直]，影响碰撞检测结果，避免相邻文本靠的太近
                 stroke: '#ffffff', // 描边颜色
@@ -364,6 +364,12 @@
         }
         this.myChart.render()
         this.pointLayer && this.resetZoom()
+        // 自动放大两级
+        let index = 2
+        while (index--) {
+          this.roamMap(true)
+        }
+        
       },
 
       getMapTheme(chart) {
