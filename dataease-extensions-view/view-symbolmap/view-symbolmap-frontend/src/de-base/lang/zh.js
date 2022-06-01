@@ -12,6 +12,8 @@ export default {
     hexagon: '六角形',
     octogon: '八角形',
     hexagram: '六角星',
-    border: '边框'
+    border: '边框',
+    light: '亮色',
+    dark: '暗色'
   }
 }
