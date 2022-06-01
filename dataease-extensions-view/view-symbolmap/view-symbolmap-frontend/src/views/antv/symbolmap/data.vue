@@ -179,6 +179,7 @@
       },
 
       addLongitudes(e) {
+        this.dragCheckType(this.longitudes, 'd')
         this.dragMoveDuplicate(this.longitudes, e)
         if (this.longitudes.length > 1) {
           this.longitudes = [this.longitudes[0]]
@@ -186,6 +187,7 @@
         this.calcData(true)
       },
       addLatitudes(e) {
+        this.dragCheckType(this.latitudes, 'd')
         this.dragMoveDuplicate(this.latitudes, e)
         if (this.latitudes.length > 1) {
           this.latitudes = [this.latitudes[0]]
@@ -207,6 +209,7 @@
         this.calcData(true)
       }, */
       addYaxis(e) {
+        this.dragCheckType(this.view.yaxis, 'q')
         this.dragMoveDuplicate(this.view.yaxis, e)
         if (this.view.yaxis.length > 1) {
           this.view.yaxis = [this.view.yaxis[0]]
