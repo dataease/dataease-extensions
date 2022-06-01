@@ -8,7 +8,6 @@ import io.dataease.plugins.view.service.ViewPluginBaseService;
 import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -40,33 +39,41 @@ public class SymbolMapStatHandler implements PluginViewStatHandler {
             fieldSQLMap.put(typeKey, lists);
         }
 
-        List<PluginViewSQL> xFields = fieldSQLMap.get("xAxis").stream().filter(singleField -> ObjectUtils.isNotEmpty(singleField.getField())).map(singleField -> singleField.getField()).collect(Collectors.toList());
-        List<PluginViewSQL> xOrders = fieldSQLMap.get("xAxis").stream().filter(singleField -> ObjectUtils.isNotEmpty(singleField.getSort())).map(singleField -> singleField.getSort()).collect(Collectors.toList());
-
+        List<PluginViewSQL> xFields = fieldSQLMap.get("xAxis").stream()
+                .filter(singleField -> ObjectUtils.isNotEmpty(singleField.getField()))
+                .map(singleField -> singleField.getField()).collect(Collectors.toList());
+        List<PluginViewSQL> xOrders = fieldSQLMap.get("xAxis").stream()
+                .filter(singleField -> ObjectUtils.isNotEmpty(singleField.getSort()))
+                .map(singleField -> singleField.getSort()).collect(Collectors.toList());
 
         // 处理视图中字段过滤
-        String customWheres = baseService.customWhere(dsType, pluginViewParam.getPluginChartFieldCustomFilters(), tableObj);
+        String customWheres = baseService.customWhere(dsType, pluginViewParam.getPluginChartFieldCustomFilters(),
+                tableObj);
         // 处理仪表板字段过滤
         String panelWheres = baseService.panelWhere(dsType, pluginViewParam.getPluginChartExtFilters(), tableObj);
         // 构建sql所有参数
 
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (panelWheres != null) wheres.add(panelWheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (panelWheres != null)
+            wheres.add(panelWheres);
         List<PluginViewSQL> groups = new ArrayList<>();
         groups.addAll(xFields);
         // 外层再次套sql
         List<PluginViewSQL> orders = new ArrayList<>();
         orders.addAll(xOrders);
 
-
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
 
         ST st_sql = stg.getInstanceOf("previewSql");
         st_sql.add("isGroup", false);
-        if (CollectionUtils.isNotEmpty(xFields)) st_sql.add("groups", xFields);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(xFields))
+            st_sql.add("groups", xFields);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String sql = st_sql.render();
 
         String brackets = ConstantsUtil.constantsValue(dsType, "BRACKETS");
@@ -78,18 +85,11 @@ public class SymbolMapStatHandler implements PluginViewStatHandler {
                 .tableName(String.format(brackets, sql))
                 .tableAlias(String.format(table_alias_prefix, 1))
                 .build();
-        if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
-        if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
-        return sqlLimit(st.render(), pluginViewParam.getPluginViewLimit());
+        if (CollectionUtils.isNotEmpty(orders))
+            st.add("orders", orders);
+        if (ObjectUtils.isNotEmpty(tableSQL))
+            st.add("table", tableSQL);
+        return baseService.sqlLimit(dsType, st.render(), pluginViewParam.getPluginViewLimit());
     }
 
-
-
-    private String sqlLimit(String sql, PluginViewLimit view) {
-        if (StringUtils.equalsIgnoreCase(view.getResultMode(), "custom")) {
-            return sql + " LIMIT 0," + view.getResultCount();
-        } else {
-            return sql;
-        }
-    }
 }
