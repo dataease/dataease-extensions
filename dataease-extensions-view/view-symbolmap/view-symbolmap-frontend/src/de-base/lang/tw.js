@@ -9,7 +9,9 @@ export default {
       
       octogon: '八邊形',
       hexagram: '六角星',
-      border: '邊框'
+      border: '邊框',
+      light: '亮色',
+      dark: '暗色'
     }
 }
   

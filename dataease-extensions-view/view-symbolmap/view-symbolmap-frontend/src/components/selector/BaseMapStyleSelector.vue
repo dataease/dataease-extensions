@@ -5,8 +5,8 @@
         <el-form-item :label="$t('chart.background')" class="form-item">
           <!-- <el-color-picker v-model="colorForm.color" class="color-picker-style" :predefine="predefineColors" @change="changeBackgroundStyle" /> -->
             <el-radio-group v-model="styleForm.baseMapTheme" @change="changeBackgroundStyle">
-                <el-radio label="light">light</el-radio>
-                <el-radio label="dark">dark</el-radio>
+                <el-radio label="light">{{$t('plugin_view_symbol_map.light')}}</el-radio>
+                <el-radio label="dark">{{$t('plugin_view_symbol_map.dark')}}</el-radio>
             </el-radio-group>
         </el-form-item>
         
