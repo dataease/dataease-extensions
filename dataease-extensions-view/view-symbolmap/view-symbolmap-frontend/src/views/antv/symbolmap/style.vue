@@ -96,6 +96,7 @@
   import TooltipSelectorAntV from '@/components/selector/TooltipSelectorAntV'
   import BaseMapStyleSelector from '@/components/selector/BaseMapStyleSelector'
   import LabelSelector from '@/components/selector/LabelSelector.vue'
+  import messages from '@/de-base/lang/messages'
   export default {
     components: {
       ColorSelector,
@@ -135,6 +136,9 @@
       quotaData() {
         return this.obj.quotaData
       }
+    },
+    created() {      
+      this.$emit('on-add-languanges', messages)
     },
     methods: {
       onColorChange(val) {
