@@ -8,6 +8,8 @@ export default {
     hexagon: 'Hexagon',
     octogon: 'Octogon',
     hexagram: 'Hexagram',
-    border: 'Border'
+    border: 'Border',
+    light: 'Light',
+    dark: 'Dark'
   }
 }
