@@ -12,6 +12,7 @@ import io.dataease.plugins.common.constants.SqlServerSQLConstants;
 import io.dataease.plugins.common.dto.chart.ChartCustomFilterItemDTO;
 import io.dataease.plugins.common.dto.chart.ChartFieldCustomFilterDTO;
 import io.dataease.plugins.common.dto.chart.ChartViewFieldDTO;
+import io.dataease.plugins.common.dto.datasource.DeSortField;
 import io.dataease.plugins.common.dto.sqlObj.SQLObj;
 import io.dataease.plugins.common.request.chart.ChartExtFilterRequest;
 import io.dataease.plugins.datasource.entity.JdbcConfiguration;
@@ -74,6 +75,11 @@ public class MaxcomputeQueryProvider extends QueryProvider {
 
     @Override
     public String createQuerySQL(String table, List<DatasetTableField> fields, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+        return createQuerySQL(table, fields, isGroup, ds, fieldCustomFilter, null);
+    }
+
+    @Override
+    public String createQuerySQL(String table, List<DatasetTableField> fields, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DeSortField> sortFields) {
         SQLObj tableObj = SQLObj.builder()
                 .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(MaxConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 0))
@@ -138,7 +144,68 @@ public class MaxcomputeQueryProvider extends QueryProvider {
         List<String> wheres = new ArrayList<>();
         if (customWheres != null) wheres.add(customWheres);
         if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
+
+        List<SQLObj> xOrders = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(sortFields)) {
+            int step = fields.size();
+            for (int i = step; i < (step + sortFields.size()); i++) {
+                DeSortField deSortField = sortFields.get(i - step);
+                SQLObj order = buildSortField(deSortField, tableObj, i);
+                xOrders.add(order);
+            }
+        }
+        if (ObjectUtils.isNotEmpty(xOrders)) {
+            st_sql.add("orders", xOrders);
+        }
         return st_sql.render();
+    }
+
+    private SQLObj buildSortField(DeSortField f, SQLObj tableObj, int i) {
+        String originField;
+        if (ObjectUtils.isNotEmpty(f.getExtField()) && f.getExtField() == 2) {
+            // 解析origin name中有关联的字段生成sql表达式
+            originField = calcFieldRegex(f.getOriginName(), tableObj);
+        } else if (ObjectUtils.isNotEmpty(f.getExtField()) && f.getExtField() == 1) {
+            originField = String.format(MaxConstants.KEYWORD_FIX, tableObj.getTableAlias(), f.getOriginName());
+        } else {
+            originField = String.format(MaxConstants.KEYWORD_FIX, tableObj.getTableAlias(), f.getOriginName());
+        }
+        String fieldAlias = String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i);
+        String fieldName = "";
+        // 处理横轴字段
+        if (f.getDeExtractType() == DeTypeConstants.DE_TIME) {
+            if (f.getDeType() == DeTypeConstants.DE_INT || f.getDeType() == DeTypeConstants.DE_FLOAT) {
+                fieldName = String.format(MaxConstants.UNIX_TIMESTAMP, originField);
+            } else {
+                fieldName = originField;
+            }
+        } else if (f.getDeExtractType() == DeTypeConstants.DE_STRING) {
+            if (f.getDeType() == DeTypeConstants.DE_INT) {
+                fieldName = String.format(MaxConstants.CAST, originField, MaxConstants.DEFAULT_INT_FORMAT);
+            } else if (f.getDeType() == DeTypeConstants.DE_FLOAT) {
+                fieldName = String.format(MaxConstants.CAST, originField, MaxConstants.DEFAULT_FLOAT_FORMAT);
+            } else if (f.getDeType() == DeTypeConstants.DE_TIME) {
+                fieldName = String.format(MaxConstants.CAST, originField, "DATETIME");
+            } else {
+                fieldName = originField;
+            }
+        } else {
+            if (f.getDeType() == DeTypeConstants.DE_TIME) {
+                String cast = String.format(MaxConstants.CAST, originField, "bigint");
+                fieldName = String.format(MaxConstants.FROM_UNIXTIME, cast);
+            } else if (f.getDeType() == DeTypeConstants.DE_INT) {
+                fieldName = String.format(MaxConstants.CAST, originField, MaxConstants.DEFAULT_INT_FORMAT);
+            } else {
+                fieldName = originField;
+            }
+        }
+        SQLObj result = SQLObj.builder().orderField(originField).orderAlias(originField).orderDirection(f.getOrderDirection()).build();
+        return result;
+    }
+
+    @Override
+    public String createQuerySQLAsTmp(String sql, List<DatasetTableField> fields, boolean isGroup, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DeSortField> sortFields) {
+        return createQuerySQL("(" + sqlFix(sql) + ")", fields, isGroup, null, fieldCustomFilter, sortFields);
     }
 
     @Override
