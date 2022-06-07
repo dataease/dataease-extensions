@@ -12,6 +12,7 @@
     <modules>
         <module>view-bubblemap</module>
         <module>view-3dpie</module>
+        <module>view-symbolmap</module>
     </modules>
 
     <artifactId>dataease-extensions-view</artifactId>

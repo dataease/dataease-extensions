@@ -61,6 +61,19 @@
           />
         </el-collapse-item>
 
+        <el-collapse-item
+          name="legend"
+          :title="$t('chart.legend')"
+        >
+            <legend-selector
+                
+                :param="param"
+                class="attr-selector"
+                :chart="chart"
+                @onLegendChange="onLegendChange"
+            />
+        </el-collapse-item>
+
         <el-collapse-item name="background" :title="$t('chart.background')">
           <background-color-selector
             :param="param"
@@ -77,6 +90,7 @@
 <script>
   import ColorSelector from '@/components/selector/ColorSelector'
   import LabelSelector from '@/components/selector/LabelSelector'
+  import LegendSelector from '@/components/selector/LegendSelector'
   import TitleSelector from '@/components/selector/TitleSelector'
   import TooltipSelector from '@/components/selector/TooltipSelector'
   import BackgroundColorSelector from '@/components/selector/BackgroundColorSelector'
@@ -84,6 +98,7 @@
     components: {
       ColorSelector,
       LabelSelector,
+      LegendSelector,
       TitleSelector,
       TooltipSelector,
       BackgroundColorSelector
@@ -134,6 +149,10 @@
       },
       onChangeBackgroundForm(val) {
         this.view.customStyle.background = val
+        this.calcStyle()
+      },
+      onLegendChange(val) {
+        this.view.customStyle.legend = val
         this.calcStyle()
       },
       calcStyle() {

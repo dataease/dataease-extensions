@@ -1,14 +1,12 @@
 <template>
   <div style="width: 100%;">
     <el-col>
-      <el-form v-show="chart.type && !chart.type.includes('gauge')" ref="labelForm"  :model="labelForm" label-width="80px" size="mini">
+      <el-form ref="labelForm"  :model="labelForm" label-width="80px" size="mini">
         <el-form-item :label="$t('chart.show')" class="form-item">
           <el-checkbox v-model="labelForm.show" @change="changeLabelAttr">{{ $t('chart.show') }}</el-checkbox>
         </el-form-item>
         <div v-show="labelForm.show">
-          <el-form-item v-show="chart.type && chart.type.includes('pie')" :label="$t('chart.pie_label_line_show')" class="form-item">
-            <el-checkbox v-model="labelForm.labelLine.show" @change="changeLabelAttr">{{ $t('chart.pie_label_line_show') }}</el-checkbox>
-          </el-form-item>
+          
           <el-form-item :label="$t('chart.text_fontsize')" class="form-item">
             <el-select v-model="labelForm.fontSize" :placeholder="$t('chart.text_fontsize')" size="mini" @change="changeLabelAttr">
               <el-option v-for="option in fontSize" :key="option.value" :label="option.name" :value="option.value" />
@@ -17,12 +15,12 @@
           <el-form-item :label="$t('chart.text_color')" class="form-item">
             <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors" @change="changeLabelAttr" />
           </el-form-item>
-          <el-form-item v-show="chart.type && chart.type !== 'liquid' && !chart.type.includes('line') && chart.type !== 'treemap' && chart.type !== 'map'" :label="$t('chart.label_position')" class="form-item">
+          <!-- <el-form-item :label="$t('chart.label_position')" class="form-item">
             <el-select v-model="labelForm.position" :placeholder="$t('chart.label_position')" @change="changeLabelAttr">
               <el-option v-for="option in labelPosition" :key="option.value" :label="option.name" :value="option.value" />
             </el-select>
-          </el-form-item>
-          <el-form-item v-show="chart.type && chart.type !== 'liquid'" class="form-item">
+          </el-form-item> -->
+          <el-form-item class="form-item">
             <span slot="label">
               <span class="span-box">
                 <span>{{ $t('chart.content_formatter') }}</span>
@@ -39,27 +37,7 @@
         </div>
       </el-form>
 
-      <el-form v-show="chart.type && chart.type.includes('gauge')" ref="labelForm"  :model="labelForm" label-width="80px" size="mini">
-        <el-form-item :label="$t('chart.show')" class="form-item">
-          <el-checkbox v-model="labelForm.show" @change="changeLabelAttr">{{ $t('chart.show') }}</el-checkbox>
-        </el-form-item>
-        <el-form-item :label="$t('chart.text_fontsize')" class="form-item">
-          <el-select v-model="labelForm.fontSize" :placeholder="$t('chart.text_fontsize')" size="mini" @change="changeLabelAttr">
-            <el-option v-for="option in fontSize" :key="option.value" :label="option.name" :value="option.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('chart.text_color')" class="form-item">
-          <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors" @change="changeLabelAttr" />
-        </el-form-item>
-        <el-form-item class="form-item">
-          <span slot="label">
-            <span class="span-box">
-              <span>{{ $t('chart.content_formatter') }}</span>
-            </span>
-          </span>
-          <el-input v-model="labelForm.gaugeFormatter" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr" />
-        </el-form-item>
-      </el-form>
+      
     </el-col>
   </div>
 </template>
@@ -88,16 +66,6 @@ export default {
       labelPositionPie: [
         { name: this.$t('chart.inside'), value: 'inside' },
         { name: this.$t('chart.outside'), value: 'outside' }
-      ],
-      labelPositionH: [
-        { name: this.$t('chart.text_pos_left'), value: 'left' },
-        { name: this.$t('chart.center'), value: 'inside' },
-        { name: this.$t('chart.text_pos_right'), value: 'right' }
-      ],
-      labelPositionV: [
-        { name: this.$t('chart.text_pos_top'), value: 'top' },
-        { name: this.$t('chart.center'), value: 'inside' },
-        { name: this.$t('chart.text_pos_bottom'), value: 'bottom' }
       ],
       predefineColors: COLOR_PANEL
     }
@@ -152,13 +120,7 @@ export default {
     initOptions() {
       const type = this.chart.type
       if (type) {
-        if (type.includes('horizontal') || type === 'funnel') {
-          this.labelPosition = this.labelPositionH
-        } else if (type.includes('pie')) {
-          this.labelPosition = this.labelPositionPie
-        } else {
-          this.labelPosition = this.labelPositionV
-        }
+        this.labelPosition = this.labelPositionPie
       }
     }
   }

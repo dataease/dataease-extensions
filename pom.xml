@@ -22,6 +22,7 @@
     <modules>
 
         <module>dataease-extensions-view</module>
+        <module>dataease-extensions-datasource</module>
     </modules>
 
 

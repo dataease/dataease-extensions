@@ -8,7 +8,7 @@
             <el-row>
                 <el-radio-group
                 v-model="view.stylePriority"
-                class="radio-span"                
+                class="radio-span"
                 size="mini"
                 @change="calcStyle"
                 >
@@ -24,8 +24,8 @@
                 <el-collapse-item name="color" :title="$t('chart.color')">
                     <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange" />
                 </el-collapse-item>
-            
-            
+
+
                 <el-collapse-item name="label" :title="$t('chart.label')">
                     <label-selector
                         :param="param"
@@ -50,25 +50,25 @@
         <el-row>
             <span class="padding-lr">{{ $t('chart.module_style') }}</span>
             <el-collapse v-model="styleActiveNames" class="style-collapse">
-            
+
                 <el-collapse-item v-show="view.type" name="title" :title="$t('chart.title')">
                     <title-selector
-                        
+
                         :param="param"
                         class="attr-selector"
                         :chart="chart"
                         @onTextChange="onTextChange"
                     />
                 </el-collapse-item>
-                
-                <el-collapse-item name="background" :title="$t('chart.background')">
+
+                <!--<el-collapse-item name="background" :title="$t('chart.background')">
                 <background-color-selector
                     :param="param"
                     class="attr-selector"
                     :chart="chart"
                     @onChangeBackgroundForm="onChangeBackgroundForm"
                 />
-                </el-collapse-item>
+                </el-collapse-item>-->
             </el-collapse>
         </el-row>
     </div>
@@ -79,14 +79,14 @@ import ColorSelector from '@/components/selector/ColorSelector'
 import LabelSelector from '@/components/selector/LabelSelector'
 import TitleSelector from '@/components/selector/TitleSelector'
 import TooltipSelector from '@/components/selector/TooltipSelector'
-import BackgroundColorSelector from '@/components/selector/BackgroundColorSelector'
+/*import BackgroundColorSelector from '@/components/selector/BackgroundColorSelector'*/
 export default {
     components: {
         ColorSelector,
         LabelSelector,
         TitleSelector,
-        TooltipSelector,
-        BackgroundColorSelector
+        TooltipSelector
+        // BackgroundColorSelector
     },
     data() {
         return {
@@ -95,7 +95,7 @@ export default {
         }
     },
     props: {
-       
+
         obj: {
             type: Object,
             default: () => {}

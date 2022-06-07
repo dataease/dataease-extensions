@@ -156,7 +156,7 @@ export default {
           this.myChart.clear()
           return
         }
-        const cCode = this.dynamicAreaCode || customAttr.areaCode
+        const cCode = this.chart.DetailAreaCode || this.dynamicAreaCode || customAttr.areaCode
        
         const geoMap = !!localStorage.getItem('geoMap') ? JSON.parse(localStorage.getItem('geoMap')) : {}
         if (geoMap[cCode]) {
