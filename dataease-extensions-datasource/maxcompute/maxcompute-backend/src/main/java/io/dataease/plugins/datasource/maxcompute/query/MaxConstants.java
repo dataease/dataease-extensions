@@ -2,7 +2,7 @@ package io.dataease.plugins.datasource.maxcompute.query;
 
 
 
-import io.dataease.plugins.common.constants.SQLConstants;
+import io.dataease.plugins.common.constants.datasource.SQLConstants;
 
 
 public class MaxConstants extends SQLConstants {
