@@ -1047,7 +1047,13 @@ public class PrestoQueryProvider extends QueryProvider {
                     fieldName = String.format(PrestoConstants.FORMAT_DATETIME, from_unixtime, format);
                 }
             } else {
-                fieldName = originField;
+                if (x.getDeType() == DeTypeConstants.DE_INT) {
+                    fieldName = String.format(PrestoConstants.CAST, originField, PrestoConstants.DEFAULT_INT_FORMAT);
+                } else if (x.getDeType() == DeTypeConstants.DE_FLOAT) {
+                    fieldName = String.format(PrestoConstants.CAST, originField, PrestoConstants.DEFAULT_FLOAT_FORMAT);
+                } else {
+                    fieldName = originField;
+                }
             }
         }
         return SQLObj.builder()
