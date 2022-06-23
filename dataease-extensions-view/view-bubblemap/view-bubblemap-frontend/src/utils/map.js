@@ -75,7 +75,8 @@ export const BASE_MAP = {
         inRange: {
           color: ['lightskyblue', 'yellow', 'orangered']
         },
-        right: 0
+        right: 0,
+        textStyle: {}
     },
   
     tooltip: {},
@@ -148,7 +149,7 @@ const convertData = (mapData, chart) => {
 }
 
 let terminalType = 'pc'
-export function baseMapOption(chart_option, chart, mapData, terminal = 'pc') {
+export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', themeStyle) {
     terminalType = terminal
     // 处理shape attr
     let customAttr = {}
@@ -212,6 +213,11 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc') {
       if (customAttr.color && customAttr.color.colors) {
         chart_option.visualMap.inRange.color = customAttr.color.colors
         chart_option.visualMap.inRange.colorAlpha = customAttr.color.alpha / 100
+      }
+      if (themeStyle && themeStyle.backgroundColorSelect) {
+        const panelColor = themeStyle.color
+        const reverseValue = reverseColor(panelColor)
+        chart_option.visualMap.textStyle = { color: reverseValue }
       }
       // chart_option.visualMap = null
         
@@ -339,5 +345,11 @@ export const DEFAULT_YAXIS_EXT_STYLE = {
 
 export function uuid() {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+}
+
+export const reverseColor = colorValue => {
+    colorValue = '0x' + colorValue.replace(/#/g, '')
+    const str = '000000' + (0xFFFFFF - colorValue).toString(16)
+    return '#' + str.substring(str.length - 6, str.length)
 }
   
