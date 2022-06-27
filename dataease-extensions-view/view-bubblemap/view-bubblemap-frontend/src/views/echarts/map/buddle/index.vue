@@ -40,6 +40,11 @@ export default {
     obj: {
       type: Object,
       required: true
+    },
+    themeStyle: {
+      type: Object,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -211,7 +216,11 @@ export default {
       geoJson.features.map(function(item){
           mapData[item.properties.name] = item.properties.centroid || item.properties.center           
       })
-      const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType)
+      let themeStyle = null
+      if (this.themeStyle) {
+        themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
+      }
+      const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, themeStyle)
       this.myEcharts(chart_option)
       const opt = this.myChart.getOption()
       if (opt && opt.series) {

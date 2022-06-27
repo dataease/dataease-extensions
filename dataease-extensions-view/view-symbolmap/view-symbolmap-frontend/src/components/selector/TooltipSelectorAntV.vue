@@ -39,7 +39,7 @@
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                        可以${fieldName}形式读字段值，标签和提示中字段互相通用
+                        可以${fieldName}形式读字段值，标签和提示中字段互相通用，内置经纬度相关字段
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
@@ -86,11 +86,11 @@ export default {
           return [
             {
               label: this.$t('chart.dimension'),
-              options: this.dimensionData
+              options: this.dimensionData && this.dimensionData.filter(item => item.deType !== 5)
             },
             {
               label: this.$t('chart.quota'),
-              options: this.quotaData
+              options: this.quotaData && this.quotaData.filter(item => item.deType !== 5)
             }]            
       },
       tooltipFields() {
