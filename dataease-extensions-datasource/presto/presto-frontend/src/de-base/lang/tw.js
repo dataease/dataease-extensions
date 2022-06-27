@@ -9,5 +9,6 @@ export default {
   dataBase: '數據庫',
   schema: 'Schema',
   username: '用戶名',
-  password: '密碼'
+  password: '密碼',
+  query_timeout: '査詢超時（秒）'
 }

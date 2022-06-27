@@ -11,5 +11,6 @@ export default {
   username: '用户名',
   password: '密码',
   get_schema: '获取 Schema',
-  please_choose_schema: '请选择 Schema'
+  please_choose_schema: '请选择 Schema',
+  query_timeout: '査詢超時（秒）'
 }

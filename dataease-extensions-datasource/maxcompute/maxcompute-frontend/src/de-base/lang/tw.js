@@ -8,4 +8,5 @@ export default {
   projectName: '項目名稱',
   access_id: 'Access ID',
   access_key: 'Access Key',
+  query_timeout: '査詢超時（秒）'
 }

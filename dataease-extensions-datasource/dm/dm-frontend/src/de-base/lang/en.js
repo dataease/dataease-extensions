@@ -11,5 +11,6 @@ export default {
   username: 'User',
   password: 'Password',
   get_schema: 'Get Schema',
-  please_choose_schema: 'Please select Schema'
+  please_choose_schema: 'Please select Schema',
+  query_timeout: 'Query timeout (seconds)'
 }

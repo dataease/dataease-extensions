@@ -9,5 +9,6 @@ export default {
   dataBase: '数据库',
   schema: 'Schema',
   username: '用户名',
-  password: '密码'
+  password: '密码',
+  query_timeout: '查询超时(秒)'
 }

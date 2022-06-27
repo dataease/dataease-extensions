@@ -8,4 +8,5 @@ export default {
   projectName: '项目名称',
   access_id: 'Access ID',
   access_key: 'Access Key',
+  query_timeout: '查询超时(秒)'
 }

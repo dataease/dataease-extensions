@@ -9,5 +9,6 @@ export default {
   dataBase: 'Catalog',
   schema: 'Schema',
   username: 'User',
-  password: 'Password'
+  password: 'Password',
+  query_timeout: 'Query timeout (seconds)'
 }

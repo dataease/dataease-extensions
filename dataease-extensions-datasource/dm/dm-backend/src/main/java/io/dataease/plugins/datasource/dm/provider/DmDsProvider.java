@@ -48,26 +48,26 @@ public class DmDsProvider extends DefaultJdbcProvider {
         String url = dmConfig.getJdbc();
         Properties props = new Properties();
         DeDriver deDriver = null;
-        if(StringUtils.isNotEmpty(dmConfig.getAuthMethod()) && dmConfig.getAuthMethod().equalsIgnoreCase("kerberos")){
+        if (StringUtils.isNotEmpty(dmConfig.getAuthMethod()) && dmConfig.getAuthMethod().equalsIgnoreCase("kerberos")) {
             System.setProperty("java.security.krb5.conf", "/opt/dataease/conf/krb5.conf");
             ExtendedJdbcClassLoader classLoader;
-            if(isDefaultClassLoader(customDriver)){
+            if (isDefaultClassLoader(customDriver)) {
                 classLoader = extendedJdbcClassLoader;
-            }else {
+            } else {
                 deDriver = deDriverMapper.selectByPrimaryKey(customDriver);
                 classLoader = getCustomJdbcClassLoader(deDriver);
             }
-            Class<?> ConfigurationClass =  classLoader.loadClass("org.apache.hadoop.conf.Configuration");
-            Method set =  ConfigurationClass.getMethod("set",String.class, String.class) ;
+            Class<?> ConfigurationClass = classLoader.loadClass("org.apache.hadoop.conf.Configuration");
+            Method set = ConfigurationClass.getMethod("set", String.class, String.class);
             Object obj = ConfigurationClass.newInstance();
             set.invoke(obj, "hadoop.security.authentication", "Kerberos");
 
-            Class<?> UserGroupInformationClass =  classLoader.loadClass("org.apache.hadoop.security.UserGroupInformation");
-            Method setConfiguration =  UserGroupInformationClass.getMethod("setConfiguration",ConfigurationClass) ;
-            Method loginUserFromKeytab =  UserGroupInformationClass.getMethod("loginUserFromKeytab",String.class, String.class) ;
+            Class<?> UserGroupInformationClass = classLoader.loadClass("org.apache.hadoop.security.UserGroupInformation");
+            Method setConfiguration = UserGroupInformationClass.getMethod("setConfiguration", ConfigurationClass);
+            Method loginUserFromKeytab = UserGroupInformationClass.getMethod("loginUserFromKeytab", String.class, String.class);
             setConfiguration.invoke(null, obj);
             loginUserFromKeytab.invoke(null, dmConfig.getUsername(), "/opt/dataease/conf/" + dmConfig.getPassword());
-        }else {
+        } else {
             if (StringUtils.isNotBlank(dmConfig.getUsername())) {
                 props.setProperty("user", dmConfig.getUsername());
                 if (StringUtils.isNotBlank(dmConfig.getPassword())) {
@@ -77,13 +77,13 @@ public class DmDsProvider extends DefaultJdbcProvider {
         }
 
         Connection conn;
-        String driverClassName ;
+        String driverClassName;
         ExtendedJdbcClassLoader jdbcClassLoader;
-        if(isDefaultClassLoader(customDriver)){
+        if (isDefaultClassLoader(customDriver)) {
             driverClassName = defaultDriver;
             jdbcClassLoader = extendedJdbcClassLoader;
-        }else {
-            if(deDriver == null){
+        } else {
+            if (deDriver == null) {
                 deDriver = deDriverMapper.selectByPrimaryKey(customDriver);
             }
             driverClassName = deDriver.getDriverClass();
@@ -94,11 +94,11 @@ public class DmDsProvider extends DefaultJdbcProvider {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(jdbcClassLoader);
-            conn= driverClass.connect(url, props);
-        }catch (Exception e){
+            conn = driverClass.connect(url, props);
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
-        }finally {
+        } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
         return conn;
@@ -108,7 +108,9 @@ public class DmDsProvider extends DefaultJdbcProvider {
     public List<TableDesc> getTables(DatasourceRequest datasourceRequest) throws Exception {
         List<TableDesc> tables = new ArrayList<>();
         String queryStr = getTablesSql(datasourceRequest);
-        try (Connection con = getConnectionFromPool(datasourceRequest); Statement statement = con.createStatement(); ResultSet resultSet = statement.executeQuery(queryStr)) {
+        JdbcConfiguration jdbcConfiguration = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), JdbcConfiguration.class);
+        int queryTimeout = jdbcConfiguration.getQueryTimeout() > 0 ? jdbcConfiguration.getQueryTimeout() : 0;
+        try (Connection con = getConnectionFromPool(datasourceRequest); Statement statement = getStatement(con, queryTimeout); ResultSet resultSet = statement.executeQuery(queryStr)) {
             while (resultSet.next()) {
                 tables.add(getTableDesc(datasourceRequest, resultSet));
             }
@@ -196,7 +198,9 @@ public class DmDsProvider extends DefaultJdbcProvider {
     @Override
     public String checkStatus(DatasourceRequest datasourceRequest) throws Exception {
         String queryStr = getTablesSql(datasourceRequest);
-        try (Connection con = getConnection(datasourceRequest); Statement statement = con.createStatement(); ResultSet resultSet = statement.executeQuery(queryStr)) {
+        JdbcConfiguration jdbcConfiguration = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), JdbcConfiguration.class);
+        int queryTimeout = jdbcConfiguration.getQueryTimeout() > 0 ? jdbcConfiguration.getQueryTimeout() : 0;
+        try (Connection con = getConnection(datasourceRequest); Statement statement = getStatement(con, queryTimeout); ResultSet resultSet = statement.executeQuery(queryStr)) {
         } catch (Exception e) {
             e.printStackTrace();
             DataEaseException.throwException(e.getMessage());

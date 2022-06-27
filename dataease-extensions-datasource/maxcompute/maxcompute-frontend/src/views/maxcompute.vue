@@ -34,6 +34,10 @@
             <el-input v-model="form.configuration.extraParams" autocomplete="off"/>
           </el-form-item>
 
+          <el-form-item  :label="$t('query_timeout')">
+            <el-input v-model="form.configuration.queryTimeout" autocomplete="off" type="number" min="0"/>
+          </el-form-item>
+
         </el-form>
 
       </el-col>
@@ -75,7 +79,8 @@ export default {
             maxIdleTime: 30,
             acquireIncrement: 5,
             idleConnectionTestPeriod: 5,
-            connectTimeout: 5
+            connectTimeout: 5,
+            queryTimeout: 30
           },
           apiConfiguration: []
         }
