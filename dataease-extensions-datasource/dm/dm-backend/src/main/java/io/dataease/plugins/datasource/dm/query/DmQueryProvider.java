@@ -78,6 +78,8 @@ public class DmQueryProvider extends QueryProvider {
             case "FLOAT":
             case "DOUBLE":
             case "DECIMAL":
+            case "DEC":
+            case "NUMERIC":
                 return 3;// 浮点
             case "BIT":
             case "TINYINT":
