@@ -156,6 +156,11 @@ public class MaxcomputeQueryProvider extends QueryProvider {
         }
         if (ObjectUtils.isNotEmpty(xOrders)) {
             st_sql.add("orders", xOrders);
+            String sql = st_sql.render();
+            if(!StringUtils.containsIgnoreCase(sql, "LIMIT") && !StringUtils.containsIgnoreCase(sql, "offset")) {
+                sql += "LIMIT 1000000 offset 0";
+            }
+            return sql;
         }
         return st_sql.render();
     }

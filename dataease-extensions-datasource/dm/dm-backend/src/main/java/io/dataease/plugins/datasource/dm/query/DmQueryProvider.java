@@ -95,25 +95,30 @@ public class DmQueryProvider extends QueryProvider {
     }
 
     @Override
-    public String createQuerySQL(String table, List<DatasetTableField> fields, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DeSortField> sortFields) {
+    public String createQuerySQL(String table, List<DatasetTableField> fields, boolean isGroup, Datasource ds,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DeSortField> sortFields) {
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
 
         setSchema(tableObj, ds);
         List<SQLObj> xFields = xFields(table, fields);
 
-
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
         ST st_sql = stg.getInstanceOf("previewSql");
         st_sql.add("isGroup", isGroup);
-        if (CollectionUtils.isNotEmpty(xFields)) st_sql.add("groups", xFields);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(xFields))
+            st_sql.add("groups", xFields);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String customWheres = transCustomFilterList(tableObj, fieldCustomFilter);
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
 
         List<SQLObj> xOrders = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(sortFields)) {
@@ -130,14 +135,15 @@ public class DmQueryProvider extends QueryProvider {
         return st_sql.render();
     }
 
-
     @Override
-    public String createQuerySQL(String table, List<DatasetTableField> fields, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+    public String createQuerySQL(String table, List<DatasetTableField> fields, boolean isGroup, Datasource ds,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
         return createQuerySQL(table, fields, isGroup, ds, fieldCustomFilter, null);
     }
 
     @Override
-    public String createQuerySQLAsTmp(String sql, List<DatasetTableField> fields, boolean isGroup, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DeSortField> sortFields) {
+    public String createQuerySQLAsTmp(String sql, List<DatasetTableField> fields, boolean isGroup,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DeSortField> sortFields) {
         return createQuerySQL("(" + sqlFix(sql) + ")", fields, isGroup, null, fieldCustomFilter, sortFields);
     }
 
@@ -159,7 +165,8 @@ public class DmQueryProvider extends QueryProvider {
         } else {
             originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), f.getOriginName());
         }
-        String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, index));
+        String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, index));
         String fieldName = "";
         // 处理横轴字段
         if (f.getDeExtractType() == 1) {
@@ -174,13 +181,15 @@ public class DmQueryProvider extends QueryProvider {
             } else if (f.getDeType() == 3) {
                 fieldName = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_FLOAT_FORMAT);
             } else if (f.getDeType() == 1) {
-                fieldName = String.format(OracleConstants.DATE_FORMAT, originField, OracleConstants.DEFAULT_DATE_FORMAT);
+                fieldName = String.format(OracleConstants.DATE_FORMAT, originField,
+                        OracleConstants.DEFAULT_DATE_FORMAT);
             } else {
                 fieldName = originField;
             }
         } else {
             if (f.getDeType() == 1) {
-                String cast = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
+                String cast = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT)
+                        + "/1000";
                 fieldName = String.format(OracleConstants.FROM_UNIXTIME, cast, OracleConstants.DEFAULT_DATE_FORMAT);
             } else if (f.getDeType() == 2) {
                 fieldName = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT);
@@ -188,13 +197,15 @@ public class DmQueryProvider extends QueryProvider {
                 fieldName = originField;
             }
         }
-        SQLObj result = SQLObj.builder().orderField(originField).orderAlias(originField).orderDirection(f.getOrderDirection()).build();
+        SQLObj result = SQLObj.builder().orderField(originField).orderAlias(originField)
+                .orderDirection(f.getOrderDirection()).build();
         return result;
     }
 
     private List<SQLObj> xFields(String table, List<DatasetTableField> fields) {
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
         List<SQLObj> xFields = new ArrayList<>();
@@ -206,11 +217,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(f.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(f.getExtField()) && f.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), f.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            f.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), f.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            f.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
                 String fieldName = "";
                 // 处理横轴字段
                 if (f.getDeExtractType() == 1) {
@@ -221,20 +235,26 @@ public class DmQueryProvider extends QueryProvider {
                     }
                 } else if (f.getDeExtractType() == 0) {
                     if (f.getDeType() == 2) {
-                        fieldName = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT);
+                        fieldName = String.format(OracleConstants.CAST, originField,
+                                OracleConstants.DEFAULT_INT_FORMAT);
                     } else if (f.getDeType() == 3) {
-                        fieldName = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_FLOAT_FORMAT);
+                        fieldName = String.format(OracleConstants.CAST, originField,
+                                OracleConstants.DEFAULT_FLOAT_FORMAT);
                     } else if (f.getDeType() == 1) {
-                        fieldName = String.format(OracleConstants.DATE_FORMAT, originField, OracleConstants.DEFAULT_DATE_FORMAT);
+                        fieldName = String.format(OracleConstants.DATE_FORMAT, originField,
+                                OracleConstants.DEFAULT_DATE_FORMAT);
                     } else {
                         fieldName = originField;
                     }
                 } else {
                     if (f.getDeType() == 1) {
-                        String cast = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
-                        fieldName = String.format(OracleConstants.FROM_UNIXTIME, cast, OracleConstants.DEFAULT_DATE_FORMAT);
+                        String cast = String.format(OracleConstants.CAST, originField,
+                                OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
+                        fieldName = String.format(OracleConstants.FROM_UNIXTIME, cast,
+                                OracleConstants.DEFAULT_DATE_FORMAT);
                     } else if (f.getDeType() == 2) {
-                        fieldName = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT);
+                        fieldName = String.format(OracleConstants.CAST, originField,
+                                OracleConstants.DEFAULT_INT_FORMAT);
                     } else {
                         fieldName = originField;
                     }
@@ -256,40 +276,53 @@ public class DmQueryProvider extends QueryProvider {
     }
 
     @Override
-    public String createQuerySQLAsTmp(String sql, List<DatasetTableField> fields, boolean isGroup, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+    public String createQuerySQLAsTmp(String sql, List<DatasetTableField> fields, boolean isGroup,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
         return createQuerySQL("(" + sqlFix(sql) + ")", fields, isGroup, null, fieldCustomFilter);
     }
 
     @Override
-    public String createQueryTableWithPage(String table, List<DatasetTableField> fields, Integer page, Integer pageSize, Integer realSize, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+    public String createQueryTableWithPage(String table, List<DatasetTableField> fields, Integer page, Integer pageSize,
+            Integer realSize, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
         List<SQLObj> xFields = xFields(table, fields);
 
-        return MessageFormat.format("SELECT {0} FROM ( SELECT DE_TMP.*, rownum r FROM ( {1} ) DE_TMP WHERE rownum <= {2} ) WHERE r > {3} ",
-                sqlColumn(xFields), createQuerySQL(table, fields, isGroup, ds, fieldCustomFilter), Integer.valueOf(page * realSize).toString(), Integer.valueOf((page - 1) * pageSize).toString());
+        return MessageFormat.format(
+                "SELECT {0} FROM ( SELECT DE_TMP.*, rownum r FROM ( {1} ) DE_TMP WHERE rownum <= {2} ) WHERE r > {3} ",
+                sqlColumn(xFields), createQuerySQL(table, fields, isGroup, ds, fieldCustomFilter),
+                Integer.valueOf(page * realSize).toString(), Integer.valueOf((page - 1) * pageSize).toString());
     }
 
     @Override
-    public String createQuerySQLWithPage(String sql, List<DatasetTableField> fields, Integer page, Integer pageSize, Integer realSize, boolean isGroup, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+    public String createQuerySQLWithPage(String sql, List<DatasetTableField> fields, Integer page, Integer pageSize,
+            Integer realSize, boolean isGroup, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
         List<SQLObj> xFields = xFields("(" + sqlFix(sql) + ")", fields);
-        return MessageFormat.format("SELECT {0} FROM ( SELECT DE_TMP.*, rownum r FROM ( {1} ) DE_TMP WHERE rownum <= {2} ) WHERE r > {3} ",
-                sqlColumn(xFields), createQuerySQLAsTmp(sql, fields, isGroup, fieldCustomFilter), Integer.valueOf(page * realSize).toString(), Integer.valueOf((page - 1) * pageSize).toString());
+        return MessageFormat.format(
+                "SELECT {0} FROM ( SELECT DE_TMP.*, rownum r FROM ( {1} ) DE_TMP WHERE rownum <= {2} ) WHERE r > {3} ",
+                sqlColumn(xFields), createQuerySQLAsTmp(sql, fields, isGroup, fieldCustomFilter),
+                Integer.valueOf(page * realSize).toString(), Integer.valueOf((page - 1) * pageSize).toString());
     }
 
     @Override
-    public String createQueryTableWithLimit(String table, List<DatasetTableField> fields, Integer limit, boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+    public String createQueryTableWithLimit(String table, List<DatasetTableField> fields, Integer limit,
+            boolean isGroup, Datasource ds, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
         String schema = new Gson().fromJson(ds.getConfiguration(), JdbcConfiguration.class).getSchema();
-        return String.format("SELECT *  from %s  WHERE rownum <= %s ", schema + "." + String.format(OracleConstants.KEYWORD_TABLE, table), limit.toString());
+        return String.format("SELECT *  from %s  WHERE rownum <= %s ",
+                schema + "." + String.format(OracleConstants.KEYWORD_TABLE, table), limit.toString());
     }
 
     @Override
-    public String createQuerySqlWithLimit(String sql, List<DatasetTableField> fields, Integer limit, boolean isGroup, List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
+    public String createQuerySqlWithLimit(String sql, List<DatasetTableField> fields, Integer limit, boolean isGroup,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter) {
         return String.format("SELECT * from %s  WHERE rownum <= %s ", "(" + sqlFix(sql) + ")", limit.toString());
     }
 
     @Override
-    public String getSQL(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, Datasource ds, ChartViewWithBLOBs view) {
+    public String getSQL(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            Datasource ds, ChartViewWithBLOBs view) {
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
         setSchema(tableObj, ds);
@@ -303,11 +336,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(x.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(x.getExtField()) && x.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
                 // 处理横轴字段
                 xFields.add(getXFields(x, originField, fieldAlias));
                 // 处理横轴排序
@@ -331,11 +367,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(y.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(y.getExtField()) && y.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i));
                 // 处理纵轴字段
                 yFields.add(getYFields(y, originField, fieldAlias));
                 // 处理纵轴过滤
@@ -359,8 +398,10 @@ public class DmQueryProvider extends QueryProvider {
         fields.addAll(xFields);
         fields.addAll(yFields);
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (extWheres != null) wheres.add(extWheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (extWheres != null)
+            wheres.add(extWheres);
         List<SQLObj> groups = new ArrayList<>();
         groups.addAll(xFields);
         // 外层再次套sql
@@ -372,10 +413,14 @@ public class DmQueryProvider extends QueryProvider {
 
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
         ST st_sql = stg.getInstanceOf("querySql");
-        if (CollectionUtils.isNotEmpty(xFields)) st_sql.add("groups", xFields);
-        if (CollectionUtils.isNotEmpty(yFields)) st_sql.add("aggregators", yFields);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(xFields))
+            st_sql.add("groups", xFields);
+        if (CollectionUtils.isNotEmpty(yFields))
+            st_sql.add("aggregators", yFields);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String sql = st_sql.render();
 
         ST st = stg.getInstanceOf("querySql");
@@ -383,16 +428,22 @@ public class DmQueryProvider extends QueryProvider {
                 .tableName(String.format(OracleConstants.BRACKETS, sql))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 1))
                 .build();
-        if (CollectionUtils.isNotEmpty(aggWheres)) st.add("filters", aggWheres);
-        if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
-        if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
+        if (CollectionUtils.isNotEmpty(aggWheres))
+            st.add("filters", aggWheres);
+        if (CollectionUtils.isNotEmpty(orders))
+            st.add("orders", orders);
+        if (ObjectUtils.isNotEmpty(tableSQL))
+            st.add("table", tableSQL);
         return sqlLimit(st.render(), view);
     }
 
     @Override
-    public String getSQLTableInfo(String table, List<ChartViewFieldDTO> xAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, Datasource ds, ChartViewWithBLOBs view) {
+    public String getSQLTableInfo(String table, List<ChartViewFieldDTO> xAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            Datasource ds, ChartViewWithBLOBs view) {
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
         setSchema(tableObj, ds);
@@ -406,15 +457,20 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(x.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(x.getExtField()) && x.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 } else {
                     if (x.getDeType() == 2 || x.getDeType() == 3) {
-                        originField = String.format(OracleConstants.CAST, String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName()), OracleConstants.DEFAULT_FLOAT_FORMAT);
+                        originField = String.format(OracleConstants.CAST,
+                                String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName()),
+                                OracleConstants.DEFAULT_FLOAT_FORMAT);
                     } else {
-                        originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                        originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                                x.getOriginName());
                     }
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
                 // 处理横轴字段
                 xFields.add(getXFields(x, originField, fieldAlias));
                 // 处理横轴排序
@@ -435,8 +491,10 @@ public class DmQueryProvider extends QueryProvider {
         List<SQLObj> fields = new ArrayList<>();
         fields.addAll(xFields);
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (extWheres != null) wheres.add(extWheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (extWheres != null)
+            wheres.add(extWheres);
         List<SQLObj> groups = new ArrayList<>();
         groups.addAll(xFields);
         // 外层再次套sql
@@ -446,9 +504,12 @@ public class DmQueryProvider extends QueryProvider {
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
         ST st_sql = stg.getInstanceOf("previewSql");
         st_sql.add("isGroup", false);
-        if (CollectionUtils.isNotEmpty(xFields)) st_sql.add("groups", xFields);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(xFields))
+            st_sql.add("groups", xFields);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String sql = st_sql.render();
 
         ST st = stg.getInstanceOf("previewSql");
@@ -457,25 +518,34 @@ public class DmQueryProvider extends QueryProvider {
                 .tableName(String.format(OracleConstants.BRACKETS, sql))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 1))
                 .build();
-        if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
-        if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
+        if (CollectionUtils.isNotEmpty(orders))
+            st.add("orders", orders);
+        if (ObjectUtils.isNotEmpty(tableSQL))
+            st.add("table", tableSQL);
         return sqlLimit(st.render(), view);
     }
 
     @Override
-    public String getSQLAsTmpTableInfo(String sql, List<ChartViewFieldDTO> xAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, Datasource ds, ChartViewWithBLOBs view) {
+    public String getSQLAsTmpTableInfo(String sql, List<ChartViewFieldDTO> xAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            Datasource ds, ChartViewWithBLOBs view) {
         return getSQLTableInfo("(" + sqlFix(sql) + ")", xAxis, fieldCustomFilter, extFilterRequestList, null, view);
     }
 
     @Override
-    public String getSQLAsTmp(String sql, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, ChartViewWithBLOBs view) {
+    public String getSQLAsTmp(String sql, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            ChartViewWithBLOBs view) {
         return getSQL("(" + sqlFix(sql) + ")", xAxis, yAxis, fieldCustomFilter, extFilterRequestList, null, view);
     }
 
     @Override
-    public String getSQLStack(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, List<ChartViewFieldDTO> extStack, Datasource ds, ChartViewWithBLOBs view) {
+    public String getSQLStack(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            List<ChartViewFieldDTO> extStack, Datasource ds, ChartViewWithBLOBs view) {
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
         setSchema(tableObj, ds);
@@ -492,11 +562,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(x.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(x.getExtField()) && x.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
                 // 处理横轴字段
                 xFields.add(getXFields(x, originField, fieldAlias));
                 // 处理横轴排序
@@ -520,11 +593,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(y.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(y.getExtField()) && y.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i));
                 // 处理纵轴字段
                 yFields.add(getYFields(y, originField, fieldAlias));
                 // 处理纵轴过滤
@@ -548,8 +624,10 @@ public class DmQueryProvider extends QueryProvider {
         fields.addAll(xFields);
         fields.addAll(yFields);
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (extWheres != null) wheres.add(extWheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (extWheres != null)
+            wheres.add(extWheres);
         List<SQLObj> groups = new ArrayList<>();
         groups.addAll(xFields);
         // 外层再次套sql
@@ -561,10 +639,14 @@ public class DmQueryProvider extends QueryProvider {
 
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
         ST st_sql = stg.getInstanceOf("querySql");
-        if (CollectionUtils.isNotEmpty(xFields)) st_sql.add("groups", xFields);
-        if (CollectionUtils.isNotEmpty(yFields)) st_sql.add("aggregators", yFields);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(xFields))
+            st_sql.add("groups", xFields);
+        if (CollectionUtils.isNotEmpty(yFields))
+            st_sql.add("aggregators", yFields);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String sql = st_sql.render();
 
         ST st = stg.getInstanceOf("querySql");
@@ -572,21 +654,30 @@ public class DmQueryProvider extends QueryProvider {
                 .tableName(String.format(OracleConstants.BRACKETS, sql))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 1))
                 .build();
-        if (CollectionUtils.isNotEmpty(aggWheres)) st.add("filters", aggWheres);
-        if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
-        if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
+        if (CollectionUtils.isNotEmpty(aggWheres))
+            st.add("filters", aggWheres);
+        if (CollectionUtils.isNotEmpty(orders))
+            st.add("orders", orders);
+        if (ObjectUtils.isNotEmpty(tableSQL))
+            st.add("table", tableSQL);
         return sqlLimit(st.render(), view);
     }
 
     @Override
-    public String getSQLAsTmpStack(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, List<ChartViewFieldDTO> extStack, ChartViewWithBLOBs view) {
-        return getSQLStack("(" + sqlFix(table) + ")", xAxis, yAxis, fieldCustomFilter, extFilterRequestList, extStack, null, view);
+    public String getSQLAsTmpStack(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            List<ChartViewFieldDTO> extStack, ChartViewWithBLOBs view) {
+        return getSQLStack("(" + sqlFix(table) + ")", xAxis, yAxis, fieldCustomFilter, extFilterRequestList, extStack,
+                null, view);
     }
 
     @Override
-    public String getSQLScatter(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, List<ChartViewFieldDTO> extBubble, Datasource ds, ChartViewWithBLOBs view) {
+    public String getSQLScatter(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            List<ChartViewFieldDTO> extBubble, Datasource ds, ChartViewWithBLOBs view) {
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
         setSchema(tableObj, ds);
@@ -600,11 +691,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(x.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(x.getExtField()) && x.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), x.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            x.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_X_PREFIX, i));
                 // 处理横轴字段
                 xFields.add(getXFields(x, originField, fieldAlias));
                 // 处理横轴排序
@@ -631,11 +725,14 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(y.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(y.getExtField()) && y.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 }
-                String fieldAlias = String.format(OracleConstants.ALIAS_FIX, String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i));
+                String fieldAlias = String.format(OracleConstants.ALIAS_FIX,
+                        String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i));
                 // 处理纵轴字段
                 yFields.add(getYFields(y, originField, fieldAlias));
                 // 处理纵轴过滤
@@ -659,8 +756,10 @@ public class DmQueryProvider extends QueryProvider {
         fields.addAll(xFields);
         fields.addAll(yFields);
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (extWheres != null) wheres.add(extWheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (extWheres != null)
+            wheres.add(extWheres);
         List<SQLObj> groups = new ArrayList<>();
         groups.addAll(xFields);
         // 外层再次套sql
@@ -672,10 +771,14 @@ public class DmQueryProvider extends QueryProvider {
 
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
         ST st_sql = stg.getInstanceOf("querySql");
-        if (CollectionUtils.isNotEmpty(xFields)) st_sql.add("groups", xFields);
-        if (CollectionUtils.isNotEmpty(yFields)) st_sql.add("aggregators", yFields);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(xFields))
+            st_sql.add("groups", xFields);
+        if (CollectionUtils.isNotEmpty(yFields))
+            st_sql.add("aggregators", yFields);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String sql = st_sql.render();
 
         ST st = stg.getInstanceOf("querySql");
@@ -683,15 +786,21 @@ public class DmQueryProvider extends QueryProvider {
                 .tableName(String.format(OracleConstants.BRACKETS, sql))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 1))
                 .build();
-        if (CollectionUtils.isNotEmpty(aggWheres)) st.add("filters", aggWheres);
-        if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
-        if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
+        if (CollectionUtils.isNotEmpty(aggWheres))
+            st.add("filters", aggWheres);
+        if (CollectionUtils.isNotEmpty(orders))
+            st.add("orders", orders);
+        if (ObjectUtils.isNotEmpty(tableSQL))
+            st.add("table", tableSQL);
         return sqlLimit(st.render(), view);
     }
 
     @Override
-    public String getSQLAsTmpScatter(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, List<ChartViewFieldDTO> extBubble, ChartViewWithBLOBs view) {
-        return getSQLScatter("(" + sqlFix(table) + ")", xAxis, yAxis, fieldCustomFilter, extFilterRequestList, extBubble, null, view);
+    public String getSQLAsTmpScatter(String table, List<ChartViewFieldDTO> xAxis, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            List<ChartViewFieldDTO> extBubble, ChartViewWithBLOBs view) {
+        return getSQLScatter("(" + sqlFix(table) + ")", xAxis, yAxis, fieldCustomFilter, extFilterRequestList,
+                extBubble, null, view);
     }
 
     @Override
@@ -700,10 +809,13 @@ public class DmQueryProvider extends QueryProvider {
     }
 
     @Override
-    public String getSQLSummary(String table, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, ChartViewWithBLOBs view, Datasource ds) {
+    public String getSQLSummary(String table, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            ChartViewWithBLOBs view, Datasource ds) {
         // 字段汇总 排序等
         SQLObj tableObj = SQLObj.builder()
-                .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(OracleConstants.KEYWORD_TABLE, table))
+                .tableName((table.startsWith("(") && table.endsWith(")")) ? table
+                        : String.format(OracleConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(OracleConstants.ALIAS_FIX, String.format(TABLE_ALIAS_PREFIX, 0)))
                 .build();
         setSchema(tableObj, ds);
@@ -718,9 +830,11 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originField = calcFieldRegex(y.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(y.getExtField()) && y.getExtField() == 1) {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 } else {
-                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), y.getOriginName());
+                    originField = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            y.getOriginName());
                 }
                 String fieldAlias = String.format(SQLConstants.FIELD_ALIAS_Y_PREFIX, i);
                 // 处理纵轴字段
@@ -745,8 +859,10 @@ public class DmQueryProvider extends QueryProvider {
         List<SQLObj> fields = new ArrayList<>();
         fields.addAll(yFields);
         List<String> wheres = new ArrayList<>();
-        if (customWheres != null) wheres.add(customWheres);
-        if (extWheres != null) wheres.add(extWheres);
+        if (customWheres != null)
+            wheres.add(customWheres);
+        if (extWheres != null)
+            wheres.add(extWheres);
         // 外层再次套sql
         List<SQLObj> orders = new ArrayList<>();
         orders.addAll(yOrders);
@@ -755,9 +871,12 @@ public class DmQueryProvider extends QueryProvider {
 
         STGroup stg = new STGroupFile(SQLConstants.SQL_TEMPLATE);
         ST st_sql = stg.getInstanceOf("querySql");
-        if (CollectionUtils.isNotEmpty(yFields)) st_sql.add("aggregators", yFields);
-        if (CollectionUtils.isNotEmpty(wheres)) st_sql.add("filters", wheres);
-        if (ObjectUtils.isNotEmpty(tableObj)) st_sql.add("table", tableObj);
+        if (CollectionUtils.isNotEmpty(yFields))
+            st_sql.add("aggregators", yFields);
+        if (CollectionUtils.isNotEmpty(wheres))
+            st_sql.add("filters", wheres);
+        if (ObjectUtils.isNotEmpty(tableObj))
+            st_sql.add("table", tableObj);
         String sql = st_sql.render();
 
         ST st = stg.getInstanceOf("querySql");
@@ -765,14 +884,19 @@ public class DmQueryProvider extends QueryProvider {
                 .tableName(String.format(OracleConstants.BRACKETS, sql))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 1))
                 .build();
-        if (CollectionUtils.isNotEmpty(aggWheres)) st.add("filters", aggWheres);
-        if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
-        if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
+        if (CollectionUtils.isNotEmpty(aggWheres))
+            st.add("filters", aggWheres);
+        if (CollectionUtils.isNotEmpty(orders))
+            st.add("orders", orders);
+        if (ObjectUtils.isNotEmpty(tableSQL))
+            st.add("table", tableSQL);
         return sqlLimit(st.render(), view);
     }
 
     @Override
-    public String getSQLSummaryAsTmp(String sql, List<ChartViewFieldDTO> yAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList, ChartViewWithBLOBs view) {
+    public String getSQLSummaryAsTmp(String sql, List<ChartViewFieldDTO> yAxis,
+            List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<ChartExtFilterRequest> extFilterRequestList,
+            ChartViewWithBLOBs view) {
         return getSQLSummary("(" + sqlFix(sql) + ")", yAxis, fieldCustomFilter, extFilterRequestList, view, null);
     }
 
@@ -794,7 +918,8 @@ public class DmQueryProvider extends QueryProvider {
             return stringBuilder.toString();
         }).toArray(String[]::new);
         DmConfig dmConfig = new Gson().fromJson(ds.getConfiguration(), DmConfig.class);
-        return MessageFormat.format("SELECT {0} FROM {1}", StringUtils.join(array, ","), dmConfig.getSchema() + ".\"" + table + "\"");
+        return MessageFormat.format("SELECT {0} FROM {1}", StringUtils.join(array, ","),
+                dmConfig.getSchema() + ".\"" + table + "\"");
     }
 
     @Override
@@ -804,14 +929,16 @@ public class DmQueryProvider extends QueryProvider {
             stringBuilder.append(" \"").append(f.getOriginName()).append("\"");
             return stringBuilder.toString();
         }).toArray(String[]::new);
-        return MessageFormat.format("SELECT {0} FROM {1}", StringUtils.join(array, ","), " (" + sqlFix(sql) + ") DE_TMP ");
+        return MessageFormat.format("SELECT {0} FROM {1}", StringUtils.join(array, ","),
+                " (" + sqlFix(sql) + ") DE_TMP ");
     }
 
     @Override
     public String convertTableToSql(String tableName, Datasource ds) {
         String schema = new Gson().fromJson(ds.getConfiguration(), JdbcConfiguration.class).getSchema();
         schema = String.format(OracleConstants.KEYWORD_TABLE, schema);
-        return createSQLPreview("SELECT * FROM " + schema + "." + String.format(OracleConstants.KEYWORD_TABLE, tableName), null);
+        return createSQLPreview(
+                "SELECT * FROM " + schema + "." + String.format(OracleConstants.KEYWORD_TABLE, tableName), null);
     }
 
     public String transMysqlFilterTerm(String term) {
@@ -869,9 +996,11 @@ public class DmQueryProvider extends QueryProvider {
                 // 解析origin name中有关联的字段生成sql表达式
                 originName = calcFieldRegex(field.getOriginName(), tableObj);
             } else if (ObjectUtils.isNotEmpty(field.getExtField()) && field.getExtField() == 1) {
-                originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), field.getOriginName());
+                originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                        field.getOriginName());
             } else {
-                originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), field.getOriginName());
+                originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                        field.getOriginName());
             }
 
             if (field.getDeType() == 1) {
@@ -879,7 +1008,8 @@ public class DmQueryProvider extends QueryProvider {
                     whereName = String.format(OracleConstants.TO_DATE, originName, OracleConstants.DEFAULT_DATE_FORMAT);
                 }
                 if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
-                    String cast = String.format(OracleConstants.CAST, originName, OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
+                    String cast = String.format(OracleConstants.CAST, originName, OracleConstants.DEFAULT_INT_FORMAT)
+                            + "/1000";
                     whereName = String.format(OracleConstants.FROM_UNIXTIME, cast, OracleConstants.DEFAULT_DATE_FORMAT);
                 }
                 if (field.getDeExtractType() == 1) {
@@ -918,13 +1048,15 @@ public class DmQueryProvider extends QueryProvider {
                         whereValue = "''";
                     } else if (StringUtils.equalsIgnoreCase(filterItemDTO.getTerm(), "not_empty")) {
                         whereValue = "''";
-                    } else if (StringUtils.containsIgnoreCase(filterItemDTO.getTerm(), "in") || StringUtils.containsIgnoreCase(filterItemDTO.getTerm(), "not in")) {
+                    } else if (StringUtils.containsIgnoreCase(filterItemDTO.getTerm(), "in")
+                            || StringUtils.containsIgnoreCase(filterItemDTO.getTerm(), "not in")) {
                         whereValue = "('" + String.join("','", value.split(",")) + "')";
                     } else if (StringUtils.containsIgnoreCase(filterItemDTO.getTerm(), "like")) {
                         whereValue = "'%" + value + "%'";
                     } else {
                         if (field.getDeType() == 1) {
-                            whereValue = String.format(OracleConstants.TO_DATE, "'" + value + "'", OracleConstants.DEFAULT_DATE_FORMAT);
+                            whereValue = String.format(OracleConstants.TO_DATE, "'" + value + "'",
+                                    OracleConstants.DEFAULT_DATE_FORMAT);
                         } else {
                             whereValue = String.format(OracleConstants.WHERE_VALUE_VALUE, value);
                         }
@@ -972,30 +1104,38 @@ public class DmQueryProvider extends QueryProvider {
                     // 解析origin name中有关联的字段生成sql表达式
                     originName = calcFieldRegex(field.getOriginName(), tableObj);
                 } else if (ObjectUtils.isNotEmpty(field.getExtField()) && field.getExtField() == 1) {
-                    originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), field.getOriginName());
+                    originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            field.getOriginName());
                 } else {
-                    originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(), field.getOriginName());
+                    originName = String.format(OracleConstants.KEYWORD_FIX, tableObj.getTableAlias(),
+                            field.getOriginName());
                 }
 
                 if (field.getDeType() == 1) {
                     if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                        whereName = String.format(OracleConstants.TO_DATE, originName, OracleConstants.DEFAULT_DATE_FORMAT);
+                        whereName = String.format(OracleConstants.TO_DATE, originName,
+                                OracleConstants.DEFAULT_DATE_FORMAT);
                     }
-                    if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
-                        String cast = String.format(OracleConstants.CAST, originName, OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
-                        whereName = String.format(OracleConstants.FROM_UNIXTIME, cast, OracleConstants.DEFAULT_DATE_FORMAT);
+                    if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3
+                            || field.getDeExtractType() == 4) {
+                        String cast = String.format(OracleConstants.CAST, originName,
+                                OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
+                        whereName = String.format(OracleConstants.FROM_UNIXTIME, cast,
+                                OracleConstants.DEFAULT_DATE_FORMAT);
                     }
                     if (field.getDeExtractType() == 1) {
                         whereName = originName;
                     }
                 } else if (field.getDeType() == 2 || field.getDeType() == 3) {
                     if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                        whereName = String.format(OracleConstants.CAST, originName, OracleConstants.DEFAULT_FLOAT_FORMAT);
+                        whereName = String.format(OracleConstants.CAST, originName,
+                                OracleConstants.DEFAULT_FLOAT_FORMAT);
                     }
                     if (field.getDeExtractType() == 1) {
                         whereName = String.format(OracleConstants.UNIX_TIMESTAMP, originName) + "*1000";
                     }
-                    if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
+                    if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3
+                            || field.getDeExtractType() == 4) {
                         whereName = originName;
                     }
                 } else {
@@ -1006,7 +1146,7 @@ public class DmQueryProvider extends QueryProvider {
 
             String whereName = "";
             if (request.getIsTree()) {
-                whereName = "CONCAT(" + StringUtils.join(whereNameList, ",',',") + ")";
+                whereName = StringUtils.join(whereNameList, "||','||");
             } else {
                 whereName = whereNameList.get(0);
             }
@@ -1022,8 +1162,10 @@ public class DmQueryProvider extends QueryProvider {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String startTime = simpleDateFormat.format(new Date(Long.parseLong(value.get(0))));
                     String endTime = simpleDateFormat.format(new Date(Long.parseLong(value.get(1))));
-                    String st = String.format(OracleConstants.TO_DATE, "'" + startTime + "'", OracleConstants.DEFAULT_DATE_FORMAT);
-                    String et = String.format(OracleConstants.TO_DATE, "'" + endTime + "'", OracleConstants.DEFAULT_DATE_FORMAT);
+                    String st = String.format(OracleConstants.TO_DATE, "'" + startTime + "'",
+                            OracleConstants.DEFAULT_DATE_FORMAT);
+                    String et = String.format(OracleConstants.TO_DATE, "'" + endTime + "'",
+                            OracleConstants.DEFAULT_DATE_FORMAT);
                     whereValue = st + " AND " + et;
                 } else {
                     whereValue = String.format(OracleConstants.WHERE_BETWEEN, value.get(0), value.get(1));
@@ -1083,22 +1225,28 @@ public class DmQueryProvider extends QueryProvider {
     private SQLObj getXFields(ChartViewFieldDTO x, String originField, String fieldAlias) {
         String fieldName = "";
         if (x.getDeExtractType() == DeTypeConstants.DE_TIME) {
-            if (x.getDeType() == DeTypeConstants.DE_INT || x.getDeType() == DeTypeConstants.DE_FLOAT) { //时间转数值
+            if (x.getDeType() == DeTypeConstants.DE_INT || x.getDeType() == DeTypeConstants.DE_FLOAT) { // 时间转数值
                 if (x.getType().equalsIgnoreCase("DATE")) {
-                    String date = String.format(OracleConstants.CALC_SUB, originField, String.format(OracleConstants.TO_DATE, OracleConstants.DEFAULT_START_DATE, OracleConstants.DEFAULT_DATE_FORMAT));
+                    String date = String.format(OracleConstants.CALC_SUB, originField,
+                            String.format(OracleConstants.TO_DATE, OracleConstants.DEFAULT_START_DATE,
+                                    OracleConstants.DEFAULT_DATE_FORMAT));
                     fieldName = String.format(OracleConstants.TO_NUMBER, date) + OracleConstants.TO_MS;
                 } else {
-                    String toChar = String.format(OracleConstants.TO_CHAR, originField, OracleConstants.DEFAULT_DATE_FORMAT);
+                    String toChar = String.format(OracleConstants.TO_CHAR, originField,
+                            OracleConstants.DEFAULT_DATE_FORMAT);
                     String toDate = String.format(OracleConstants.TO_DATE, toChar, OracleConstants.DEFAULT_DATE_FORMAT);
-                    String toDate1 = String.format(OracleConstants.TO_DATE, OracleConstants.DEFAULT_START_DATE, OracleConstants.DEFAULT_DATE_FORMAT);
-                    fieldName = String.format(OracleConstants.TO_NUMBER, String.format(OracleConstants.CALC_SUB, toDate, toDate1)) + OracleConstants.TO_MS;
+                    String toDate1 = String.format(OracleConstants.TO_DATE, OracleConstants.DEFAULT_START_DATE,
+                            OracleConstants.DEFAULT_DATE_FORMAT);
+                    fieldName = String.format(OracleConstants.TO_NUMBER,
+                            String.format(OracleConstants.CALC_SUB, toDate, toDate1)) + OracleConstants.TO_MS;
                 }
-            } else if (x.getDeType() == DeTypeConstants.DE_TIME) { //格式化显示时间
+            } else if (x.getDeType() == DeTypeConstants.DE_TIME) { // 格式化显示时间
                 String format = transDateFormat(x.getDateStyle(), x.getDatePattern());
                 if (x.getType().equalsIgnoreCase("DATE")) {
                     fieldName = String.format(OracleConstants.TO_CHAR, originField, format);
                 } else {
-                    String toChar = String.format(OracleConstants.TO_CHAR, originField, OracleConstants.DEFAULT_DATE_FORMAT);
+                    String toChar = String.format(OracleConstants.TO_CHAR, originField,
+                            OracleConstants.DEFAULT_DATE_FORMAT);
                     String toDate = String.format(OracleConstants.TO_DATE, toChar, OracleConstants.DEFAULT_DATE_FORMAT);
                     fieldName = String.format(OracleConstants.TO_CHAR, toDate, format);
                 }
@@ -1108,11 +1256,13 @@ public class DmQueryProvider extends QueryProvider {
         } else {
             if (x.getDeType() == DeTypeConstants.DE_TIME) {
                 String format = transDateFormat(x.getDateStyle(), x.getDatePattern());
-                if (x.getDeExtractType() == DeTypeConstants.DE_STRING) { //字符串转时间
-                    String toDate = String.format(OracleConstants.TO_DATE, originField, OracleConstants.DEFAULT_DATE_FORMAT);
+                if (x.getDeExtractType() == DeTypeConstants.DE_STRING) { // 字符串转时间
+                    String toDate = String.format(OracleConstants.TO_DATE, originField,
+                            OracleConstants.DEFAULT_DATE_FORMAT);
                     fieldName = String.format(OracleConstants.TO_CHAR, toDate, format);
-                } else {                            //数值转时间
-                    String date = originField + "/(1000 * 60 * 60 * 24)+" + String.format(OracleConstants.TO_DATE, OracleConstants.DEFAULT_START_DATE, OracleConstants.DEFAULT_DATE_FORMAT);
+                } else { // 数值转时间
+                    String date = originField + "/(1000 * 60 * 60 * 24)+" + String.format(OracleConstants.TO_DATE,
+                            OracleConstants.DEFAULT_START_DATE, OracleConstants.DEFAULT_DATE_FORMAT);
                     fieldName = String.format(OracleConstants.TO_CHAR, date, format);
                 }
             } else {
@@ -1139,7 +1289,8 @@ public class DmQueryProvider extends QueryProvider {
                 String whereTerm = transMysqlFilterTerm(f.getTerm());
                 String whereValue = "";
                 if (x.getDeType() == 1 && x.getDeExtractType() != 1) {
-                    String cast = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT) + "/1000";
+                    String cast = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_INT_FORMAT)
+                            + "/1000";
                     whereName = String.format(OracleConstants.FROM_UNIXTIME, cast, OracleConstants.DEFAULT_DATE_FORMAT);
                 } else {
                     whereName = originField;
@@ -1182,12 +1333,15 @@ public class DmQueryProvider extends QueryProvider {
                 fieldName = String.format(OracleConstants.AGG_FIELD, y.getSummary(), originField);
             }
         } else {
-            if (StringUtils.equalsIgnoreCase(y.getSummary(), "avg") || StringUtils.containsIgnoreCase(y.getSummary(), "pop")) {
-                String cast = String.format(OracleConstants.CAST, originField, y.getDeType() == 2 ? OracleConstants.DEFAULT_INT_FORMAT : OracleConstants.DEFAULT_FLOAT_FORMAT);
+            if (StringUtils.equalsIgnoreCase(y.getSummary(), "avg")
+                    || StringUtils.containsIgnoreCase(y.getSummary(), "pop")) {
+                String cast = String.format(OracleConstants.CAST, originField,
+                        y.getDeType() == 2 ? OracleConstants.DEFAULT_INT_FORMAT : OracleConstants.DEFAULT_FLOAT_FORMAT);
                 String agg = String.format(OracleConstants.AGG_FIELD, y.getSummary(), cast);
                 fieldName = String.format(OracleConstants.CAST, agg, OracleConstants.DEFAULT_FLOAT_FORMAT);
             } else {
-                String cast = String.format(OracleConstants.CAST, originField, y.getDeType() == 2 ? OracleConstants.DEFAULT_INT_FORMAT : OracleConstants.DEFAULT_FLOAT_FORMAT);
+                String cast = String.format(OracleConstants.CAST, originField,
+                        y.getDeType() == 2 ? OracleConstants.DEFAULT_INT_FORMAT : OracleConstants.DEFAULT_FLOAT_FORMAT);
                 if (StringUtils.equalsIgnoreCase(y.getSummary(), "count_distinct")) {
                     fieldName = String.format(OracleConstants.AGG_FIELD, "COUNT", "DISTINCT " + cast);
                 } else {
@@ -1232,7 +1386,8 @@ public class DmQueryProvider extends QueryProvider {
         }
         List<String> strList = new ArrayList<>();
         list.forEach(ele -> strList.add(ele.getWhereField() + " " + ele.getWhereTermAndValue()));
-        return CollectionUtils.isNotEmpty(list) ? "(" + String.join(" " + getLogic(y.getLogic()) + " ", strList) + ")" : null;
+        return CollectionUtils.isNotEmpty(list) ? "(" + String.join(" " + getLogic(y.getLogic()) + " ", strList) + ")"
+                : null;
     }
 
     private String calcFieldRegex(String originField, SQLObj tableObj) {
