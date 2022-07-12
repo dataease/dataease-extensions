@@ -32,21 +32,12 @@
             <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
           </el-form-item>
 
-          <el-form-item>
-            <el-button icon="el-icon-plus" size="mini" @click="getSchema()">{{ $t('get_schema') }}
-            </el-button>
-          </el-form-item>
-
-          <el-form-item :label="$t('schema')">
-            <el-select v-model="form.configuration.schema" filterable
-                       :placeholder="$t('please_choose_schema')"
-                       class="select-width">
-              <el-option v-for="item in schemas" :key="item" :label="item" :value="item"/>
-            </el-select>
-          </el-form-item>
-
           <el-form-item  :label="$t('query_timeout')">
             <el-input v-model="form.configuration.queryTimeout" autocomplete="off" type="number" min="0"/>
+          </el-form-item>
+
+          <el-form-item  :label="$t('extra_params')">
+            <el-input v-model="form.configuration.extraParams" autocomplete="off" />
           </el-form-item>
 
         </el-form>
@@ -62,7 +53,7 @@
 import messages from '@/de-base/lang/messages'
 
 export default {
-  name: "dm",
+  name: "mongobi",
   components: {},
   props: {
     method: String,
@@ -136,19 +127,6 @@ export default {
       }
       this.$emit('execute-axios', param)
     },
-    getSchema() {
-      this.$refs["DsForm"].validate(valid => {
-        if (valid) {
-          const data = JSON.parse(JSON.stringify(this.form))
-          data.configuration = JSON.stringify(data.configuration)
-          this.executeAxios('/datasource/getSchema/', 'post', data, res => {
-            this.schemas = res.data
-          })
-        } else {
-          return false
-        }
-      })
-    },
     validate() {
       let status = null;
       this.$refs["DsForm"].validate((val) => {
@@ -158,11 +136,6 @@ export default {
           status = false
         }
       })
-
-      if (!this.form.configuration.schema ) {
-        this.$message.error(this.$t('please_choose_schema'))
-        status = false
-      }
       return status
     }
   }
