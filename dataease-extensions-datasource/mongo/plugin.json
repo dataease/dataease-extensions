@@ -9,5 +9,5 @@
     "creator":"DATAEASE",
     "moduleName":"mongo-backend",
     "require":"1.12.0",
-    "dsType":"mongoForBI"
+    "dsType":"mongobi"
 }
