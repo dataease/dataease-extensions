@@ -5,7 +5,6 @@ package io.dataease.plugins.datasource.mongo.query;
 import io.dataease.plugins.common.constants.datasource.SQLConstants;
 
 import static io.dataease.plugins.common.constants.DatasourceTypes.mysql;
-import static io.dataease.plugins.common.constants.DatasourceTypes.oracle;
 
 public class MongoConstants extends SQLConstants {
 

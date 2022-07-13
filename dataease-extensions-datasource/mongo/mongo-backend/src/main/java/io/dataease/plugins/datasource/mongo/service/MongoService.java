@@ -27,6 +27,11 @@ public class MongoService extends DatasourceService {
 
     @Override
     public DataSourceType getDataSourceType() {
-        return new DataSourceType("mongobi", "Mongodb-BI" , true , "characterEncoding=UTF-8&connectTimeout=5000&useSSL=true&allowPublicKeyRetrieval=true&verifyServerCertificate=false", DatasourceCalculationMode.DIRECT, true);
+        DataSourceType dataSourceType =  new DataSourceType("mongobi", "Mongodb-BI" , true , "characterEncoding=UTF-8&connectTimeout=5000&useSSL=true&allowPublicKeyRetrieval=true&verifyServerCertificate=false", DatasourceCalculationMode.DIRECT, true);
+        dataSourceType.setKeywordPrefix("`");
+        dataSourceType.setKeywordSuffix("`");
+        dataSourceType.setAliasPrefix("");
+        dataSourceType.setAliasSuffix("");
+        return dataSourceType;
     }
 }

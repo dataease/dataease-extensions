@@ -27,6 +27,11 @@ public class DmService extends DatasourceService {
 
     @Override
     public DataSourceType getDataSourceType() {
-        return new DataSourceType("dm", "DM" , true , "", DatasourceCalculationMode.DIRECT, true);
+        DataSourceType dataSourceType = new DataSourceType("dm", "DM" , true , "", DatasourceCalculationMode.DIRECT, true);
+        dataSourceType.setKeywordPrefix("\"");
+        dataSourceType.setKeywordSuffix("\"");
+        dataSourceType.setAliasPrefix("\"");
+        dataSourceType.setAliasSuffix("\"");
+        return dataSourceType;
     }
 }
