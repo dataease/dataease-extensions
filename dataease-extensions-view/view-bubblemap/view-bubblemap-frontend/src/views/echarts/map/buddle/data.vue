@@ -234,7 +234,7 @@ export default {
             }
         },
         initAreas() {
-            Object.keys(this.places).length === 0 && this.executeAxios('/api/map/areaEntitys/0','get', {}, res => {
+            Object.keys(this.places).length === 0 && this.executeAxios('/api/map/globalEntitys/0','get', {}, res => {
                 this.places = res.data
             })
         },

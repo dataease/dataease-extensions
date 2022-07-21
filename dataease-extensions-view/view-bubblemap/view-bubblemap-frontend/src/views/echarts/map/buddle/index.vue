@@ -168,8 +168,8 @@ export default {
             this.initMapChart(cCode, geoMap[cCode], chart)
             return
         }
-       
-        const url = '/geo/' + cCode + '_full.json'
+        const countryCode = cCode.substring(0, 3)
+        const url = '/geo/full/' + countryCode + '/' + cCode + '_full.json'
         this.executeAxios(url, 'get', null, res => {
             if (res && Object.keys(res).length > 0) {
                 geoMap[cCode] = res
@@ -195,7 +195,8 @@ export default {
             return
         }
 
-        const url = '/geo/' + cCode + '.json'
+        const countryCode = cCode.substring(0, 3)
+        const url = '/geo/border/' + countryCode + '/' + cCode + '.json'
         this.executeAxios(url, 'get', null, res => {
             if (res && Object.keys(res).length > 0) {
                 geoBorderMap[cCode] = res
