@@ -2,10 +2,13 @@
   <div ref="chartContainer" style="padding: 0;width: 100%;height: 100%;overflow: hidden;" :style="bg_class">
     <view-track-bar ref="viewTrack" :track-menu="trackMenu" class="track-bar" :style="trackBarStyleTime" @trackClick="trackClick" />
     <span v-if="chart.type && antVRenderStatus" v-show="title_show" ref="title" :style="titleClass" style="cursor: default;display: block;">
-      <p style="padding:6px 10px 0 10px;margin: 0;overflow: hidden;white-space: pre;text-overflow: ellipsis;">{{ chart.title }}</p>
+      <div>
+        <p style="padding:6px 4px 0;margin: 0;overflow: hidden;white-space: pre;text-overflow: ellipsis;display: inline;">{{ chart.title }}</p>
+        <title-remark v-if="remarkCfg.show" style="text-shadow: none!important;" :remark-cfg="remarkCfg" />
+      </div>
     </span>
     <div :id="chartId" style="width: 100%;overflow: hidden;" :style="{height:chartHeight}" />
-    
+
     <div class="map-zoom-box">
       <div style="margin-bottom: 0.5em;">
         <el-button size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
@@ -28,6 +31,7 @@
   import { uuid, hexColorToRGBA} from '@/utils/symbolmap'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
   import { getDefaultTemplate } from '@/utils/map'
+  import {getRemark} from "../../../components/views/utils";
 
   export default {
     name: 'ChartComponentG2',
@@ -90,7 +94,11 @@
           background: hexColorToRGBA('#ffffff', 0)
         },
         title_show: true,
-        antVRenderStatus: false
+        antVRenderStatus: false,
+        remarkCfg: {
+          show: false,
+          content: ''
+        }
       }
     },
 
@@ -117,7 +125,7 @@
       }
     },
     created() {
-      
+
       !this.$scene && (this.$scene = Scene)
       !this.$pointLayer && (this.$pointLayer = PointLayer)
       !this.$popup && (this.$popup = Popup)
@@ -133,7 +141,7 @@
         this.initTitle()
         this.calcHeightDelay()
         this.initMap()
-        
+
         const that = this
         window.onresize = function() {
           that.calcHeightDelay()
@@ -156,7 +164,7 @@
             logoVisible: false
           })
           const chart = this.chart
-        
+
 
           this.antVRenderStatus = true
           if (!chart.data || !chart.data.datas) {
@@ -166,13 +174,13 @@
           }
           this.myChart.on('loaded', () => {
             this.addGlobalImage()
-            
+
             this.drawView()
             this.myChart.on('click', ev => {
                 this.$emit('trigger-edit-click', ev.originEvent)
-            })           
-          })                    
-        }       
+            })
+          })
+        }
       },
       drawView() {
         this.setLayerAttr(this.chart)
@@ -191,7 +199,7 @@
           return template.replace(regex, replacer)
       },
 
-     
+
 
       addTextLayer(originData, chart) {
         let customAttr = {}
@@ -208,20 +216,20 @@
         textColor = customAttr.label.color
 
         const defaultTemplate = "经度：${longitude}，纬度：${latitude}"
-        const templateWithField = getDefaultTemplate(chart, 'labelAxis', false, false)        
+        const templateWithField = getDefaultTemplate(chart, 'labelAxis', false, false)
         const labelTemplate = customAttr.label.labelTemplate || templateWithField || defaultTemplate
 
         originData.forEach(item => {
             const properties = item.properties || {}
             properties.longitude = item.longitude
             properties.latitude = item.latitude
-            
-            
+
+
             try {
                 item.labelResult = this.fillStrTemplate(labelTemplate, properties)
             }catch (error) {
 
-            }            
+            }
             item.labelResult = item.labelResult || this.fillStrTemplate(defaultTemplate, properties)
             item.labelResult = item.labelResult.replaceAll('\n', ' ')
         })
@@ -255,9 +263,9 @@
       removeTextLayer() {
           this.myChart.layerService.removeLayer(this.textLayer)
       },
-      
+
       setLayerAttr (chart) {
-        
+
         let defaultSymbol = 'marker'
         let customAttr = {}
         let layerStyle = {}
@@ -298,11 +306,11 @@
         })
 
         this.pointLayer && this.pointLayer.off('mousemove')
-        
+
         const theme = this.getMapTheme(chart)
         this.myChart && this.myChart.setMapStyle && this.myChart.setMapStyle(theme)
         const colors = []
-       
+
         if (customAttr) {
           if (customAttr.color) {
             const c = JSON.parse(JSON.stringify(customAttr.color))
@@ -313,18 +321,18 @@
           }
           const yaxis = JSON.parse(chart.yaxis)
           const hasYaxis =  yaxis && yaxis.length
-          
+
 
           if (customAttr.tooltip) {
             const t = JSON.parse(JSON.stringify(customAttr.tooltip))
             if (t.show) {
                 const fontSize = t.textStyle.fontSize
                 const fontColor = t.textStyle.color
-                
+
                 const htmlPrefix = '<div style=\'font-size:'+fontSize+'px;color:'+fontColor+';\'>'
                 const htmlSuffix = '</div>'
 
-                const templateWithField = getDefaultTemplate(chart, 'tooltipAxis', true, true)    
+                const templateWithField = getDefaultTemplate(chart, 'tooltipAxis', true, true)
 
                 this.pointLayer.on('mousemove', event => {
                     if (!t.show) {
@@ -337,9 +345,9 @@
                         try {
                             content = this.fillStrTemplate(tooltipTemplate, properties)
                         } catch (error) {
-                            
+
                         }
-                        content = content || event.feature.longitude + ',' + event.feature.latitude                        
+                        content = content || event.feature.longitude + ',' + event.feature.latitude
                     }
                     content = content.replaceAll('\n', '<br>')
                     const innerHtml = htmlPrefix + content + htmlSuffix
@@ -359,7 +367,7 @@
           if (customAttr.size && customAttr.size.scatterSymbolSize) {
               defaultSize = customAttr.size.scatterSymbolSize
           }
-          
+
           hasYaxis && this.pointLayer.size('busiValue', [10,25]) || this.pointLayer.size(defaultSize)
         }
         this.myChart.render()
@@ -369,7 +377,7 @@
         while (index--) {
           this.roamMap(true)
         }
-        
+
       },
 
       getMapTheme(chart) {
@@ -382,7 +390,7 @@
             }
             return theme
       },
-      
+
 
       setBackGroundBorder() {
         if (this.chart.customStyle) {
@@ -447,6 +455,7 @@
             this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
           }
         }
+        this.initRemark()
       },
 
       calcHeightRightNow() {
@@ -467,10 +476,13 @@
       },
 
       roamMap(flag) {
-          return flag ? this.myChart.zoomIn() : this.myChart.zoomOut()          
+          return flag ? this.myChart.zoomIn() : this.myChart.zoomOut()
       },
       resetZoom() {
         this.pointLayer.fitBounds()
+      },
+      initRemark() {
+        this.remarkCfg = getRemark(this.chart)
       }
     }
   }

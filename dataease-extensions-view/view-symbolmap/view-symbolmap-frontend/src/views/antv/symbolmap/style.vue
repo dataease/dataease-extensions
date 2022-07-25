@@ -25,7 +25,7 @@
           <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange" />
         </el-collapse-item>
 
-        <el-collapse-item name="size" :title="$t('chart.size')" >                                         
+        <el-collapse-item name="size" :title="$t('chart.size')" >
           <size-selector-ant-v
               :param="param"
               class="attr-selector"
@@ -68,7 +68,6 @@
 
         <el-collapse-item v-show="view.type" name="title" :title="$t('chart.title')">
           <title-selector
-
             :param="param"
             class="attr-selector"
             :chart="chart"
@@ -137,7 +136,7 @@
         return this.obj.quotaData
       }
     },
-    created() {      
+    created() {
       this.$emit('on-add-languanges', messages)
     },
     methods: {
@@ -150,7 +149,7 @@
         // this.calcStyle()
         this.calcData()
       },
-      onLabelChange(val) {         
+      onLabelChange(val) {
         this.view.customAttr.label = val
         this.calcStyle()
       },
@@ -186,7 +185,7 @@
           eventParam: this.view
         })
       },
-      calcData(cache) {       
+      calcData(cache) {
         this.$emit('plugin-call-back', {
           eventName: 'calc-data',
           eventParam: {
