@@ -16,6 +16,11 @@
               @input="inputOnInput($event)"
             />
           </el-form-item>
+          <el-form-item :label="$t('chart.font_family')" class="form-item">
+            <el-select v-model="titleForm.fontFamily" :placeholder="$t('chart.font_family')" @change="changeTitleStyle('fontFamily')">
+              <el-option v-for="option in fontFamily" :key="option.value" :label="option.name" :value="option.value" />
+            </el-select>
+          </el-form-item>
           <el-form-item :label="$t('chart.text_fontsize')" class="form-item">
             <el-select v-model="titleForm.fontSize" :placeholder="$t('chart.text_fontsize')" size="mini" @change="changeTitleStyle">
               <el-option v-for="option in fontSize" :key="option.value" :label="option.name" :value="option.value" />
@@ -41,6 +46,15 @@
           <el-form-item :label="$t('chart.text_style')" class="form-item">
             <el-checkbox v-model="titleForm.isItalic" @change="changeTitleStyle">{{ $t('chart.italic') }}</el-checkbox>
             <el-checkbox v-model="titleForm.isBolder" @change="changeTitleStyle">{{ $t('chart.bolder') }}</el-checkbox>
+          </el-form-item>
+
+          <el-form-item :label="$t('chart.letter_space')" class="form-item">
+            <el-select v-model="titleForm.letterSpace" :placeholder="$t('chart.quota_letter_space')" @change="changeTitleStyle('letterSpace')">
+              <el-option v-for="option in fontLetterSpace" :key="option.value" :label="option.name" :value="option.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('chart.font_shadow')" class="form-item">
+            <el-checkbox v-model="titleForm.fontShadow" @change="changeTitleStyle('fontShadow')">{{ $t('chart.font_shadow') }}</el-checkbox>
           </el-form-item>
 
           <el-form-item :label="$t('chart.remark')" class="form-item">
@@ -106,6 +120,25 @@ export default {
       isSetting: false,
       predefineColors: COLOR_PANEL,
       showEditRemark: false,
+      fontFamily: [
+        { name: '微软雅黑', value: 'Microsoft YaHei' },
+        { name: '宋体', value: 'SimSun' },
+        { name: '黑体', value: 'SimHei' },
+        { name: '楷体', value: 'KaiTi' }
+      ],
+      fontLetterSpace: [
+        { name: '0px', value: '0' },
+        { name: '1px', value: '1' },
+        { name: '2px', value: '2' },
+        { name: '3px', value: '3' },
+        { name: '4px', value: '4' },
+        { name: '5px', value: '5' },
+        { name: '6px', value: '6' },
+        { name: '7px', value: '7' },
+        { name: '8px', value: '8' },
+        { name: '9px', value: '9' },
+        { name: '10px', value: '10' }
+      ]
     }
   },
   watch: {
@@ -136,6 +169,9 @@ export default {
           this.titleForm.remark = this.titleForm.remark ? this.titleForm.remark : ''
           this.titleForm.remarkBackgroundColor = this.titleForm.remarkBackgroundColor ? this.titleForm.remarkBackgroundColor : '#ffffffff'
 
+          this.titleForm.fontFamily = this.titleForm.fontFamily ? this.titleForm.fontFamily : 'Microsoft YaHei'
+          this.titleForm.letterSpace = this.titleForm.letterSpace ? this.titleForm.letterSpace : '0'
+          this.titleForm.fontShadow = this.titleForm.fontShadow ? this.titleForm.fontShadow : false
         }
         this.titleForm.title = this.chart.title
       }

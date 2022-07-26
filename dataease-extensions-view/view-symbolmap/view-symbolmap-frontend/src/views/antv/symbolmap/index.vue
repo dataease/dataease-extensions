@@ -449,6 +449,10 @@
             this.titleClass.textAlign = customStyle.text.hPosition
             this.titleClass.fontStyle = customStyle.text.isItalic ? 'italic' : 'normal'
             this.titleClass.fontWeight = customStyle.text.isBolder ? 'bold' : 'normal'
+
+            this.titleClass.fontFamily = customStyle.text.fontFamily ? customStyle.text.fontFamily : 'Microsoft YaHei'
+            this.titleClass.letterSpacing = (customStyle.text.letterSpace ? customStyle.text.letterSpace : '0') + 'px'
+            this.titleClass.textShadow = customStyle.text.fontShadow ? '2px 2px 4px' : 'none'
           }
           if (customStyle.background) {
             this.titleClass.background = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
