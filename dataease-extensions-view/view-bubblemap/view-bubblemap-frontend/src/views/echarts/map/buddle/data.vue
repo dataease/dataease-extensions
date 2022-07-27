@@ -240,7 +240,7 @@ export default {
         },
         initAreaCode() {
             if (this.view && this.view.customAttr && !this.view.customAttr.areaCode) {
-                this.view.customAttr.areaCode = "100000"
+                this.view.customAttr.areaCode = "156100000"
             }
         },
         normalizer(node) {
