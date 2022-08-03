@@ -83,15 +83,24 @@ export default {
   },
   computed: {
       fieldOptions() {
-          return [
-            {
-              label: this.$t('chart.dimension'),
-              options: this.dimensionData && this.dimensionData.filter(item => item.deType !== 5)
-            },
-            {
-              label: this.$t('chart.quota'),
-              options: this.quotaData && this.quotaData.filter(item => item.deType !== 5)
-            }]            
+        const xaxis = this.view.xaxis
+        const locationIds = xaxis ? xaxis.map(item => item.id) : []
+        return [
+          {
+            label: this.$t('chart.dimension'),
+            options: this.dimensionData && this.dimensionData.filter(item => item.deType !== 5).map(item => {
+              item.disabled = locationIds.includes(item.id)
+              return item
+            })
+          },
+          {
+            label: this.$t('chart.quota'),
+            options: this.quotaData && this.quotaData.filter(item => item.deType !== 5).map(item => {
+              item.disabled = locationIds.includes(item.id)
+              return item
+            })
+          }
+        ]            
       },
       tooltipFields() {
           return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
