@@ -15,11 +15,7 @@
           <el-form-item :label="$t('chart.text_color')" class="form-item">
             <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors" @change="changeLabelAttr" />
           </el-form-item>
-          <!-- <el-form-item :label="$t('chart.label_position')" class="form-item">
-            <el-select v-model="labelForm.position" :placeholder="$t('chart.label_position')" @change="changeLabelAttr">
-              <el-option v-for="option in labelPosition" :key="option.value" :label="option.name" :value="option.value" />
-            </el-select>
-          </el-form-item> -->
+          
 
           <el-form-item :label="$t('chart.label')" class="form-item">
             <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags @change="changeFields">
@@ -33,7 +29,8 @@
                         v-for="item in group.options"
                         :key="item.id"
                         :label="item.name"
-                        :value="item.id">
+                        :value="item.id"
+                        :disabled="item.disabled">
                     </el-option>
                 </el-option-group>
             </el-select>
@@ -89,15 +86,26 @@ export default {
   },
   computed: {
       fieldOptions() {
-          return [
-            {
-              label: this.$t('chart.dimension'),
-              options: this.dimensionData && this.dimensionData.filter(item => item.deType !== 5)
-            },
-            {
-              label: this.$t('chart.quota'),
-              options: this.quotaData && this.quotaData.filter(item => item.deType !== 5)
-            }]            
+
+        const xaxis = this.view.xaxis
+        const locationIds = xaxis ? xaxis.map(item => item.id) : []
+
+        return [
+          {
+            label: this.$t('chart.dimension'),
+            options: this.dimensionData && this.dimensionData.filter(item => item.deType !== 5).map(item => {
+              item.disabled = locationIds.includes(item.id)
+              return item
+            })
+          },
+          {
+            label: this.$t('chart.quota'),
+            options: this.quotaData && this.quotaData.filter(item => item.deType !== 5).map(item => {
+              item.disabled = locationIds.includes(item.id)
+              return item
+            })
+          }
+        ]            
       },
       labelFields() {
           return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
