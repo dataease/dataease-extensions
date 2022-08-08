@@ -3,20 +3,6 @@
     style="overflow:auto;border-right: 1px solid #e6e6e6;height: 100%;width: 100%;"
     class="attr-style theme-border-class"
   >
-    <el-row class="padding-lr">
-      <span class="title-text">{{ $t('chart.style_priority') }}</span>
-      <el-row>
-        <el-radio-group
-          v-model="view.stylePriority"
-          class="radio-span"
-          size="mini"
-          @change="calcStyle"
-        >
-          <el-radio label="view"><span>{{ $t('chart.chart') }}</span></el-radio>
-          <el-radio label="panel"><span>{{ $t('chart.dashboard') }}</span></el-radio>
-        </el-radio-group>
-      </el-row>
-    </el-row>
 
     <el-row>
       <span class="padding-lr">{{ $t('chart.shape_attr') }}</span>
@@ -25,7 +11,7 @@
           <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange" />
         </el-collapse-item>
 
-        <el-collapse-item name="size" :title="$t('chart.size')" >                                         
+        <el-collapse-item name="size" :title="$t('chart.size')" >
           <size-selector-ant-v
               :param="param"
               class="attr-selector"
@@ -68,7 +54,6 @@
 
         <el-collapse-item v-show="view.type" name="title" :title="$t('chart.title')">
           <title-selector
-
             :param="param"
             class="attr-selector"
             :chart="chart"
@@ -137,7 +122,7 @@
         return this.obj.quotaData
       }
     },
-    created() {      
+    created() {
       this.$emit('on-add-languanges', messages)
     },
     methods: {
@@ -150,7 +135,7 @@
         // this.calcStyle()
         this.calcData()
       },
-      onLabelChange(val) {         
+      onLabelChange(val) {
         this.view.customAttr.label = val
         this.calcStyle()
       },
@@ -186,7 +171,7 @@
           eventParam: this.view
         })
       },
-      calcData(cache) {       
+      calcData(cache) {
         this.$emit('plugin-call-back', {
           eventName: 'calc-data',
           eventParam: {

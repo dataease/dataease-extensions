@@ -12,6 +12,8 @@
     <modules>
         <module>maxcompute</module>
         <module>presto</module>
+        <module>dm</module>
+        <module>mongo</module>
     </modules>
 
     <artifactId>dataease-extensions-datasource</artifactId>

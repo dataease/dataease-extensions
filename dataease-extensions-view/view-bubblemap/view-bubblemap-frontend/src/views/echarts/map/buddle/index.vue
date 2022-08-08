@@ -40,6 +40,11 @@ export default {
     obj: {
       type: Object,
       required: true
+    },
+    themeStyle: {
+      type: Object,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -163,8 +168,8 @@ export default {
             this.initMapChart(cCode, geoMap[cCode], chart)
             return
         }
-       
-        const url = '/geo/' + cCode + '_full.json'
+        const countryCode = cCode.substring(0, 3)
+        const url = '/geo/full/' + countryCode + '/' + cCode + '_full.json'
         this.executeAxios(url, 'get', null, res => {
             if (res && Object.keys(res).length > 0) {
                 geoMap[cCode] = res
@@ -190,7 +195,8 @@ export default {
             return
         }
 
-        const url = '/geo/' + cCode + '.json'
+        const countryCode = cCode.substring(0, 3)
+        const url = '/geo/border/' + countryCode + '/' + cCode + '.json'
         this.executeAxios(url, 'get', null, res => {
             if (res && Object.keys(res).length > 0) {
                 geoBorderMap[cCode] = res
@@ -211,7 +217,11 @@ export default {
       geoJson.features.map(function(item){
           mapData[item.properties.name] = item.properties.centroid || item.properties.center           
       })
-      const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType)
+      let themeStyle = null
+      if (this.themeStyle) {
+        themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
+      }
+      const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, themeStyle)
       this.myEcharts(chart_option)
       const opt = this.myChart.getOption()
       if (opt && opt.series) {

@@ -234,13 +234,13 @@ export default {
             }
         },
         initAreas() {
-            Object.keys(this.places).length === 0 && this.executeAxios('/api/map/areaEntitys/0','get', {}, res => {
+            Object.keys(this.places).length === 0 && this.executeAxios('/api/map/globalEntitys/0','get', {}, res => {
                 this.places = res.data
             })
         },
         initAreaCode() {
             if (this.view && this.view.customAttr && !this.view.customAttr.areaCode) {
-                this.view.customAttr.areaCode = "100000"
+                this.view.customAttr.areaCode = "156100000"
             }
         },
         normalizer(node) {
