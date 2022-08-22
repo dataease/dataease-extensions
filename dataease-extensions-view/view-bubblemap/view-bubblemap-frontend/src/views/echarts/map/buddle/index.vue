@@ -218,7 +218,6 @@ export default {
       geoJson.features.map(function(item){
           mapData[item.properties.name] = item.properties.centroid || item.properties.center           
       })
-      debugger
       let themeStyle = null
       if (this.themeStyle) {
         themeStyle = JSON.parse(JSON.stringify(this.themeStyle))

@@ -37,7 +37,6 @@ export const DEFAULT_BACKGROUND_COLOR = {
 
 
 export function baseSymbolMap(scene, container, chart, action, $pointLayer, $popup) {
-  debugger
   let _self = this
 
 
