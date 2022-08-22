@@ -8,7 +8,8 @@ export const DEFAULT_COLOR_CASE = {
     tableStripe: true,
     dimensionColor: '#000000',
     quotaColor: '#000000',
-    tableBorderColor: '#cfdaf4'
+    tableBorderColor: '#cfdaf4',
+    areaBorderColor: '#303133'
 }
 
 export const COLOR_PANEL = [
@@ -157,6 +158,9 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
       customAttr = JSON.parse(chart.customAttr)
       if (customAttr.color) {
         chart_option.color = customAttr.color.colors
+        if (customAttr.color.areaBorderColor) {
+          chart_option.geo[0].itemStyle.borderColor = customAttr.color.areaBorderColor
+        }
       }
       // tooltip
       if (customAttr.tooltip) {
