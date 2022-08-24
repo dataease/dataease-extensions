@@ -59,7 +59,15 @@ public class Pie3DService extends ViewPluginService {
         staticResource.setName(VIEW_TYPE_VALUE);
         staticResource.setSuffix(SUFFIX);
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("view-3dpie-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 
     @Override

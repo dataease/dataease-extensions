@@ -81,7 +81,15 @@ public class BubbleMapService extends ViewPluginService {
         staticResource.setName(VIEW_TYPE_VALUE);
         staticResource.setSuffix(SUFFIX);
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("view-bubblemap-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 
     @Override
