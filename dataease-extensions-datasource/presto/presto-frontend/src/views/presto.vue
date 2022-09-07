@@ -17,7 +17,7 @@
           </el-form-item>
 
           <el-form-item :label="$t('port')" prop="configuration.port">
-            <el-input v-model="form.configuration.port" autocomplete="off"/>
+            <el-input :placeholder="$t('enter_the_port')" v-model="form.configuration.port" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item :label="$t('dataBase')" prop="configuration.dataBase">
@@ -29,15 +29,22 @@
           </el-form-item>
 
           <el-form-item :label="$t('username')" prop="configuration.username">
-            <el-input v-model="form.configuration.username" autocomplete="off"/>
+            <el-input :placeholder="$t('one_user_name')" v-model="form.configuration.username" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item :label="$t('password')" >
-            <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
+            <dePwd :placeholder="$t('input_a_password')" v-model="form.configuration.password" />
           </el-form-item>
 
           <el-form-item  :label="$t('query_timeout')">
-            <el-input v-model="form.configuration.queryTimeout" autocomplete="off" type="number" min="0"/>
+            <el-input
+                v-model="form.configuration.queryTimeout"
+                autocomplete="off"
+                type="number"
+                :min="0"
+              >
+                <template slot="append">{{ $t("second") }}</template>
+              </el-input>
           </el-form-item>
 
         </el-form>
@@ -51,10 +58,11 @@
 
 
 import messages from '@/de-base/lang/messages'
+import dePwd from "./dePwd.vue";
 
 export default {
   name: "presto",
-  components: {},
+  components: { dePwd },
   props: {
     method: String,
     request: {},
