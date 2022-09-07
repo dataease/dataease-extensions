@@ -73,6 +73,18 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.svg$/,
+        include: [path.resolve('src/icons')],
+        use: [
+          {
+            loader: 'svg-sprite-loader',
+            options: {
+              symbolId: 'icon-[name]',
+            },
+          }
+        ],
       }
     ]
   },

@@ -35,7 +35,14 @@
           </el-form-item>
 
           <el-form-item  :label="$t('query_timeout')">
-            <el-input v-model="form.configuration.queryTimeout" autocomplete="off" type="number" min="0"/>
+            <el-input
+                v-model="form.configuration.queryTimeout"
+                autocomplete="off"
+                type="number"
+                :min="0"
+              >
+                <template slot="append">{{ $t("second") }}</template>
+              </el-input>
           </el-form-item>
 
         </el-form>
