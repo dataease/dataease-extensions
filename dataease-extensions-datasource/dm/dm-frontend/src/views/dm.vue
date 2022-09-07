@@ -29,18 +29,18 @@
           </el-form-item>
 
           <el-form-item :label="$t('password')" prop="configuration.password">
-            <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
+            <dePwd v-model="form.configuration.password" />
           </el-form-item>
 
-          <el-form-item>
-            <el-button icon="el-icon-plus" size="mini" @click="getSchema()">{{ $t('get_schema') }}
+          <el-form-item class="schema-label" :label="$t('schema')">
+            <template slot="label">
+          {{ $t("schema") }}
+          <el-button type="text" icon="el-icon-plus" size="small" @click="getSchema()">{{ $t('get_schema') }}
             </el-button>
-          </el-form-item>
-
-          <el-form-item :label="$t('schema')">
+        </template>
             <el-select v-model="form.configuration.schema" filterable
                        :placeholder="$t('please_choose_schema')"
-                       class="select-width">
+                       class="de-select">
               <el-option v-for="item in schemas" :key="item" :label="item" :value="item"/>
             </el-select>
           </el-form-item>
@@ -57,13 +57,12 @@
 </template>
 
 <script>
-
-
 import messages from '@/de-base/lang/messages'
+import dePwd from "./dePwd.vue";
 
 export default {
   name: "dm",
-  components: {},
+  components: { dePwd },
   props: {
     method: String,
     request: {},
