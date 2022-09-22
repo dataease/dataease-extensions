@@ -1,5 +1,6 @@
 package io.dataease.plugins.datasource.mongo.service;
 
+import io.dataease.plugins.common.constants.DatabaseClassification;
 import io.dataease.plugins.common.constants.DatasourceCalculationMode;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
 import io.dataease.plugins.datasource.service.DatasourceService;
@@ -32,6 +33,7 @@ public class MongoService extends DatasourceService {
         dataSourceType.setKeywordSuffix("`");
         dataSourceType.setAliasPrefix("");
         dataSourceType.setAliasSuffix("");
+        dataSourceType.setDatabaseClassification(DatabaseClassification.NORDBMS);
         return dataSourceType;
     }
 }
