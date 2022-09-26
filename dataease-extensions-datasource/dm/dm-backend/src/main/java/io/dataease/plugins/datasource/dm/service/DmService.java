@@ -2,6 +2,7 @@ package io.dataease.plugins.datasource.dm.service;
 
 import io.dataease.plugins.common.constants.DatabaseClassification;
 import io.dataease.plugins.common.constants.DatasourceCalculationMode;
+import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
 import io.dataease.plugins.datasource.service.DatasourceService;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,17 @@ public class DmService extends DatasourceService {
     protected InputStream readContent(String s) {
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("static/" + s);
         return resourceAsStream;
+    }
+
+
+    @Override
+    public List<StaticResource> staticResources() {
+        List<StaticResource> results = new ArrayList<>();
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("dm");
+        staticResource.setSuffix("jpg");
+        results.add(staticResource);
+        return results;
     }
 
     @Override
