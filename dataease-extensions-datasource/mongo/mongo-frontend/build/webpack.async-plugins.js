@@ -90,8 +90,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     }),
-    // new CopyPlugin([
-    //     {from: 'src/icons/svg/'}
-    // ]),
+    new CopyPlugin([
+        {from: 'src/icons/svg/'}
+    ]),
   ]
 }
