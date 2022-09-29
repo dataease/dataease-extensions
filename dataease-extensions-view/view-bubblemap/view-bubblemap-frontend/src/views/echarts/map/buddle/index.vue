@@ -1,24 +1,25 @@
 <template>
   <div style="display: flex;position:relative" class="chart-class">
-    <view-track-bar
-      ref="viewTrack"
-      :track-menu="trackMenu"
-      class="track-bar"
-      :style="trackBarStyleTime"
-      @trackClick="trackClick"
-    />
+    <view-track-bar ref="viewTrack" :track-menu="trackMenu" class="track-bar" :style="trackBarStyleTime"
+      @trackClick="trackClick" />
     <div :id="chartId" style="width: 100%;height: 100%;overflow: hidden;" :style="{ borderRadius: borderRadius}" />
     <div class="map-zoom-box">
       <div style="margin-bottom: 0.5em;">
-        <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
+        <el-button
+          :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}"
+          size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
       </div>
 
       <div style="margin-bottom: 0.5em;">
-        <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-refresh" circle @click="resetZoom()" />
+        <el-button
+          :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}"
+          size="mini" icon="el-icon-refresh" circle @click="resetZoom()" />
       </div>
 
       <div>
-        <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
+        <el-button
+          :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}"
+          size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
       </div>
 
     </div>
@@ -26,316 +27,388 @@
 </template>
 
 <script>
-
-
-
-import {BASE_MAP, baseMapOption, uuid, reverseColor} from '@/utils/map'
-import ViewTrackBar from '@/components/views/ViewTrackBar'
-export default {
-  name: 'ChartComponent',
-  components: {
-    ViewTrackBar
-  },
-  props: {
-    obj: {
-      type: Object,
-      required: true
+  import {
+    BASE_MAP,
+    baseMapOption,
+    uuid,
+    reverseColor
+  } from '@/utils/map'
+  import ViewTrackBar from '@/components/views/ViewTrackBar'
+  export default {
+    name: 'ChartComponent',
+    components: {
+      ViewTrackBar
     },
-    themeStyle: {
-      type: Object,
-      required: false,
-      default: null
-    }
-  },
-  data() {
-    return {
-      myChart: {},
-      chartId: uuid(),
-      showTrackBar: true,
-      trackBarStyle: {
-        position: 'absolute',
-        left: '0px',
-        top: '0px'
+    props: {
+      obj: {
+        type: Object,
+        required: true
       },
-      pointParam: null,
-
-      dynamicAreaCode: null,
-      borderRadius: '0px',
-      mapCenter: null,
-      buttonTextColor: null
-    }
-  },
-
-  computed: {
-    trackBarStyleTime() {
-      return this.trackBarStyle
+      themeStyle: {
+        type: Object,
+        required: false,
+        default: null
+      }
     },
-    chart() {
+    data() {
+      return {
+        myChart: {},
+        chartId: uuid(),
+        showTrackBar: true,
+        trackBarStyle: {
+          position: 'absolute',
+          left: '0px',
+          top: '0px'
+        },
+        pointParam: null,
+
+        dynamicAreaCode: null,
+        borderRadius: '0px',
+        mapCenter: null,
+        buttonTextColor: null
+      }
+    },
+
+    computed: {
+      trackBarStyleTime() {
+        return this.trackBarStyle
+      },
+      chart() {
         return this.obj.chart
-    },
-    filter() {
-        return this.obj.filter || {}
-    },
-    trackMenu() {
-        return this.obj.trackMenu || ['drill']
-    },
-    searchCount() {
-        return this.obj.searchCount || 0
-    },
-    terminalType() {
-        return this.obj.terminalType || 'pc'
-    }
-  },
-  watch: {
-    chart: {
-      handler(newVal, oldVla) {
-        this.preDraw()
       },
-      deep: true
+      filter() {
+        return this.obj.filter || {}
+      },
+      trackMenu() {
+        return this.obj.trackMenu || ['drill']
+      },
+      searchCount() {
+        return this.obj.searchCount || 0
+      },
+      terminalType() {
+        return this.obj.terminalType || 'pc'
+      }
     },
-    resize() {
-      this.drawEcharts()
-    }
-  },
-  mounted() {
-    this.preDraw()
-  },
-  destroyed() {
-    this.myChart.dispose()
-  },
-  methods: {
-    executeAxios (url, type, data, callBack) {
+    watch: {
+      chart: {
+        handler(newVal, oldVla) {
+          this.preDraw()
+        },
+        deep: true
+      },
+      resize() {
+        this.drawEcharts()
+      },
+      'themeStyle.color'(value, old) {
+        if (value !== old) {
+          this.preDraw()
+        }
+      },
+      'themeStyle.commonBackground.color'(value, old) {
+        if (value !== old) {
+          this.preDraw()
+        }
+      }
+    },
+    mounted() {
+      this.preDraw()
+    },
+    destroyed() {
+      this.myChart.dispose()
+    },
+    created() {
+      this.loadThemeStyle()
+    },
+    methods: {
+      executeAxios(url, type, data, callBack, hideMsg) {
         const param = {
-            url: url,
-            type: type,
-            data: data,
-            callBack: callBack
+          url: url,
+          type: type,
+          data: data,
+          callBack: callBack,
+          hideMsg: hideMsg
         }
         this.$emit('execute-axios', param)
         if (process.env.NODE_ENV === 'development') {
-            execute(param).then(res => {
-                if (param.callBack) {
-                    param.callBack(res)
-                }
-                }).catch(e => {
-                if (param.error) {
-                    param.error(e)
-                }
-            })
+          execute(param).then(res => {
+            if (param.callBack) {
+              param.callBack(res)
+            }
+          }).catch(e => {
+            if (param.error) {
+              param.error(e)
+            }
+          })
         }
-    },
-    preDraw() {     
-      const that = this
-      new Promise((resolve) => {
-        resolve()
-      }).then(() => {
-        //	此dom为echarts图标展示dom
-        this.myChart = this.$echarts.getInstanceByDom(document.getElementById(this.chartId))
-        if (!this.myChart) {
-          this.myChart = this.$echarts.init(document.getElementById(this.chartId))
-        }
-        this.drawEcharts()
-
-        this.myChart.off('click')
-        this.myChart.on('click', function(param) {
-          that.pointParam = param
-          if (that.trackMenu.length < 2) { // 只有一个事件直接调用
-            that.trackClick(that.trackMenu[0])
-          } else { // 视图关联多个事件
-            that.trackBarStyle.left = param.event.offsetX + 'px'
-            that.trackBarStyle.top = (param.event.offsetY - 15) + 'px'
-            that.$refs.viewTrack.trackButtonClick()
+      },
+      preDraw() {
+        const that = this
+        new Promise((resolve) => {
+          resolve()
+        }).then(() => {
+          this.myChart = this.$echarts.getInstanceByDom(document.getElementById(this.chartId))
+          if (!this.myChart) {
+            this.myChart = this.$echarts.init(document.getElementById(this.chartId))
           }
-        })
-      })
-    },
-    drawEcharts() {
-      const chart = this.chart
-      let chart_option = {}
-     
-      if (this.myChart && this.searchCount > 0) {
-        chart_option.animation = false
-      }
+          this.drawEcharts()
 
-      const customAttr = JSON.parse(chart.customAttr)
+          this.myChart.off('click')
+          this.myChart.on('click', function (param) {
+            that.pointParam = param
+            if (that.trackMenu.length < 2) {
+              that.trackClick(that.trackMenu[0])
+            } else {
+              that.trackBarStyle.left = param.event.offsetX + 'px'
+              that.trackBarStyle.top = (param.event.offsetY - 15) + 'px'
+              that.$refs.viewTrack.trackButtonClick()
+            }
+          })
+        })
+      },
+      drawEcharts() {
+        const chart = this.chart
+        let chart_option = {}
+
+        if (this.myChart && this.searchCount > 0) {
+          chart_option.animation = false
+        }
+
+        const customAttr = JSON.parse(chart.customAttr)
         if (!customAttr.areaCode) {
           this.myChart.clear()
           return
         }
         const cCode = this.chart.DetailAreaCode || this.dynamicAreaCode || customAttr.areaCode
-       
+
         const geoMap = !!localStorage.getItem('geoMap') ? JSON.parse(localStorage.getItem('geoMap')) : {}
         if (geoMap[cCode]) {
-            this.initMapChart(cCode, geoMap[cCode], chart)
-            return
+          this.initMapChart(cCode, geoMap[cCode], chart)
+          return
         }
         const countryCode = cCode.substring(0, 3)
         const url = '/geo/full/' + countryCode + '/' + cCode + '_full.json'
         this.executeAxios(url, 'get', null, res => {
-            if (res && Object.keys(res).length > 0) {
-                geoMap[cCode] = res
-                localStorage.setItem("geoMap", JSON.stringify(geoMap))
-                this.initMapChart(cCode, res, chart)
-            }
-            
+          if (res && Object.keys(res).length > 0) {
+            geoMap[cCode] = res
+            localStorage.setItem("geoMap", JSON.stringify(geoMap))
+            this.initMapChart(cCode, res, chart)
+          }
+
         })
+      },
+      loadThemeStyle() {
+        let themeStyle = null
+        if (this.themeStyle) {
+          themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
+          if (themeStyle && themeStyle.backgroundColorSelect) {
+            const panelColor = themeStyle.color
+            if (panelColor !== '#FFFFFF') {
+              const reverseValue = reverseColor(panelColor)
+              this.buttonTextColor = reverseValue
+            } else {
+              this.buttonTextColor = null
+            }
+          }
+        }
+      },
 
-        
-    },
+      registerDynamicMap(areaCode) {
+        this.dynamicAreaCode = areaCode
+      },
 
-    registerDynamicMap(areaCode) {
-      this.dynamicAreaCode = areaCode
-    },
-    
 
-    initMapChart(cCode, geoJson, chart) {
-        const geoBorderMap = !!localStorage.getItem('geoBorderMap') ? JSON.parse(localStorage.getItem('geoBorderMap')) : {}
-    
+      initMapChart(cCode, geoJson, chart) {
+        const geoBorderMap = !!localStorage.getItem('geoBorderMap') ? JSON.parse(localStorage.getItem('geoBorderMap')) :
+        {}
+
         if (geoBorderMap[cCode]) {
-            this.setTwoMap(geoJson, geoBorderMap[cCode], chart)
-            return
+          this.setTwoMap(geoJson, geoBorderMap[cCode], chart)
+          return
         }
 
         const countryCode = cCode.substring(0, 3)
         const url = '/geo/border/' + countryCode + '/' + cCode + '.json'
         this.executeAxios(url, 'get', null, res => {
-            if (res && Object.keys(res).length > 0) {
-                geoBorderMap[cCode] = res
-                localStorage.setItem("geoBorderMap", JSON.stringify(geoBorderMap))
-                this.setTwoMap(geoJson, geoBorderMap[cCode],chart)
-            }
-        })
-    },
-    setTwoMap(geoJson, geoJsonBorder,chart) {
-      console.log("渲染地图")
-      this.$echarts.registerMap('BUDDLE_MAP', geoJson)
-      this.$echarts.registerMap('BUDDLE_MAP_BORDER', geoJsonBorder)
-      const base_json = JSON.parse(JSON.stringify(BASE_MAP))
-      let mapData = {}
-      if ( !geoJson || !geoJson.features ||  !geoJson.features.length === 0) {
-          return
-      }
-      geoJson.features.map(function(item){
-          mapData[item.properties.name] = item.properties.centroid || item.properties.center           
-      })
-      let themeStyle = null
-      if (this.themeStyle) {
-        themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
-        if (themeStyle && themeStyle.backgroundColorSelect) {
-          const panelColor = themeStyle.color
-          if (panelColor !== '#FFFFFF') {
-            const reverseValue = reverseColor(panelColor)
-            this.buttonTextColor = reverseValue
+          if (res && !(res instanceof Error) && Object.keys(res).length > 0) {
+            geoBorderMap[cCode] = res
+            localStorage.setItem("geoBorderMap", JSON.stringify(geoBorderMap))
+            this.setTwoMap(geoJson, geoBorderMap[cCode], chart)
           } else {
-            this.buttonTextColor = null
+            this.setTwoMap(geoJson, null, chart)
+          }
+        }, true)
+      },
+      setTwoMap(geoJson, geoJsonBorder, chart) {
+        this.$echarts.registerMap('BUDDLE_MAP', geoJson)
+        geoJsonBorder && this.$echarts.registerMap('BUDDLE_MAP_BORDER', geoJsonBorder)
+        const base_json = JSON.parse(JSON.stringify(BASE_MAP))
+
+        if (!geoJsonBorder) {
+          base_json.geo = [base_json.geo[1]]
+        }
+        base_json.geo.forEach((item, index) => {
+          item.id = chart.id + '_' + index
+        })
+        let mapData = {}
+        if (!geoJson || !geoJson.features || !geoJson.features.length === 0) {
+          return
+        }
+        let hasCenter = false
+        geoJson.features.map(function (item) {
+          mapData[item.properties.name] = item.properties.centroid || item.properties.center
+          if (mapData[item.properties.name]) {
+            hasCenter = true
+          }
+        })
+        if (!hasCenter) {
+          const msg = this.$t('chart.map_center_lost')
+          this.$error(msg)
+        }
+        let themeStyle = null
+        if (this.themeStyle) {
+          themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
+          if (themeStyle && themeStyle.commonBackground) {
+            const viewBGColor = themeStyle.commonBackground.color
+            if (viewBGColor !== '#FFFFFF') {
+              const reverseValue = reverseColor(viewBGColor)
+              this.buttonTextColor = reverseValue
+            } else {
+              this.buttonTextColor = null
+            }
+          }
+          if (themeStyle && themeStyle.backgroundColorSelect) {
+            const panelColor = themeStyle.color
+            if (panelColor !== '#FFFFFF') {
+              const reverseValue = reverseColor(panelColor)
+              this.buttonTextColor = reverseValue
+            } else {
+              this.buttonTextColor = null
+            }
           }
         }
-      }
-      const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, themeStyle)
-      this.myEcharts(chart_option)
-      const opt = this.myChart.getOption()
-      if (opt && opt.series) {
-        const center = opt.series[0].center
-        this.mapCenter = center
-      }
-    },
-    myEcharts(option) {
-      // 指定图表的配置项和数据
-      const chart = this.myChart
-      this.setBackGroundBorder()
-      setTimeout(chart.setOption(option, true), 500)
-      window.onresize = function() {
-        chart.resize()
-      }
-    },
-    setBackGroundBorder() {
-      if (this.chart.customStyle) {
-        const customStyle = JSON.parse(this.chart.customStyle)
-        if (customStyle.background) {
-          this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
+        const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, themeStyle)
+        this.myEcharts(chart_option)
+        const opt = this.myChart.getOption()
+        if (opt && opt.series) {
+          const center = opt.series[0].center
+          this.mapCenter = center
         }
-      }
-    },
-    chartResize() {
-      // 指定图表的配置项和数据
-      const chart = this.myChart
-      chart.resize()
-      this.reDrawMap()
-    },
-    reDrawMap() {
-      const chart = this.chart
-      this.preDraw()
-    },
-    trackClick(trackAction) {
-     this.pointParam.viewId = this.chart.id
-      const param = this.pointParam
-      if (!param || !param.data || !param.data.dimensionList) {
-        // 地图提示没有关联字段 其他没有维度信息的 直接返回
-         this.$warning(this.$t('panel.no_drill_field'))
-        return
-      }
-      const linkageParam = {
-        option: 'linkage',
-        viewId: this.chart.id,
-        dimensionList: this.pointParam.data.dimensionList,
-        quotaList: this.pointParam.data.quotaList
-      }
-      const jumpParam = {
-        option: 'jump',
-        viewId: this.chart.id,
-        dimensionList: this.pointParam.data.dimensionList,
-        quotaList: this.pointParam.data.quotaList
-      }
-      switch (trackAction) {
-        case 'drill':
+
+        if (chart_option.geo && chart_option.geo.length > 1) {
+          this.myChart.on('georoam', zoomParams => {
+            const curOptions = this.myChart.getOption()
+            if (zoomParams.zoom != null && zoomParams.zoom != undefined) {
+              curOptions.geo.forEach(item => {
+                if (zoomParams.zoom !== item.zoom) {
+                  item.zoom = zoomParams.zoom
+                }
+              })
+            }
+            const len = curOptions.geo.length
+            if (len > 1) {
+              for (let i = 0; i < len; i++) {
+                if (curOptions.geo[i].id === zoomParams.geoId) {
+                  const targetIndex = (i + 1) % 2
+                  curOptions.geo[targetIndex].center = curOptions.geo[i].center
+                }
+              }
+            }
+            this.myChart.setOption(curOptions)
+          })
+        }
+
+      },
+      myEcharts(option) {
+        const chart = this.myChart
+        this.setBackGroundBorder()
+        setTimeout(chart.setOption(option, true), 500)
+        window.onresize = function () {
+          chart.resize()
+        }
+      },
+      setBackGroundBorder() {
+        if (this.chart.customStyle) {
+          const customStyle = JSON.parse(this.chart.customStyle)
+          if (customStyle.background) {
+            this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
+          }
+        }
+      },
+      chartResize() {
+        const chart = this.myChart
+        chart.resize()
+        this.reDrawMap()
+      },
+      reDrawMap() {
+        const chart = this.chart
+        this.preDraw()
+      },
+      trackClick(trackAction) {
+        this.pointParam.viewId = this.chart.id
+        const param = this.pointParam
+        if (!param || !param.data || !param.data.dimensionList) {
+          this.$warning(this.$t('panel.no_drill_field'))
+          return
+        }
+        const linkageParam = {
+          option: 'linkage',
+          viewId: this.chart.id,
+          dimensionList: this.pointParam.data.dimensionList,
+          quotaList: this.pointParam.data.quotaList
+        }
+        const jumpParam = {
+          option: 'jump',
+          viewId: this.chart.id,
+          dimensionList: this.pointParam.data.dimensionList,
+          quotaList: this.pointParam.data.quotaList
+        }
+        switch (trackAction) {
+          case 'drill':
+            this.$emit('onChartClick', this.pointParam)
+            break
+          case 'linkage':
             this.$emit('plugin-call-back', {
-                eventName: 'plugin-chart-click',
-                eventParam: this.pointParam
+              eventName: 'plugin-add-view-track-filter',
+              eventParam: linkageParam
             })
-          
-          break
-        case 'linkage':
-          // this.$store.commit('addViewTrackFilter', linkageParam)
-          this.$emit('plugin-call-back', {
-                eventName: 'plugin-add-view-track-filter',
-                eventParam: linkageParam
-            })
-          break
-        case 'jump':
+            break
+          case 'jump':
             this.$emit('plugin-call-back', {
-                eventName: 'plugin-jump-click',
-                eventParam: jumpParam
+              eventName: 'plugin-jump-click',
+              eventParam: jumpParam
             })
-          break
-        default:
-          break
+            break
+          default:
+            break
+        }
+      },
+      roamMap(flag) {
+        let targetZoom = 1
+        const zoom = this.myChart.getOption().geo[1].zoom
+        if (flag) {
+          targetZoom = zoom * 1.2
+        } else {
+          targetZoom = zoom / 1.2
+        }
+        const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
+        options.geo.forEach(item => {
+          item.zoom = targetZoom
+        })
+        // options.geo[0].zoom = targetZoom
+        this.myChart.setOption(options)
+      },
+      resetZoom() {
+        const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
+        /* options.geo[0].zoom = 1
+        options.geo[0].center = this.mapCenter */
+        options.geo.forEach(item => {
+          item.zoom = 1
+          item.center = this.mapCenter
+        })
+        this.myChart.setOption(options)
       }
-    },
-    roamMap(flag) {
-      let targetZoom = 1
-      const zoom = this.myChart.getOption().geo[1].zoom
-      if (flag) {
-        targetZoom = zoom * 1.2
-      } else {
-        targetZoom = zoom / 1.2
-      }
-      const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
-      options.geo.forEach(item =>{ item.zoom = targetZoom})
-      // options.geo[0].zoom = targetZoom
-      this.myChart.setOption(options)
-    },
-    resetZoom() {
-      const options = JSON.parse(JSON.stringify(this.myChart.getOption()))
-      /* options.geo[0].zoom = 1
-      options.geo[0].center = this.mapCenter */
-       options.geo.forEach(item =>{
-            item.zoom = 1
-            item.center = this.mapCenter
-       })
-      this.myChart.setOption(options)
     }
   }
-}
 
 </script>
 
@@ -350,12 +423,14 @@ export default {
     padding: 2px;
     border-radius: 5px
   }
+
   .chart-class {
     height: 100%;
     padding: 10px;
   }
-  .track-bar >>> ul {
-       width: 80px !important;
+
+  .track-bar>>>ul {
+    width: 80px !important;
   }
 
 </style>
