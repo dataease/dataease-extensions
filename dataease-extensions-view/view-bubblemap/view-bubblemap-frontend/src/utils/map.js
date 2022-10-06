@@ -214,11 +214,10 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
         chart_option.visualMap.inRange.color = customAttr.color.colors
         chart_option.visualMap.inRange.colorAlpha = customAttr.color.alpha / 100
       }
-      if (themeStyle && themeStyle.backgroundColorSelect) {
-        const panelColor = themeStyle.color
-        const reverseValue = reverseColor(panelColor)
+      if (themeStyle) {
+        
         chart_option.visualMap.textStyle = {
-          color: reverseValue
+          color: themeStyle
         }
       }
 
