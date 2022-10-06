@@ -34,6 +34,7 @@
     reverseColor
   } from '@/utils/map'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
+  import { mapState } from 'vuex'
   export default {
     name: 'ChartComponent',
     components: {
@@ -87,7 +88,10 @@
       },
       terminalType() {
         return this.obj.terminalType || 'pc'
-      }
+      },
+      ...mapState([
+        'canvasStyleData'
+      ])
     },
     watch: {
       chart: {
@@ -208,8 +212,18 @@
             } else {
               this.buttonTextColor = null
             }
+          } else if(this.canvasStyleData.openCommonStyle && this.canvasStyleData.panel.backgroundType === 'color') {
+              const panelColor = this.canvasStyleData.panel.color
+              if (panelColor !== '#FFFFFF') {
+                const reverseValue = reverseColor(panelColor)
+                this.buttonTextColor = reverseValue
+              } else {
+                this.buttonTextColor = null
+              }
+            } 
+          } else {
+            this.buttonTextColor = null
           }
-        }
       },
 
       registerDynamicMap(areaCode) {
@@ -267,15 +281,7 @@
         let themeStyle = null
         if (this.themeStyle) {
           themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
-          if (themeStyle && themeStyle.commonBackground) {
-            const viewBGColor = themeStyle.commonBackground.color
-            if (viewBGColor !== '#FFFFFF') {
-              const reverseValue = reverseColor(viewBGColor)
-              this.buttonTextColor = reverseValue
-            } else {
-              this.buttonTextColor = null
-            }
-          }
+          
           if (themeStyle && themeStyle.backgroundColorSelect) {
             const panelColor = themeStyle.color
             if (panelColor !== '#FFFFFF') {
@@ -284,9 +290,19 @@
             } else {
               this.buttonTextColor = null
             }
+          } else if(this.canvasStyleData.openCommonStyle && this.canvasStyleData.panel.backgroundType === 'color') {
+            const panelColor = this.canvasStyleData.panel.color
+            if (panelColor !== '#FFFFFF') {
+              const reverseValue = reverseColor(panelColor)
+              this.buttonTextColor = reverseValue
+            } else {
+              this.buttonTextColor = null
+            }
+          } else {
+            this.buttonTextColor = null
           }
         }
-        const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, themeStyle)
+        const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, this.buttonTextColor)
         this.myEcharts(chart_option)
         const opt = this.myChart.getOption()
         if (opt && opt.series) {
