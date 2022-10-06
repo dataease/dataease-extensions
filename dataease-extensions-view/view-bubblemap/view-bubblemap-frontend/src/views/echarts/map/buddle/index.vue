@@ -34,7 +34,6 @@
     reverseColor
   } from '@/utils/map'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
-  import { mapState } from 'vuex'
   export default {
     name: 'ChartComponent',
     components: {
@@ -49,6 +48,13 @@
         type: Object,
         required: false,
         default: null
+      },
+      canvasStyleData: {
+        type: Object,
+        required: false,
+        default: function() {
+          return {}
+        }
       }
     },
     data() {
@@ -88,10 +94,8 @@
       },
       terminalType() {
         return this.obj.terminalType || 'pc'
-      },
-      ...mapState([
-        'canvasStyleData'
-      ])
+      }
+      
     },
     watch: {
       chart: {
