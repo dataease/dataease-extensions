@@ -112,7 +112,7 @@
           this.preDraw()
         }
       },
-      'themeStyle.commonBackground.color'(value, old) {
+      'themeStyle.backgroundColorSelect'(value, old) {
         if (value !== old) {
           this.preDraw()
         }
