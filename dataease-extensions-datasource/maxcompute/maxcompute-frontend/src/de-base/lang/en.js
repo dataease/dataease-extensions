@@ -8,5 +8,8 @@ export default {
   projectName: 'Project Name',
   access_id: 'Access ID',
   access_key: 'Access Key',
-  query_timeout: 'Query timeout (seconds)'
+  query_timeout: 'Query timeout (seconds)',
+  second: 'second',
+  please_select: 'Please select',
+  query_timeout: 'query timeout',
 }

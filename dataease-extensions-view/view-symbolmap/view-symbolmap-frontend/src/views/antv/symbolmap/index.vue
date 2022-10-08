@@ -11,15 +11,15 @@
 
     <div class="map-zoom-box">
       <div style="margin-bottom: 0.5em;">
-        <el-button size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
+        <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
       </div>
 
       <div style="margin-bottom: 0.5em;">
-        <el-button size="mini" icon="el-icon-refresh" circle @click="resetZoom()" />
+        <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-refresh" circle @click="resetZoom()" />
       </div>
 
       <div>
-        <el-button size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
+        <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
       </div>
     </div>
 
@@ -30,7 +30,7 @@
   import { Scene, PointLayer, Popup } from '@antv/l7'
   import { uuid, hexColorToRGBA} from '@/utils/symbolmap'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
-  import { getDefaultTemplate } from '@/utils/map'
+  import { getDefaultTemplate, reverseColor } from '@/utils/map'
   import {getRemark} from "../../../components/views/utils";
 
   export default {
@@ -64,6 +64,11 @@
         type: Number,
         required: false,
         default: 1
+      },
+      themeStyle: {
+        type: Object,
+        required: false,
+        default: null
       }
     },
     data() {
@@ -98,7 +103,8 @@
         remarkCfg: {
           show: false,
           content: ''
-        }
+        },
+        buttonTextColor: null
       }
     },
 
@@ -281,6 +287,8 @@
                 layerStyle.strokeWidth = customAttr.size.symbolStrokeWidth
             }
         }
+        
+
         this.myChart.layerService.layerList && this.myChart.layerService.layerList.length && this.myChart.layerService.removeAllLayers()
         const data = chart.data && chart.data.datas || []
         this.pointLayer = new this.$pointLayer({autoFit: true})
@@ -381,14 +389,14 @@
       },
 
       getMapTheme(chart) {
-            let theme = 'light'
-            if (chart.customStyle) {
-                const customStyle = JSON.parse(chart.customStyle)
-                if (customStyle.baseMapStyle && customStyle.baseMapStyle.baseMapTheme) {
-                    theme = customStyle.baseMapStyle.baseMapTheme
-                }
+        let theme = 'light'
+        if (chart.customStyle) {
+            const customStyle = JSON.parse(chart.customStyle)
+            if (customStyle.baseMapStyle && customStyle.baseMapStyle.baseMapTheme) {
+                theme = customStyle.baseMapStyle.baseMapTheme
             }
-            return theme
+        }
+        return theme
       },
 
 

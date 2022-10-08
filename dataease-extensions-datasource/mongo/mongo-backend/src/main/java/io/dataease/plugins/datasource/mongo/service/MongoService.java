@@ -1,6 +1,8 @@
 package io.dataease.plugins.datasource.mongo.service;
 
+import io.dataease.plugins.common.constants.DatabaseClassification;
 import io.dataease.plugins.common.constants.DatasourceCalculationMode;
+import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
 import io.dataease.plugins.datasource.service.DatasourceService;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,23 @@ public class MongoService extends DatasourceService {
     }
 
     @Override
+    public List<StaticResource> staticResources() {
+        List<StaticResource> results = new ArrayList<>();
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("mongobi");
+        staticResource.setSuffix("jpg");
+        results.add(staticResource);
+        return results;
+    }
+
+    @Override
     public DataSourceType getDataSourceType() {
         DataSourceType dataSourceType =  new DataSourceType("mongobi", "Mongodb-BI" , true , "characterEncoding=UTF-8&connectTimeout=5000&useSSL=true&allowPublicKeyRetrieval=true&verifyServerCertificate=false", DatasourceCalculationMode.DIRECT, true);
         dataSourceType.setKeywordPrefix("`");
         dataSourceType.setKeywordSuffix("`");
         dataSourceType.setAliasPrefix("");
         dataSourceType.setAliasSuffix("");
+        dataSourceType.setDatabaseClassification(DatabaseClassification.NORDBMS);
         return dataSourceType;
     }
 }

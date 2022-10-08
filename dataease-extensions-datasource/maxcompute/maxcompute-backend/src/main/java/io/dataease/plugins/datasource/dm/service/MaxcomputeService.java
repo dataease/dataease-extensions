@@ -1,6 +1,8 @@
 package io.dataease.plugins.datasource.dm.service;
 
+import io.dataease.plugins.common.constants.DatabaseClassification;
 import io.dataease.plugins.common.constants.DatasourceCalculationMode;
+import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
 import io.dataease.plugins.datasource.service.DatasourceService;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,23 @@ public class MaxcomputeService extends DatasourceService {
     }
 
     @Override
+    public List<StaticResource> staticResources() {
+        List<StaticResource> results = new ArrayList<>();
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("maxcompute");
+        staticResource.setSuffix("jpg");
+        results.add(staticResource);
+        return results;
+    }
+
+    @Override
     public DataSourceType getDataSourceType() {
         DataSourceType dataSourceType =  new DataSourceType("maxcompute", "Maxcompute" , true , "", DatasourceCalculationMode.DIRECT, true);
         dataSourceType.setKeywordPrefix("\"");
         dataSourceType.setKeywordSuffix("\"");
         dataSourceType.setAliasPrefix("\"");
         dataSourceType.setAliasSuffix("\"");
+        dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
         return dataSourceType;
     }
 }

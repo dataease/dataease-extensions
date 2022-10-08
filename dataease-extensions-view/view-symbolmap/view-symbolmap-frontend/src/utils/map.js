@@ -422,3 +422,9 @@ export function uuid() {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 }
 
+export const reverseColor = colorValue => {
+  colorValue = '0x' + colorValue.replace(/#/g, '')
+  const str = '000000' + (0xFFFFFF - colorValue).toString(16)
+  return '#' + str.substring(str.length - 6, str.length)
+}
+

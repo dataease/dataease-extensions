@@ -1,6 +1,8 @@
 package io.dataease.plugins.datasource.dm.service;
 
+import io.dataease.plugins.common.constants.DatabaseClassification;
 import io.dataease.plugins.common.constants.DatasourceCalculationMode;
+import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
 import io.dataease.plugins.datasource.service.DatasourceService;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,19 @@ public class PrestoService extends DatasourceService {
     }
 
     @Override
+    public List<StaticResource> staticResources() {
+        List<StaticResource> results = new ArrayList<>();
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("presto");
+        staticResource.setSuffix("jpg");
+        results.add(staticResource);
+        return results;
+    }
+
+    @Override
     public DataSourceType getDataSourceType() {
         DataSourceType dataSourceType =  new DataSourceType("presto", "Presto" , true , "", DatasourceCalculationMode.DIRECT, true);
+        dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
         return dataSourceType;
     }
 }

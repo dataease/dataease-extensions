@@ -185,21 +185,20 @@ export default {
         this.view.viewFields = this.view.viewFields.filter(field => field.busiType !== this.busiType)
     },
     changeFields(vals) {
-        debugger
-        this.clearBusiTypeFields()
-        const allFields = [...JSON.parse(JSON.stringify(this.dimensionData)), ... JSON.parse(JSON.stringify(this.quotaData))]
-        allFields.forEach(field => {
-            if (vals.includes(field.id)) {
-                const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
-                item.summary = 'group_concat'
-                if(item && item.groupType && item.groupType === 'q') {
-                    item.summary = 'sum'
-                }
-                this.view.viewFields.push(item)
-            }
-        })
-               
-        this.$emit('onRefreshViewFields',this.view.viewFields)
+      this.clearBusiTypeFields()
+      const allFields = [...JSON.parse(JSON.stringify(this.dimensionData)), ... JSON.parse(JSON.stringify(this.quotaData))]
+      allFields.forEach(field => {
+          if (vals.includes(field.id)) {
+              const item = Object.assign(JSON.parse(JSON.stringify(field)), {busiType: this.busiType})
+              item.summary = 'group_concat'
+              if(item && item.groupType && item.groupType === 'q') {
+                  item.summary = 'sum'
+              }
+              this.view.viewFields.push(item)
+          }
+      })
+              
+      this.$emit('onRefreshViewFields',this.view.viewFields)
         
     },
     initOptions() {

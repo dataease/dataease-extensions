@@ -17,7 +17,7 @@
           </el-form-item>
 
           <el-form-item :label="$t('port')" prop="configuration.port">
-            <el-input v-model="form.configuration.port" autocomplete="off"/>
+            <el-input :placeholder="$t('enter_the_port')" v-model="form.configuration.port" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item :label="$t('dataBase')" prop="configuration.dataBase">
@@ -25,28 +25,35 @@
           </el-form-item>
 
           <el-form-item :label="$t('username')" prop="configuration.username">
-            <el-input v-model="form.configuration.username" autocomplete="off"/>
+            <el-input :placeholder="$t('one_user_name')" v-model="form.configuration.username" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item :label="$t('password')" prop="configuration.password">
-            <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
+            <dePwd :placeholder="$t('input_a_password')" v-model="form.configuration.password" />
           </el-form-item>
 
-          <el-form-item>
-            <el-button icon="el-icon-plus" size="mini" @click="getSchema()">{{ $t('get_schema') }}
+          <el-form-item class="schema-label" :label="$t('schema')">
+            <template slot="label">
+          {{ $t("schema") }}
+          <el-button type="text" icon="el-icon-plus" size="small" @click="getSchema()">{{ $t('get_schema') }}
             </el-button>
-          </el-form-item>
-
-          <el-form-item :label="$t('schema')">
+        </template>
             <el-select v-model="form.configuration.schema" filterable
-                       :placeholder="$t('please_choose_schema')"
-                       class="select-width">
+                       :placeholder="$t('please_select')"
+                       class="de-select">
               <el-option v-for="item in schemas" :key="item" :label="item" :value="item"/>
             </el-select>
           </el-form-item>
 
           <el-form-item  :label="$t('query_timeout')">
-            <el-input v-model="form.configuration.queryTimeout" autocomplete="off" type="number" min="0"/>
+            <el-input
+                v-model="form.configuration.queryTimeout"
+                autocomplete="off"
+                type="number"
+                :min="0"
+              >
+                <template slot="append">{{ $t("second") }}</template>
+              </el-input>
           </el-form-item>
 
         </el-form>
@@ -57,13 +64,12 @@
 </template>
 
 <script>
-
-
 import messages from '@/de-base/lang/messages'
+import dePwd from "./dePwd.vue";
 
 export default {
   name: "dm",
-  components: {},
+  components: { dePwd },
   props: {
     method: String,
     request: {},

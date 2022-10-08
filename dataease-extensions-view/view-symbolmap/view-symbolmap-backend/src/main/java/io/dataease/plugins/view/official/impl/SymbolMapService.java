@@ -98,7 +98,15 @@ public class SymbolMapService extends ViewPluginService {
         staticResource.setSuffix(SUFFIX);
         results.add(staticResource);
         addImage(results);
+        results.add(pluginSvg());
         return results;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("view-symbolmap-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 
     private void addImage(List<StaticResource> results) {
