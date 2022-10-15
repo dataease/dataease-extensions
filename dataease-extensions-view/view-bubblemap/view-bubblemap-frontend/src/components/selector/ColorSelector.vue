@@ -79,6 +79,9 @@
         <el-form-item v-show="chart.type" :label="$t('chart.area_border_color')" class="form-item">
           <el-color-picker v-model="colorForm.areaBorderColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase('areaBorderColor')" />
         </el-form-item>
+        <el-form-item v-show="chart.type" :label="$t('chart.area_base_color')" class="form-item">
+          <el-color-picker v-model="colorForm.areaBaseColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase('areaBaseColor')" />
+        </el-form-item>
       </el-form>
     </el-col>
   </div>

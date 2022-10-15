@@ -9,7 +9,8 @@ export const DEFAULT_COLOR_CASE = {
   dimensionColor: '#000000',
   quotaColor: '#000000',
   tableBorderColor: '#cfdaf4',
-  areaBorderColor: '#303133'
+  areaBorderColor: '#303133',
+  areaBaseColor: '#ffffff'
 }
 
 export const COLOR_PANEL = [
@@ -161,6 +162,16 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
       chart_option.color = customAttr.color.colors
       if (customAttr.color.areaBorderColor && chart_option.geo.length > 1) {
         chart_option.geo[0].itemStyle.borderColor = customAttr.color.areaBorderColor
+      }
+      if (customAttr.color.areaBorderColor) {
+        chart_option.geo[chart_option.geo.length - 1].itemStyle.areaColor = customAttr.color.areaBaseColor
+        chart_option.geo[chart_option.geo.length - 1].itemStyle.opacity = 0.7
+        chart_option.geo[chart_option.geo.length - 1].emphasis = {
+          itemStyle: {
+            areaColor: customAttr.color.areaBaseColor,
+            opacity: 1
+          }
+        }
       }
     }
     if (customAttr.tooltip) {

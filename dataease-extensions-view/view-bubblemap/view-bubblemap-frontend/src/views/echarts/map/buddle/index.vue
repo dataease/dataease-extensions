@@ -313,8 +313,21 @@
           const center = opt.series[0].center
           this.mapCenter = center
         }
-
+        
         if (chart_option.geo && chart_option.geo.length > 1) {
+          this.myChart.on('mouseover', params => {
+            if (params.componentType === 'geo' && params.geoIndex === 0) {
+              this.myChart.dispatchAction({
+                type: 'downplay',
+                geoIndex: 0
+              })
+              this.myChart.dispatchAction({
+                type: 'geoUnSelect',
+                geoIndex: 0
+              })
+            }
+          })
+
           this.myChart.on('georoam', zoomParams => {
             const curOptions = this.myChart.getOption()
             if (zoomParams.zoom != null && zoomParams.zoom != undefined) {
