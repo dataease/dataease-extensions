@@ -22,6 +22,7 @@
         <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
       </div>
     </div>
+    <div :class="loading ? 'symbol-map-loading' : 'symbol-map-loaded'" style="display: none;">
 
   </div>
 </template>
@@ -104,7 +105,8 @@
           show: false,
           content: ''
         },
-        buttonTextColor: null
+        buttonTextColor: null,
+        loading: false
       }
     },
 
@@ -131,7 +133,7 @@
       }
     },
     created() {
-
+      
       !this.$scene && (this.$scene = Scene)
       !this.$pointLayer && (this.$pointLayer = PointLayer)
       !this.$popup && (this.$popup = Popup)
@@ -144,6 +146,7 @@
     },
     methods: {
       preDraw() {
+        this.loading = true
         this.initTitle()
         this.calcHeightDelay()
         this.initMap()
@@ -186,9 +189,12 @@
                 this.$emit('trigger-edit-click', ev.originEvent)
             })
           })
+        } else {
+          this.loading = false
         }
       },
       drawView() {
+        this.loading = true
         this.setLayerAttr(this.chart)
         this.setBackGroundBorder()
       },
@@ -299,6 +305,11 @@
                 y: 'latitude'
             }
         }).shape(defaultSymbol).active(true).style(layerStyle)
+        this.pointLayer.on('add', ev => {
+          setTimeout(() => {
+            this.loading = false
+          }, 500)
+        })
         this.myChart.addLayer(this.pointLayer);
         this.addTextLayer(data, chart)
         this.pointLayer.on('click', ev => {
