@@ -106,7 +106,7 @@
           content: ''
         },
         buttonTextColor: null,
-        loading: false
+        loading: true
       }
     },
 
