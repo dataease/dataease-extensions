@@ -117,7 +117,7 @@ public class MongobiQueryProvider extends QueryProvider {
             } else if (f.getDeType() == 3) {
                 fieldName = String.format(MongoConstants.CAST, originField, MongoConstants.DEFAULT_FLOAT_FORMAT);
             } else if (f.getDeType() == 1) {
-                fieldName = String.format(MongoConstants.STR_TO_DATE, originField, MongoConstants.DEFAULT_DATE_FORMAT);
+                fieldName = String.format(MongoConstants.STR_TO_DATE, originField, StringUtils.isNotEmpty(f.getDateFormat()) ? f.getDateFormat() : MongoConstants.DEFAULT_DATE_FORMAT);
             } else {
                 fieldName = originField;
             }
@@ -170,7 +170,7 @@ public class MongobiQueryProvider extends QueryProvider {
                     } else if (f.getDeType() == 3) {
                         fieldName = String.format(MongoConstants.CAST, originField, MongoConstants.DEFAULT_FLOAT_FORMAT);
                     } else if (f.getDeType() == 1) {
-                        fieldName = String.format(MongoConstants.STR_TO_DATE, originField, MongoConstants.DEFAULT_DATE_FORMAT);
+                        fieldName = String.format(MongoConstants.STR_TO_DATE, originField, StringUtils.isNotEmpty(f.getDateFormat()) ? f.getDateFormat() : MongoConstants.DEFAULT_DATE_FORMAT);
                     } else {
                         fieldName = originField;
                     }
@@ -797,7 +797,7 @@ public class MongobiQueryProvider extends QueryProvider {
         }
         if (field.getDeType() == 1) {
             if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                whereName = String.format(MongoConstants.STR_TO_DATE, originName, MongoConstants.DEFAULT_DATE_FORMAT);
+                whereName = String.format(MongoConstants.STR_TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : MongoConstants.DEFAULT_DATE_FORMAT);
             }
             if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                 String cast = String.format(MongoConstants.CAST, originName, MongoConstants.DEFAULT_INT_FORMAT) + "/1000";
@@ -919,7 +919,7 @@ public class MongobiQueryProvider extends QueryProvider {
             }
             if (field.getDeType() == 1) {
                 if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                    whereName = String.format(MongoConstants.STR_TO_DATE, originName, MongoConstants.DEFAULT_DATE_FORMAT);
+                    whereName = String.format(MongoConstants.STR_TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : MongoConstants.DEFAULT_DATE_FORMAT);
                 }
                 if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                     String cast = String.format(MongoConstants.CAST, originName, MongoConstants.DEFAULT_INT_FORMAT) + "/1000";
@@ -1017,7 +1017,7 @@ public class MongobiQueryProvider extends QueryProvider {
 
                 if (field.getDeType() == 1) {
                     if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                        whereName = String.format(MongoConstants.STR_TO_DATE, originName, MongoConstants.DEFAULT_DATE_FORMAT);
+                        whereName = String.format(MongoConstants.STR_TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : MongoConstants.DEFAULT_DATE_FORMAT);
                     }
                     if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                         String cast = String.format(MongoConstants.CAST, originName, MongoConstants.DEFAULT_INT_FORMAT) + "/1000";

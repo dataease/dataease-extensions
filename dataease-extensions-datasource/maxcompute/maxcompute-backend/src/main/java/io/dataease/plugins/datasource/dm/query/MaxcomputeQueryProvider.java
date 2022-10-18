@@ -116,7 +116,7 @@ public class MaxcomputeQueryProvider extends QueryProvider {
                     } else if (f.getDeType() == DeTypeConstants.DE_FLOAT) {
                         fieldName = String.format(MaxConstants.CAST, originField, MaxConstants.DEFAULT_FLOAT_FORMAT);
                     } else if (f.getDeType() == DeTypeConstants.DE_TIME) {
-                        fieldName = String.format(MaxConstants.CAST, originField, "DATETIME");
+                        fieldName = String.format(MaxConstants.TO_DATE, originField, StringUtils.isNotEmpty(f.getDateFormat()) ? f.getDateFormat() : MaxConstants.DEFAULT_DATE_FORMAT);
                     } else {
                         fieldName = originField;
                     }
@@ -195,7 +195,7 @@ public class MaxcomputeQueryProvider extends QueryProvider {
             } else if (f.getDeType() == DeTypeConstants.DE_FLOAT) {
                 fieldName = String.format(MaxConstants.CAST, originField, MaxConstants.DEFAULT_FLOAT_FORMAT);
             } else if (f.getDeType() == DeTypeConstants.DE_TIME) {
-                fieldName = String.format(MaxConstants.CAST, originField, "DATETIME");
+                fieldName = String.format(MaxConstants.TO_DATE, originField, StringUtils.isNotEmpty(f.getDateFormat()) ? f.getDateFormat() : MaxConstants.DEFAULT_DATE_FORMAT);
             } else {
                 fieldName = originField;
             }
@@ -800,7 +800,7 @@ public class MaxcomputeQueryProvider extends QueryProvider {
         }
         if (field.getDeType() == 1) {
             if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                whereName = String.format(MaxConstants.CAST, originName, "DATETIME");
+                whereName = String.format(MaxConstants.TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : MaxConstants.DEFAULT_DATE_FORMAT);
             }
             if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                 String cast = String.format(MaxConstants.CAST, originName, "bigint");
@@ -924,7 +924,7 @@ public class MaxcomputeQueryProvider extends QueryProvider {
             }
             if (field.getDeType() == 1) {
                 if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                    whereName = String.format(MaxConstants.CAST, originName, "DATETIME");
+                    whereName = String.format(MaxConstants.TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : MaxConstants.DEFAULT_DATE_FORMAT);
                 }
                 if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                     String cast = String.format(MaxConstants.CAST, originName, "bigint");
@@ -1023,7 +1023,7 @@ public class MaxcomputeQueryProvider extends QueryProvider {
 
                 if (field.getDeType() == 1) {
                     if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                        whereName = String.format(MaxConstants.CAST, originName, "DATETIME");
+                        whereName = String.format(MaxConstants.TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : MaxConstants.DEFAULT_DATE_FORMAT);
                     }
                     if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                         String cast = String.format(MaxConstants.CAST, originName, "bigint");
@@ -1137,7 +1137,7 @@ public class MaxcomputeQueryProvider extends QueryProvider {
             if (x.getDeType() == DeTypeConstants.DE_TIME) {
                 String format = transDateFormat(x.getDateStyle(), x.getDatePattern());
                 if (x.getDeExtractType() == DeTypeConstants.DE_STRING) {
-                    fieldName = String.format(MaxConstants.DATE_FORMAT, String.format(MaxConstants.CAST, originField, "DATETIME"), format);
+                    fieldName = String.format(MaxConstants.TO_DATE, originField, StringUtils.isNotEmpty(x.getDateFormat()) ? x.getDateFormat() : MaxConstants.DEFAULT_DATE_FORMAT);
                 } else {
                     String cast = String.format(MaxConstants.CAST, originField, "bigint");
                     String from_unixtime = String.format(MaxConstants.FROM_UNIXTIME, cast);

@@ -187,8 +187,7 @@ public class DmQueryProvider extends QueryProvider {
             } else if (f.getDeType() == 3) {
                 fieldName = String.format(OracleConstants.CAST, originField, OracleConstants.DEFAULT_FLOAT_FORMAT);
             } else if (f.getDeType() == 1) {
-                fieldName = String.format(OracleConstants.DATE_FORMAT, originField,
-                        OracleConstants.DEFAULT_DATE_FORMAT);
+                fieldName = String.format(OracleConstants.DATE_FORMAT, originField, OracleConstants.DEFAULT_DATE_FORMAT);
             } else {
                 fieldName = originField;
             }
@@ -981,7 +980,7 @@ public class DmQueryProvider extends QueryProvider {
 
         if (field.getDeType() == 1) {
             if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                whereName = String.format(OracleConstants.TO_DATE, originName, OracleConstants.DEFAULT_DATE_FORMAT);
+                whereName = String.format(OracleConstants.TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : OracleConstants.DEFAULT_DATE_FORMAT);
             }
             if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                 String cast = String.format(OracleConstants.CAST, originName, OracleConstants.DEFAULT_INT_FORMAT)
@@ -1029,8 +1028,7 @@ public class DmQueryProvider extends QueryProvider {
                 whereValue = "'%" + value + "%'";
             } else {
                 if (field.getDeType() == 1) {
-                    whereValue = String.format(OracleConstants.TO_DATE, "'" + value + "'",
-                            OracleConstants.DEFAULT_DATE_FORMAT);
+                    whereValue = String.format(OracleConstants.TO_DATE, "'" + value + "'", OracleConstants.DEFAULT_DATE_FORMAT);
                 } else {
                     whereValue = String.format(OracleConstants.WHERE_VALUE_VALUE, value);
                 }
@@ -1116,7 +1114,7 @@ public class DmQueryProvider extends QueryProvider {
 
             if (field.getDeType() == 1) {
                 if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                    whereName = String.format(OracleConstants.TO_DATE, originName, OracleConstants.DEFAULT_DATE_FORMAT);
+                    whereName = String.format(OracleConstants.TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : OracleConstants.DEFAULT_DATE_FORMAT);
                 }
                 if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                     String cast = String.format(OracleConstants.CAST, originName, OracleConstants.DEFAULT_INT_FORMAT)
@@ -1166,8 +1164,7 @@ public class DmQueryProvider extends QueryProvider {
                         whereValue = "'%" + value + "%'";
                     } else {
                         if (field.getDeType() == 1) {
-                            whereValue = String.format(OracleConstants.TO_DATE, "'" + value + "'",
-                                    OracleConstants.DEFAULT_DATE_FORMAT);
+                            whereValue = String.format(OracleConstants.TO_DATE, "'" + value + "'", StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : OracleConstants.DEFAULT_DATE_FORMAT);
                         } else {
                             whereValue = String.format(OracleConstants.WHERE_VALUE_VALUE, value);
                         }
@@ -1224,8 +1221,7 @@ public class DmQueryProvider extends QueryProvider {
 
                 if (field.getDeType() == 1) {
                     if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                        whereName = String.format(OracleConstants.TO_DATE, originName,
-                                OracleConstants.DEFAULT_DATE_FORMAT);
+                        whereName = String.format(OracleConstants.TO_DATE, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : OracleConstants.DEFAULT_DATE_FORMAT);
                     }
                     if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3
                             || field.getDeExtractType() == 4) {

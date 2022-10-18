@@ -19,6 +19,8 @@ public class MaxConstants extends SQLConstants {
 
     public static final String CAST = "CAST(%s AS %s)";
 
+    public static final String TO_DATE = "to_date(%s, '%s')";
+
     public static final String DEFAULT_DATE_FORMAT = "YYYY-MM-DD HH24:MI:SS";
 
     public static final String DEFAULT_INT_FORMAT = "bigint";

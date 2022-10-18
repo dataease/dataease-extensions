@@ -21,6 +21,8 @@ public class PrestoConstants extends SQLConstants {
 
     public static final String FORMAT_DATETIME = "format_datetime(%s, '%s')";
 
+    public static final String date_parse = "date_parse(%s, '%s')";
+
     public static final String DEFAULT_INT_FORMAT = "bigint";
 
     public static final String DEFAULT_FLOAT_FORMAT = "DOUBLE";

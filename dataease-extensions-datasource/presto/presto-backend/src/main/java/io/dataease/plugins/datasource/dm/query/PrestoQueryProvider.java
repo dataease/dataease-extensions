@@ -121,7 +121,7 @@ public class PrestoQueryProvider extends QueryProvider {
                     } else if (f.getDeType() == DeTypeConstants.DE_FLOAT) {
                         fieldName = String.format(PrestoConstants.CAST, originField, PrestoConstants.DEFAULT_FLOAT_FORMAT);
                     } else if (f.getDeType() == DeTypeConstants.DE_TIME) {
-                        fieldName = String.format(PrestoConstants.FORMAT_DATETIME, String.format(PrestoConstants.FROM_UNIXTIME, originField + "/1000"), PrestoConstants.DEFAULT_DATE_FORMAT);
+                        fieldName = String.format(PrestoConstants.date_parse, originField, StringUtils.isNotEmpty(f.getDateFormat()) ? f.getDateFormat() : PrestoConstants.DEFAULT_DATE_FORMAT);
                     } else {
                         fieldName = originField;
                     }
@@ -195,7 +195,7 @@ public class PrestoQueryProvider extends QueryProvider {
             } else if (f.getDeType() == DeTypeConstants.DE_FLOAT) {
                 fieldName = String.format(PrestoConstants.CAST, originField, PrestoConstants.DEFAULT_FLOAT_FORMAT);
             } else if (f.getDeType() == DeTypeConstants.DE_TIME) {
-                fieldName = String.format(PrestoConstants.FORMAT_DATETIME, String.format(PrestoConstants.FROM_UNIXTIME, originField + "/1000"), PrestoConstants.DEFAULT_DATE_FORMAT);
+                fieldName = String.format(PrestoConstants.date_parse, originField, StringUtils.isNotEmpty(f.getDateFormat()) ? f.getDateFormat() : PrestoConstants.DEFAULT_DATE_FORMAT);
             } else {
                 fieldName = originField;
             }
