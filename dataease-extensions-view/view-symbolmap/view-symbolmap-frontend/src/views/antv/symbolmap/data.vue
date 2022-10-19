@@ -140,7 +140,7 @@
     created() {
       this.longitudes = this.view.xaxis && this.view.xaxis.length && [this.view.xaxis[0]] || []
       this.latitudes = this.view.xaxis && this.view.xaxis.length > 1 && [this.view.xaxis[1]] || []
-      this.$emit('on-add-languanges', messages)
+      this.$emit('on-add-languages', messages)
     },
     watch: {
       longitudes(val) {

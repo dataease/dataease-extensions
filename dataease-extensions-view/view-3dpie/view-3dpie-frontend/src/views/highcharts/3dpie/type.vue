@@ -27,7 +27,7 @@ import messages from '@/de-base/lang/messages'
 
     created() {
       
-      this.$emit('on-add-languanges', messages)
+      this.$emit('on-add-languages', messages)
     }
     
 

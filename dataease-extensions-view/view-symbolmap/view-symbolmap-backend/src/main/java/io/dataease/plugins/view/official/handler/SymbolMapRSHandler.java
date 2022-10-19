@@ -48,7 +48,7 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
             }
         });
         Map<String, Object> map = new HashMap<>();
-        List<AxisChartDataAntVDTO> datas = new ArrayList<>();
+        List<AxisChartDataAntVDTO> datalist = new ArrayList<>();
 
         for (int i1 = 0; i1 < data.size(); i1++) {
             String[] row = data.get(i1);
@@ -99,7 +99,7 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                     }
                     axisChartDataDTO.setLongitude(dimensionList.get(0).getValue());
                     axisChartDataDTO.setLatitude(dimensionList.get(1).getValue());
-                    datas.add(axisChartDataDTO);
+                    datalist.add(axisChartDataDTO);
                 }
             } else {
                 SymbolMapResultDTO axisChartDataDTO = new SymbolMapResultDTO();
@@ -133,10 +133,10 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                         valueFilled = true;
                     }
                 }
-                datas.add(axisChartDataDTO);
+                datalist.add(axisChartDataDTO);
             }
         }
-        map.put("datas", datas);
+        map.put("datas", datalist);
         return map;
     }
 }

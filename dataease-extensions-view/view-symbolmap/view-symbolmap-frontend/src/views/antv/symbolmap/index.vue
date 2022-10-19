@@ -176,9 +176,9 @@
 
 
           this.antVRenderStatus = true
-          if (!chart.data || !chart.data.datas) {
+          if (!chart.data || !chart.data.data) {
             chart.data = {
-                datas: []
+                data: []
             }
           }
           this.myChart.on('loaded', () => {
@@ -296,7 +296,7 @@
         
 
         this.myChart.layerService.layerList && this.myChart.layerService.layerList.length && this.myChart.layerService.removeAllLayers()
-        const data = chart.data && chart.data.datas || []
+        const data = chart.data && chart.data.data || []
         this.pointLayer = new this.$pointLayer({autoFit: true})
         this.pointLayer.source(data, {
             parser: {
