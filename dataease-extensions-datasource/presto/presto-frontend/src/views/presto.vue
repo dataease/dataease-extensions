@@ -121,7 +121,7 @@ export default {
     }
   },
   created() {
-    this.$emit('on-add-languanges', messages)
+    this.$emit('on-add-languages', messages)
   },
   watch: {},
   methods: {

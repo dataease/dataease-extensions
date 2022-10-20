@@ -128,7 +128,7 @@ public class DmDsProvider extends DefaultJdbcProvider {
     }
 
     @Override
-    public List<TableField> getTableFileds(DatasourceRequest datasourceRequest) throws Exception {
+    public List<TableField> getTableFields(DatasourceRequest datasourceRequest) throws Exception {
         List<TableField> list = new LinkedList<>();
         try (Connection connection = getConnectionFromPool(datasourceRequest)) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();

@@ -105,7 +105,7 @@ public class MongobiDsProvider extends DefaultJdbcProvider {
     }
 
     @Override
-    public List<TableField> getTableFileds(DatasourceRequest datasourceRequest) throws Exception {
+    public List<TableField> getTableFields(DatasourceRequest datasourceRequest) throws Exception {
         datasourceRequest.setQuery("select * from " + datasourceRequest.getTable() + " limit 0");
         return fetchResultField(datasourceRequest);
     }
