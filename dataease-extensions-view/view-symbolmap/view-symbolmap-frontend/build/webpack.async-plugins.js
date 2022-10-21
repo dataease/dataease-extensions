@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const path = require('path')
 const utils = require('./utils')
 const CopyPlugin = require("copy-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -50,6 +51,14 @@ module.exports = {
         }
       },
       {
+        test: /.(sa|sc|c)ss$/,
+        use: [
+         {loader: 'vue-style-loader'},
+         'css-loader',
+         'sass-loader'
+       ]
+           },
+      {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test')]
@@ -81,6 +90,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     }),
