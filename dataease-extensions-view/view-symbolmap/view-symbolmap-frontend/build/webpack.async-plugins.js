@@ -8,7 +8,8 @@ function resolve (dir) {
 }
 
 module.exports = {
-  entry: {
+    mode: 'development',
+    entry: {
 
     // PluginDemo: resolve('/src/views/PluginDemo.vue')
     'symbol-map-view': resolve('/src/views/antv/symbolmap/index.vue'),
@@ -37,12 +38,7 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          esModule: false, // vue-loader v13 更新 默认值为 true v12及之前版本为 false, 此项配置影响 vue 自身异步组件写法以及 webpack 打包结果
-          loaders: utils.cssLoaders({
-            sourceMap: true,
-            extract: false // css 不做提取
-          }),
-          transformToRequire: {
+          transformAssetUrls: {
             video: 'src',
             source: 'src',
             img: 'src',
