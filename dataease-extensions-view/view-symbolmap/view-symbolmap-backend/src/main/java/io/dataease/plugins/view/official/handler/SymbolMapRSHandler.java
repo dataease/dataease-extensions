@@ -136,7 +136,7 @@ public class SymbolMapRSHandler implements PluginViewRSHandler<Map> {
                 datalist.add(axisChartDataDTO);
             }
         }
-        map.put("datas", datalist);
+        map.put("data", datalist);
         return map;
     }
 }
