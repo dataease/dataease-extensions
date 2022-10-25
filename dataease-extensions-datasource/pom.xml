@@ -14,6 +14,7 @@
         <module>presto</module>
         <module>dm</module>
         <module>mongo</module>
+        <module>kylin</module>
     </modules>
 
     <artifactId>dataease-extensions-datasource</artifactId>
