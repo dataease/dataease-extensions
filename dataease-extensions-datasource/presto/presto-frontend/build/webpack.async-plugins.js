@@ -2,12 +2,14 @@ const webpack = require('webpack')
 const path = require('path')
 const utils = require('./utils')
 const CopyPlugin = require("copy-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
-  entry: {
+    mode: 'development',
+    entry: {
     'presto': resolve('/src/views/presto.vue')
   },
   output: {
@@ -30,12 +32,7 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          esModule: false, // vue-loader v13 更新 默认值为 true v12及之前版本为 false, 此项配置影响 vue 自身异步组件写法以及 webpack 打包结果
-          loaders: utils.cssLoaders({
-            sourceMap: true,
-            extract: false // css 不做提取
-          }),
-          transformToRequire: {
+          transformAssetUrls: {
             video: 'src',
             source: 'src',
             img: 'src',
@@ -43,6 +40,14 @@ module.exports = {
           }
         }
       },
+      {
+        test: /.(sa|sc|c)ss$/,
+        use: [
+         {loader: 'vue-style-loader'},
+         'css-loader',
+         'sass-loader'
+       ]
+           },
       {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -75,6 +80,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     }),
