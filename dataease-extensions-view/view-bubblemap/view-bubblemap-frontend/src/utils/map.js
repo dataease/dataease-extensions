@@ -128,7 +128,22 @@ export const BASE_MAP = {
     data: []
   }]
 }
-const convertData = (mapData, chart) => {
+const convertData = (mapData, chart, curAreaCode) => {
+  if (chart.senior) {
+    const senior = JSON.parse(chart.senior)
+    const mapMapping = senior && senior.mapMapping && senior.mapMapping[curAreaCode]
+    if (mapMapping) {
+      for (const key in mapMapping) {
+        if (Object.hasOwnProperty.call(mapMapping, key)) {
+          const element = mapMapping[key]
+          if (element && mapData[key]) {
+            mapData[element] = mapData[key]
+          }
+          
+        }
+      }
+    }
+  }
   let maxVal = 0
   const k = terminalType === 'pc' ? 30 : 15
   const names = chart.data.x
@@ -153,7 +168,7 @@ const convertData = (mapData, chart) => {
 }
 
 let terminalType = 'pc'
-export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', themeStyle) {
+export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', themeStyle, curAreaCode) {
   terminalType = terminal
   let customAttr = {}
   if (chart.customAttr) {
@@ -231,10 +246,15 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
           color: themeStyle
         }
       }
-
-      const convert = convertData(mapData, chart)
+      const convert = convertData(mapData, chart, curAreaCode)
       chart_option.series[0].data = convert.value
       chart_option.series[0].symbolSize = val => val[2] * convert.rate
+
+      if (chart.senior) {
+        const senior = JSON.parse(chart.senior)
+
+        senior && senior.mapMapping && senior.mapMapping[curAreaCode] && (chart_option.series[0].nameMap = senior.mapMapping[curAreaCode])
+      }
 
     }
   }

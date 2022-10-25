@@ -33,6 +33,7 @@
     uuid,
     reverseColor
   } from '@/utils/map'
+  import { centerPointJson } from '@/utils/nationalCenterPoint'
   import ViewTrackBar from '@/components/views/ViewTrackBar'
   export default {
     name: 'ChartComponent',
@@ -240,7 +241,7 @@
         {}
 
         if (geoBorderMap[cCode]) {
-          this.setTwoMap(geoJson, geoBorderMap[cCode], chart)
+          this.setTwoMap(geoJson, geoBorderMap[cCode], chart, cCode)
           return
         }
 
@@ -250,13 +251,13 @@
           if (res && !(res instanceof Error) && Object.keys(res).length > 0) {
             geoBorderMap[cCode] = res
             localStorage.setItem("geoBorderMap", JSON.stringify(geoBorderMap))
-            this.setTwoMap(geoJson, geoBorderMap[cCode], chart)
+            this.setTwoMap(geoJson, geoBorderMap[cCode], chart, cCode)
           } else {
-            this.setTwoMap(geoJson, null, chart)
+            this.setTwoMap(geoJson, null, chart, cCode)
           }
         }, true)
       },
-      setTwoMap(geoJson, geoJsonBorder, chart) {
+      setTwoMap(geoJson, geoJsonBorder, chart, cCode) {
         this.$echarts.registerMap('BUDDLE_MAP', geoJson)
         geoJsonBorder && this.$echarts.registerMap('BUDDLE_MAP_BORDER', geoJsonBorder)
         const base_json = JSON.parse(JSON.stringify(BASE_MAP))
@@ -272,8 +273,9 @@
           return
         }
         let hasCenter = false
+        
         geoJson.features.map(function (item) {
-          mapData[item.properties.name] = item.properties.centroid || item.properties.center
+          mapData[item.properties.name] = item.properties.centroid || item.properties.center || centerPointJson[item.properties.name]
           if (mapData[item.properties.name]) {
             hasCenter = true
           }
@@ -306,7 +308,7 @@
             this.buttonTextColor = null
           }
         }
-        const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, this.buttonTextColor)
+        const chart_option = baseMapOption(base_json, chart, mapData, this.terminalType, this.buttonTextColor, cCode)
         this.myEcharts(chart_option)
         const opt = this.myChart.getOption()
         if (opt && opt.series) {
