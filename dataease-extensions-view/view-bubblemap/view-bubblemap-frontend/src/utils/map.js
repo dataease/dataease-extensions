@@ -175,10 +175,12 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
     customAttr = JSON.parse(chart.customAttr)
     if (customAttr.color) {
       chart_option.color = customAttr.color.colors
-      if (customAttr.color.areaBorderColor && chart_option.geo.length > 1) {
-        chart_option.geo[0].itemStyle.borderColor = customAttr.color.areaBorderColor
-      }
       if (customAttr.color.areaBorderColor) {
+        chart_option.geo.forEach(item => {
+          item.itemStyle.borderColor = customAttr.color.areaBorderColor
+        })
+      }
+      if (customAttr.color.areaBaseColor) {
         chart_option.geo[chart_option.geo.length - 1].itemStyle.areaColor = customAttr.color.areaBaseColor
         chart_option.geo[chart_option.geo.length - 1].itemStyle.opacity = 0.7
         chart_option.geo[chart_option.geo.length - 1].emphasis = {
