@@ -85,6 +85,7 @@ export const BASE_MAP = {
   geo: [{
       show: true,
       map: 'BUDDLE_MAP_BORDER',
+      silent: true,
       label: {
         normal: {
           show: false

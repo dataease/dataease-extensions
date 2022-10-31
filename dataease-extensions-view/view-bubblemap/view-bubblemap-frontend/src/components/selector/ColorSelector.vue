@@ -66,10 +66,7 @@
           <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.table_border_color')" class="form-item">
             <el-color-picker v-model="colorForm.tableBorderColor" class="color-picker-style" :predefine="predefineColors" @change="changeColorCase" />
           </el-form-item>
-          <!--              暂时不支持该功能-->
-          <!--              <el-form-item v-show="(chart.type && chart.type.includes('table')) || sourceType==='panelTable'" :label="$t('chart.stripe')" class="form-item">-->
-          <!--                <el-checkbox v-model="colorForm.tableStripe" @change="changeColorCase">{{ $t('chart.stripe') }}</el-checkbox>-->
-          <!--              </el-form-item>-->
+          
         </div>
 
         <el-form-item v-show="chart.type && !chart.type.includes('text')" :label="$t('chart.not_alpha')" class="form-item form-item-slider">
@@ -280,43 +277,59 @@ export default {
   justify-content: space-between;
   align-items: center
 }
-.form-item-slider>>>.el-form-item__label{
+.form-item-slider ::v-deep .el-form-item__label{
   font-size: 12px;
   line-height: 38px;
 }
-.form-item>>>.el-form-item__label{
+.form-item ::v-deep .el-form-item__label{
   font-size: 12px;
 }
 .el-select-dropdown__item{
   padding: 0 20px;
 }
-  span{
-    font-size: 12px
-  }
-  .el-form-item{
-    margin-bottom: 6px;
-  }
-  .color-picker-style{
-    cursor: pointer;
-    z-index: 1003;
-  }
-  .color-label{
-    display: inline-block;
-    width: 60px;
-  }
+span{
+  font-size: 12px
+}
+.el-form-item{
+  margin-bottom: 6px;
+}
+.color-picker-style{
+  cursor: pointer;
+  z-index: 1003;
+}
+.color-label{
+  display: inline-block;
+  width: 60px;
+}
 
-  .color-type>>>.el-radio__input{
-    display: none;
-  }
-  .el-radio{
-    margin:0 2px 0 0!important;
-    border: 1px solid transparent;
-  }
-  .el-radio>>>.el-radio__label{
-    padding-left: 0;
-  }
+.color-type ::v-deep .el-radio__input{
+  display: none;
+}
+.el-radio{
+  margin:0 2px 0 0!important;
+  border: 1px solid transparent;
+}
+.el-radio ::v-deep .el-radio__label{
+  padding-left: 0;
+}
 
-  .el-radio.is-checked{
-    border: 1px solid #0a7be0;
-  }
+.el-radio.is-checked{
+  border: 1px solid #0a7be0;
+}
+
+.span-label {
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  padding: 0 8px;
+}
+
+.custom-color-style {
+  height: 300px;
+  overflow-y: auto;
+  padding: 4px 12px;
+  border: 1px solid #e6e6e6;
+}
 </style>

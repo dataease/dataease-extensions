@@ -419,7 +419,9 @@
       },
       roamMap(flag) {
         let targetZoom = 1
-        const zoom = this.myChart.getOption().geo[1].zoom
+        const len = this.myChart.getOption().geo.length
+        const index = len - 1
+        const zoom = this.myChart.getOption().geo[index].zoom
         if (flag) {
           targetZoom = zoom * 1.2
         } else {
