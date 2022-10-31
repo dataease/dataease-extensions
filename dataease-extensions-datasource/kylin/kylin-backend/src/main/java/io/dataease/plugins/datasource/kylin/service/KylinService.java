@@ -1,4 +1,4 @@
-package io.dataease.plugins.datasource.dm.service;
+package io.dataease.plugins.datasource.kylin.service;
 
 import io.dataease.plugins.common.constants.DatabaseClassification;
 import io.dataease.plugins.common.constants.DatasourceCalculationMode;
