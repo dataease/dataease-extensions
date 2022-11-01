@@ -21,8 +21,9 @@
       <div>
         <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
       </div>
+      <div :class="loading ? 'symbol-map-loading' : 'symbol-map-loaded'"></div>
     </div>
-    <div :class="loading ? 'symbol-map-loading' : 'symbol-map-loaded'" style="display: none;">
+    
 
   </div>
 </template>
