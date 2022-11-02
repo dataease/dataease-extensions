@@ -9,7 +9,7 @@
     </span>
     <div :id="chartId" style="width: 100%;overflow: hidden;" :style="{height:chartHeight}" />
 
-    <div class="map-zoom-box">
+    <div class="map-zoom-box" :class="loading ? 'symbol-map-loading' : 'symbol-map-loaded'">
       <div style="margin-bottom: 0.5em;">
         <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-plus" circle @click="roamMap(true)" />
       </div>
@@ -21,7 +21,7 @@
       <div>
         <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
       </div>
-      <div :class="loading ? 'symbol-map-loading' : 'symbol-map-loaded'"></div>
+      
     </div>
     
 
