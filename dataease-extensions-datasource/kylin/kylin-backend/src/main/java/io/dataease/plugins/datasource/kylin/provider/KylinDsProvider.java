@@ -166,11 +166,20 @@ public class KylinDsProvider extends DefaultJdbcProvider {
 
     @Override
     public String checkStatus(DatasourceRequest datasourceRequest) throws Exception {
-        JdbcConfiguration jdbcConfiguration = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), JdbcConfiguration.class);
-        int queryTimeout = jdbcConfiguration.getQueryTimeout() > 0 ? jdbcConfiguration.getQueryTimeout() : 0;
-        try (Connection con = getConnection(datasourceRequest); Statement statement = getStatement(con, queryTimeout)) {
+        try (Connection con = getConnection(datasourceRequest)) {
+            List<TableDesc> tables = new ArrayList<>();
+            List<String> tableNames = new ArrayList<>();
+            ResultSet resultSet = con.getMetaData().getColumns(null, "%", "%", "%");
+            while (resultSet.next()) {
+                String tableName = resultSet.getString("TABLE_NAME");
+                if(!tableNames.contains(tableName)){
+                    tableNames.add(tableName);
+                    TableDesc tableDesc = new TableDesc();
+                    tableDesc.setName(tableName);
+                    tables.add(tableDesc);
+                }
+            }
         } catch (Exception e) {
-            e.printStackTrace();
             DataEaseException.throwException(e.getMessage());
         }
         return "Success";
