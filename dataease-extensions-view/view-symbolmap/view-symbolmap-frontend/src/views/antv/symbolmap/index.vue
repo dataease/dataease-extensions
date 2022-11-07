@@ -167,9 +167,7 @@
               pitch: 0,
               style: theme,
               center: [ 121.434765, 31.256735 ],
-              zoom: 6
-              // token: 'pk.eyJ1IjoiZml0MmNsb3VkLWNoZW55dyIsImEiOiJjbDJ0cjFmbWswNzF4M2RvNmYzem02dGg4In0.zCshDn_jswZscaYCGON7fQ'
-              // token: 'a5d10d5d05a3a0868cec67c4d66cf025'
+              zoom: 6         
             }),
             logoVisible: false
           })
