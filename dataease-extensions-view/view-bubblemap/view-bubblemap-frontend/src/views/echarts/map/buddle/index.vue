@@ -3,7 +3,7 @@
     <view-track-bar ref="viewTrack" :track-menu="trackMenu" class="track-bar" :style="trackBarStyleTime"
       @trackClick="trackClick" />
     <div :id="chartId" style="width: 100%;height: 100%;overflow: hidden;" :style="{ borderRadius: borderRadius}" />
-    <div class="map-zoom-box">
+    <div class="map-zoom-box" v-if="showSuspension">
       <div style="margin-bottom: 0.5em;">
         <el-button
           :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}"
@@ -73,7 +73,8 @@
         dynamicAreaCode: null,
         borderRadius: '0px',
         mapCenter: null,
-        buttonTextColor: null
+        buttonTextColor: null,
+        showSuspension: true
       }
     },
 
@@ -183,6 +184,9 @@
         }
 
         const customAttr = JSON.parse(chart.customAttr)
+        if (customAttr.suspension) {
+          this.showSuspension = !!customAttr.suspension.show
+        }
         if (!customAttr.areaCode) {
           this.myChart.clear()
           return

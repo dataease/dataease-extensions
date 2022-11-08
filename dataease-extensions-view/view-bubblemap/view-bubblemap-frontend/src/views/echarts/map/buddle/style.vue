@@ -30,6 +30,15 @@
                         @onTooltipChange="onTooltipChange"
                     />
                 </el-collapse-item>
+
+                <el-collapse-item name="suspension" :title="$t('chart.suspension')" >
+                    <suspension-selector
+                        :param="param"
+                        class="attr-selector"
+                        :chart="chart"
+                        @onSuspensionChange="onSuspensionChange"
+                    />
+                </el-collapse-item>
             </el-collapse>
         </el-row>
 
@@ -47,14 +56,7 @@
                     />
                 </el-collapse-item>
 
-                <!--<el-collapse-item name="background" :title="$t('chart.background')">
-                <background-color-selector
-                    :param="param"
-                    class="attr-selector"
-                    :chart="chart"
-                    @onChangeBackgroundForm="onChangeBackgroundForm"
-                />
-                </el-collapse-item>-->
+                
             </el-collapse>
         </el-row>
     </div>
@@ -65,14 +67,14 @@ import ColorSelector from '@/components/selector/ColorSelector'
 import LabelSelector from '@/components/selector/LabelSelector'
 import TitleSelector from '@/components/selector/TitleSelector'
 import TooltipSelector from '@/components/selector/TooltipSelector'
-/*import BackgroundColorSelector from '@/components/selector/BackgroundColorSelector'*/
+import SuspensionSelector from '@/components/selector/SuspensionSelector'
 export default {
     components: {
         ColorSelector,
         LabelSelector,
         TitleSelector,
-        TooltipSelector
-        // BackgroundColorSelector
+        TooltipSelector,
+        SuspensionSelector
     },
     data() {
         return {
@@ -111,6 +113,10 @@ export default {
 
         onTooltipChange(val) {
             this.view.customAttr.tooltip = val
+            this.calcStyle()
+        },
+        onSuspensionChange(val) {
+            this.view.customAttr.suspension = val
             this.calcStyle()
         },
         onTextChange(val) {
