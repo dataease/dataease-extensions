@@ -65,14 +65,7 @@
           />
         </el-collapse-item>
 
-        <el-collapse-item name="background" :title="$t('chart.background')">
-          <background-color-selector
-            :param="param"
-            class="attr-selector"
-            :chart="chart"
-            @onChangeBackgroundForm="onChangeBackgroundForm"
-          />
-        </el-collapse-item>
+       
       </el-collapse>
     </el-row>
   </div>
@@ -84,15 +77,13 @@ import LabelSelector from "@/components/selector/LabelSelector";
 import LegendSelector from "@/components/selector/LegendSelector";
 import TitleSelector from "@/components/selector/TitleSelector";
 import TooltipSelector from "@/components/selector/TooltipSelector";
-import BackgroundColorSelector from "@/components/selector/BackgroundColorSelector";
 export default {
   components: {
     ColorSelector,
     LabelSelector,
     LegendSelector,
     TitleSelector,
-    TooltipSelector,
-    BackgroundColorSelector,
+    TooltipSelector
   },
   data() {
     return {
