@@ -19,6 +19,7 @@ import io.dataease.plugins.common.request.permission.DataSetRowPermissionsTreeDT
 import io.dataease.plugins.common.request.permission.DatasetRowPermissionsTreeItem;
 import io.dataease.plugins.datasource.dm.provider.PrestoConfig;
 import io.dataease.plugins.datasource.entity.JdbcConfiguration;
+import io.dataease.plugins.datasource.entity.PageInfo;
 import io.dataease.plugins.datasource.query.QueryProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -348,8 +349,8 @@ public class PrestoQueryProvider extends QueryProvider {
         return sqlLimit(st.render(), view);
     }
 
-    @Override
-    public String getSQLTableInfo(String table, List<ChartViewFieldDTO> xAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DataSetRowPermissionsTreeDTO> rowPermissionsTree, List<ChartExtFilterRequest> extFilterRequestList, Datasource ds, ChartViewWithBLOBs view) {
+
+    private String originalTableInfo(String table, List<ChartViewFieldDTO> xAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DataSetRowPermissionsTreeDTO> rowPermissionsTree, List<ChartExtFilterRequest> extFilterRequestList, Datasource ds, ChartViewWithBLOBs view) {
         SQLObj tableObj = SQLObj.builder()
                 .tableName((table.startsWith("(") && table.endsWith(")")) ? table : String.format(PrestoConstants.KEYWORD_TABLE, table))
                 .tableAlias(String.format(TABLE_ALIAS_PREFIX, 0))
@@ -421,7 +422,12 @@ public class PrestoQueryProvider extends QueryProvider {
                 .build();
         if (CollectionUtils.isNotEmpty(orders)) st.add("orders", orders);
         if (ObjectUtils.isNotEmpty(tableSQL)) st.add("table", tableSQL);
-        return sqlLimit(st.render(), view);
+        return st.render();
+    }
+
+    @Override
+    public String getSQLTableInfo(String table, List<ChartViewFieldDTO> xAxis, List<ChartFieldCustomFilterDTO> fieldCustomFilter, List<DataSetRowPermissionsTreeDTO> rowPermissionsTree, List<ChartExtFilterRequest> extFilterRequestList, Datasource ds, ChartViewWithBLOBs view) {
+        return sqlLimit(originalTableInfo(table, xAxis, fieldCustomFilter, rowPermissionsTree, extFilterRequestList, ds, view), view);
     }
 
     @Override
