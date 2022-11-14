@@ -61,6 +61,9 @@ export const DEFAULT_BACKGROUND_COLOR = {
   alpha: 100,
   borderRadius: 5
 }
+export const DEFAULT_SUSPENSION = {
+  show: true
+}
 export const BASE_MAP = {
   title: {
     text: '',
@@ -248,6 +251,11 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
         chart_option.visualMap.textStyle = {
           color: themeStyle
         }
+      }
+      if (customAttr.suspension && !customAttr.suspension.show) {
+        chart_option.visualMap.show = false
+      } else if ('show' in chart_option.visualMap) {
+        delete chart_option.visualMap.show
       }
       const convert = convertData(mapData, chart, curAreaCode)
       chart_option.series[0].data = convert.value
