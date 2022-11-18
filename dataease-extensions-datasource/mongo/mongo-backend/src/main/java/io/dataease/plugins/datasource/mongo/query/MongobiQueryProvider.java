@@ -1302,4 +1302,9 @@ public class MongobiQueryProvider extends QueryProvider {
             return sql;
         }
     }
+
+    @Override
+    public String sqlForPreview(String table, Datasource ds) {
+        return "SELECT * FROM " + String.format(MongoConstants.KEYWORD_TABLE, table);
+    }
 }
