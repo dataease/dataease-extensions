@@ -1,5 +1,7 @@
 package io.dataease.plugins.datasource.dm.query;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.dataease.plugins.common.base.domain.ChartViewWithBLOBs;
 import io.dataease.plugins.common.base.domain.DatasetTableField;
@@ -17,6 +19,7 @@ import io.dataease.plugins.common.dto.sqlObj.SQLObj;
 import io.dataease.plugins.common.request.chart.ChartExtFilterRequest;
 import io.dataease.plugins.common.request.permission.DataSetRowPermissionsTreeDTO;
 import io.dataease.plugins.common.request.permission.DatasetRowPermissionsTreeItem;
+import io.dataease.plugins.datasource.entity.Dateformat;
 import io.dataease.plugins.datasource.entity.JdbcConfiguration;
 import io.dataease.plugins.datasource.entity.PageInfo;
 import io.dataease.plugins.datasource.query.QueryProvider;
@@ -1260,5 +1263,21 @@ public class MaxcomputeQueryProvider extends QueryProvider {
         } else {
             return sql;
         }
+    }
+
+    public List<Dateformat> dateformat() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Dateformat> dateformats = new ArrayList<>();
+        try{
+            dateformats = objectMapper.readValue("[\n" +
+                    "{\"dateformat\": \"yyyymmdd\"},\n" +
+                    "{\"dateformat\": \"yyyy/mm/dd\"},\n" +
+                    "{\"dateformat\": \"yyyy-mm-dd\"},\n" +
+                    "{\"dateformat\": \"yyyymmdd hh:mi:s\"},\n" +
+                    "{\"dateformat\": \"yyyy/mm/dd hh:mi:s\"},\n" +
+                    "{\"dateformat\": \"yyyy-mm-dd hh:mi:s\"}\n" +
+                    "]", new TypeReference<List<Dateformat>>() {} );
+        }catch (Exception e){}
+        return dateformats;
     }
 }

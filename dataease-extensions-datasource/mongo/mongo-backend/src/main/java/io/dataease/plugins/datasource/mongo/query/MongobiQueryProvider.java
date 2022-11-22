@@ -1,5 +1,7 @@
 package io.dataease.plugins.datasource.mongo.query;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dataease.plugins.common.base.domain.ChartViewWithBLOBs;
 import io.dataease.plugins.common.base.domain.DatasetTableField;
 import io.dataease.plugins.common.base.domain.DatasetTableFieldExample;
@@ -15,6 +17,7 @@ import io.dataease.plugins.common.dto.sqlObj.SQLObj;
 import io.dataease.plugins.common.request.chart.ChartExtFilterRequest;
 import io.dataease.plugins.common.request.permission.DataSetRowPermissionsTreeDTO;
 import io.dataease.plugins.common.request.permission.DatasetRowPermissionsTreeItem;
+import io.dataease.plugins.datasource.entity.Dateformat;
 import io.dataease.plugins.datasource.entity.PageInfo;
 import io.dataease.plugins.datasource.query.QueryProvider;
 import io.dataease.plugins.datasource.query.Utils;
@@ -1306,5 +1309,21 @@ public class MongobiQueryProvider extends QueryProvider {
     @Override
     public String sqlForPreview(String table, Datasource ds) {
         return "SELECT * FROM " + String.format(MongoConstants.KEYWORD_TABLE, table);
+    }
+
+    public List<Dateformat> dateformat() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Dateformat> dateformats = new ArrayList<>();
+        try{
+            dateformats = objectMapper.readValue("[\n" +
+                    "{\"dateformat\": \"%Y%m%d\"},\n" +
+                    "{\"dateformat\": \"%Y-%m-%d\"},\n" +
+                    "{\"dateformat\": \"%Y/%m/%d\"},\n" +
+                    "{\"dateformat\": \"%Y%m%d %H:%i:%S\"},\n" +
+                    "{\"dateformat\": \"%Y/%m/%d %H:%i:%S\"},\n" +
+                    "{\"dateformat\": \"%Y-%m-%d %H:%i:%S\"}\n" +
+                    "]", new TypeReference<List<Dateformat>>() {} );
+        }catch (Exception e){}
+        return dateformats;
     }
 }

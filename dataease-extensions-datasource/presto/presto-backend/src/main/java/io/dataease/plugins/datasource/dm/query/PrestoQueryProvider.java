@@ -1,5 +1,7 @@
 package io.dataease.plugins.datasource.dm.query;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.dataease.plugins.common.base.domain.ChartViewWithBLOBs;
 import io.dataease.plugins.common.base.domain.DatasetTableField;
@@ -18,6 +20,7 @@ import io.dataease.plugins.common.request.chart.ChartExtFilterRequest;
 import io.dataease.plugins.common.request.permission.DataSetRowPermissionsTreeDTO;
 import io.dataease.plugins.common.request.permission.DatasetRowPermissionsTreeItem;
 import io.dataease.plugins.datasource.dm.provider.PrestoConfig;
+import io.dataease.plugins.datasource.entity.Dateformat;
 import io.dataease.plugins.datasource.entity.JdbcConfiguration;
 import io.dataease.plugins.datasource.entity.PageInfo;
 import io.dataease.plugins.datasource.query.QueryProvider;
@@ -1258,5 +1261,21 @@ public class PrestoQueryProvider extends QueryProvider {
             String database = prestoConfig.getDataBase();
             tableObj.setTableName(database + "." + schema + "." + tableObj.getTableName());
         }
+    }
+
+    public List<Dateformat> dateformat() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Dateformat> dateformats = new ArrayList<>();
+        try{
+            dateformats = objectMapper.readValue("[\n" +
+                    "{\"dateformat\": \"yyyy-MM-dd\"},\n" +
+                    "{\"dateformat\": \"yyyy/MM/dd\"},\n" +
+                    "{\"dateformat\": \"YyyyyMMdd\"},\n" +
+                    "{\"dateformat\": \"yyyy-MM-dd HH:mm:s\"},\n" +
+                    "{\"dateformat\": \"yyyy-MM-dd HH:mm:s\"},\n" +
+                    "{\"dateformat\": \"yyyy-MM-dd HH:mm:s\"}\n" +
+                    "]", new TypeReference<List<Dateformat>>() {} );
+        }catch (Exception e){}
+        return dateformats;
     }
 }
