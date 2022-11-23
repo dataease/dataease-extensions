@@ -23,7 +23,8 @@ public class BubbleMapService extends ViewPluginService {
                     "color-selector",
                     "label-selector",
                     "tooltip-selector",
-                    "title-selector"
+                    "title-selector",
+                    "suspension-selector"
             };
 
     private static final Map<String, String[]> VIEW_STYLE_PROPERTY_INNER = new HashMap();
@@ -33,6 +34,7 @@ public class BubbleMapService extends ViewPluginService {
         VIEW_STYLE_PROPERTY_INNER.put("label-selector", new String[]{"show", "fontSize", "color", "position", "formatter"});
         VIEW_STYLE_PROPERTY_INNER.put("tooltip-selector", new String[]{"show", "textStyle", "formatter"});
         VIEW_STYLE_PROPERTY_INNER.put("title-selector", new String[]{"show", "title", "fontSize", "color", "hPosition", "vPosition", "isItalic", "isBolder"});
+        VIEW_STYLE_PROPERTY_INNER.put("suspension-selector", new String[]{"show"});
     }
 
     /*下版这些常量移到sdk*/
