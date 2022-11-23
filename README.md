@@ -16,3 +16,4 @@
  - bubblemap
  - symbolmap
 
+更多插件持续开发中，敬请期待。
