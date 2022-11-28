@@ -34,6 +34,7 @@ public class MaxcomputeService extends DatasourceService {
         staticResource.setName("maxcompute");
         staticResource.setSuffix("jpg");
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
     }
 
@@ -46,5 +47,12 @@ public class MaxcomputeService extends DatasourceService {
         dataSourceType.setAliasSuffix("\"");
         dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
         return dataSourceType;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("maxcompute-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 }

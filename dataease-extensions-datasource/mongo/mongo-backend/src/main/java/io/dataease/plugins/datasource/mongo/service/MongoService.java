@@ -34,6 +34,7 @@ public class MongoService extends DatasourceService {
         staticResource.setName("mongobi");
         staticResource.setSuffix("jpg");
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
     }
 
@@ -46,5 +47,12 @@ public class MongoService extends DatasourceService {
         dataSourceType.setAliasSuffix("");
         dataSourceType.setDatabaseClassification(DatabaseClassification.NORDBMS);
         return dataSourceType;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("mongo-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 }

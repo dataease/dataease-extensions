@@ -35,6 +35,7 @@ public class DmService extends DatasourceService {
         staticResource.setName("dm");
         staticResource.setSuffix("jpg");
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
     }
 
@@ -47,5 +48,12 @@ public class DmService extends DatasourceService {
         dataSourceType.setAliasSuffix("\"");
         dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
         return dataSourceType;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("dm-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 }
