@@ -34,6 +34,7 @@ public class PrestoService extends DatasourceService {
         staticResource.setName("presto");
         staticResource.setSuffix("jpg");
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
     }
 
@@ -42,5 +43,12 @@ public class PrestoService extends DatasourceService {
         DataSourceType dataSourceType =  new DataSourceType("presto", "Presto" , true , "", DatasourceCalculationMode.DIRECT, true);
         dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
         return dataSourceType;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("presto-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 }

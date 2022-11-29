@@ -34,6 +34,7 @@ public class KylinService extends DatasourceService {
         staticResource.setName("kylin");
         staticResource.setSuffix("jpg");
         results.add(staticResource);
+        results.add(pluginSvg());
         return results;
     }
 
@@ -42,5 +43,12 @@ public class KylinService extends DatasourceService {
         DataSourceType dataSourceType =  new DataSourceType("kylin", "Kylin" , true , "", DatasourceCalculationMode.DIRECT, true);
         dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
         return dataSourceType;
+    }
+
+    private StaticResource pluginSvg() {
+        StaticResource staticResource = new StaticResource();
+        staticResource.setName("kylin-backend");
+        staticResource.setSuffix("svg");
+        return staticResource;
     }
 }
