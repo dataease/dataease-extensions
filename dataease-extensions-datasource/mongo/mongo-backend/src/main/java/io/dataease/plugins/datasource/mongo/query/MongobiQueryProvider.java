@@ -1148,7 +1148,7 @@ public class MongobiQueryProvider extends QueryProvider {
             if (x.getDeType() == 1) {
                 String format = transDateFormat(x.getDateStyle(), x.getDatePattern());
                 if (x.getDeExtractType() == 0) {
-                    fieldName = String.format(MongoConstants.DATE_FORMAT, originField, format);
+                    fieldName = String.format(MongoConstants.DATE_FORMAT, String.format(MongoConstants.STR_TO_DATE, originField, StringUtils.isNotEmpty(x.getDateFormat()) ? x.getDateFormat() : MongoConstants.DEFAULT_DATE_FORMAT), format);
                 } else {
                     String cast = String.format(MongoConstants.CAST, originField, MongoConstants.DEFAULT_INT_FORMAT) + "/1000";
                     String from_unixtime = String.format(MongoConstants.FROM_UNIXTIME, cast, MongoConstants.DEFAULT_DATE_FORMAT);

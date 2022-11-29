@@ -932,7 +932,7 @@ public class PrestoQueryProvider extends QueryProvider {
             }
             if (field.getDeType() == 1) {
                 if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                    whereName = String.format(PrestoConstants.CAST, originName, "timestamp");
+                    whereName = String.format(PrestoConstants.date_parse, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : PrestoConstants.DEFAULT_DATE_FORMAT);
                 }
                 if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                     String cast = String.format(PrestoConstants.CAST, originName, "bigint");
@@ -1031,7 +1031,7 @@ public class PrestoQueryProvider extends QueryProvider {
 
                 if (field.getDeType() == 1) {
                     if (field.getDeExtractType() == 0 || field.getDeExtractType() == 5) {
-                        whereName = String.format(PrestoConstants.CAST, originName, "timestamp");
+                        whereName = String.format(PrestoConstants.date_parse, originName, StringUtils.isNotEmpty(field.getDateFormat()) ? field.getDateFormat() : PrestoConstants.DEFAULT_DATE_FORMAT);
                     }
                     if (field.getDeExtractType() == 2 || field.getDeExtractType() == 3 || field.getDeExtractType() == 4) {
                         String cast = String.format(PrestoConstants.CAST, originName, "bigint");
@@ -1145,7 +1145,7 @@ public class PrestoQueryProvider extends QueryProvider {
             if (x.getDeType() == DeTypeConstants.DE_TIME) {
                 String format = transDateFormat(x.getDateStyle(), x.getDatePattern());
                 if (x.getDeExtractType() == DeTypeConstants.DE_STRING) {
-                    fieldName = String.format(PrestoConstants.FORMAT_DATETIME, String.format(PrestoConstants.FROM_UNIXTIME, originField + "/1000"), format);
+                    fieldName = String.format(PrestoConstants.FORMAT_DATETIME, String.format(PrestoConstants.date_parse, originField, StringUtils.isNotEmpty(x.getDateFormat()) ? x.getDateFormat() : PrestoConstants.DEFAULT_DATE_FORMAT), format);
                 } else {
                     String from_unixtime = String.format(PrestoConstants.FROM_UNIXTIME, originField + "/1000");
                     fieldName = String.format(PrestoConstants.FORMAT_DATETIME, from_unixtime, format);

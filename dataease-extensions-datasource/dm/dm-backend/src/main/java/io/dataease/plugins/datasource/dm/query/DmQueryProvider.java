@@ -1374,8 +1374,7 @@ public class DmQueryProvider extends QueryProvider {
             if (x.getDeType() == DeTypeConstants.DE_TIME) {
                 String format = transDateFormat(x.getDateStyle(), x.getDatePattern());
                 if (x.getDeExtractType() == DeTypeConstants.DE_STRING) { // 字符串转时间
-                    String toDate = String.format(OracleConstants.TO_DATE, originField,
-                            OracleConstants.DEFAULT_DATE_FORMAT);
+                    String toDate = String.format(OracleConstants.TO_DATE, originField, StringUtils.isNotEmpty(x.getDateFormat()) ? x.getDateFormat() : OracleConstants.DEFAULT_DATE_FORMAT);
                     fieldName = String.format(OracleConstants.TO_CHAR, toDate, format);
                 } else { // 数值转时间
                     String date = originField + "/(1000 * 60 * 60 * 24)+" + String.format(OracleConstants.TO_DATE,
