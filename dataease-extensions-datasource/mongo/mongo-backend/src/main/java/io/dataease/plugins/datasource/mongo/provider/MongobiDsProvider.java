@@ -8,6 +8,7 @@ import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.plugins.common.exception.DataEaseException;
 import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.datasource.entity.JdbcConfiguration;
+import io.dataease.plugins.datasource.mongo.query.MongoConstants;
 import io.dataease.plugins.datasource.provider.DefaultJdbcProvider;
 import io.dataease.plugins.datasource.provider.ExtendedJdbcClassLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -106,7 +107,8 @@ public class MongobiDsProvider extends DefaultJdbcProvider {
 
     @Override
     public List<TableField> getTableFields(DatasourceRequest datasourceRequest) throws Exception {
-        datasourceRequest.setQuery("select * from " + datasourceRequest.getTable() + " limit 0");
+
+        datasourceRequest.setQuery("select * from " +  String.format(MongoConstants.KEYWORD_TABLE, datasourceRequest.getTable()) + " limit 0");
         return fetchResultField(datasourceRequest);
     }
 
