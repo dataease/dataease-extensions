@@ -1,7 +1,6 @@
 <template>
   <div style="width: 100%">
     <el-col>
-      
       <el-form ref="sizeFormLine" :model="sizeForm" label-width="80px" size="mini">
         <el-form-item :label="$t('chart.bubble_symbol')" class="form-item">
           <el-select v-model="sizeForm.scatterSymbol" :placeholder="$t('chart.line_symbol')" @change="changeBarSizeCase">
@@ -23,8 +22,6 @@
           <el-slider v-model="sizeForm.symbolStrokeWidth" show-input :show-input-controls="false" input-size="mini" :min="0" :max="5" @change="changeBarSizeCase" />
         </el-form-item>
       </el-form>
-
-     
     </el-col>
   </div>
 </template>
@@ -53,7 +50,7 @@ export default {
         { name: this.$t('chart.line_symbol_triangle'), value: 'triangle' },
         { name: this.$t('plugin_view_symbol_map.pentagon'), value: 'pentagon' },
         { name: this.$t('plugin_view_symbol_map.hexagon'), value: 'hexagon' },
-        { name: this.$t('plugin_view_symbol_map.octogon'), value: 'octogon' },
+        { name: this.$t('plugin_view_symbol_map.octagon'), value: 'octogon' },
         { name: this.$t('plugin_view_symbol_map.hexagram'), value: 'hexagram' },
         { name: this.$t('chart.line_symbol_diamond'), value: 'rhombus' }
       ]
@@ -80,11 +77,11 @@ export default {
           customAttr = JSON.parse(chart.customAttr)
         }
         if (customAttr.size) {
-          this.sizeForm = customAttr.size          
+          this.sizeForm = customAttr.size
         }
       }
     },
-    
+
     changeBarSizeCase() {
       this.$emit('onSizeChange', this.sizeForm)
     },
