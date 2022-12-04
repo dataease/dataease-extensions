@@ -40,7 +40,7 @@
         <span>{{ $t('plugin_view_symbol_map.mark_size') }}</span>/<span>{{ $t('chart.quota') }}</span>
         <el-tooltip class="item" effect="dark" placement="bottom">
             <div slot="content">
-            该指标生效时，样式大小中的气泡大小属性将失效
+              {{ $t('plugin_view_symbol_map.mark_size_tip') }}
             </div>
             <i class="el-icon-info" style="cursor: pointer;color: #606266;" />
         </el-tooltip>
@@ -144,10 +144,10 @@
     },
     watch: {
       longitudes(val) {
-          this.view.xaxis = [...this.longitudes, ...this.latitudes]   
+          this.view.xaxis = [...this.longitudes, ...this.latitudes]
       },
       latitudes(val) {
-          this.view.xaxis = [...this.longitudes, ...this.latitudes]   
+          this.view.xaxis = [...this.longitudes, ...this.latitudes]
       }
     },
     methods: {
@@ -217,8 +217,8 @@
         this.calcData(true)
       },
       calcData(cache) {
-        this.view.xaxis = [...this.longitudes, ...this.latitudes]       
-       
+        this.view.xaxis = [...this.longitudes, ...this.latitudes]
+
         this.$emit('plugin-call-back', {
           eventName: 'calc-data',
           eventParam: {

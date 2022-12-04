@@ -14,10 +14,8 @@
           <el-form-item :label="$t('chart.text_color')" class="form-item">
             <el-color-picker v-model="tooltipForm.textStyle.color" class="color-picker-style" :predefine="predefineColors" @change="changeTooltipAttr" />
           </el-form-item>
-
           <el-form-item :label="$t('chart.tooltip')" class="form-item">
             <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags @change="changeFields">
-    
                 <el-option-group
                     v-for="group in fieldOptions"
                     :key="group.label"
@@ -32,14 +30,13 @@
                 </el-option-group>
             </el-select>
           </el-form-item>
-
           <el-form-item class="form-item">
             <span slot="label">
               <span class="span-box">
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                        可以${fieldName}形式读字段值，标签和提示中字段互相通用，内置经纬度相关字段
+                    {{ $t('plugin_view_symbol_map.label_format_tip') }}
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
@@ -47,7 +44,6 @@
             </span>
             <el-input v-model="tooltipForm.tooltipTemplate" type="textarea" :placeholder="defaultPlaceholder" :autosize="{ minRows: 4, maxRows: 4}" @blur="changeTooltipAttr" />
           </el-form-item>
-
         </div>
       </el-form>
     </el-col>
@@ -100,7 +96,7 @@ export default {
               return item
             })
           }
-        ]            
+        ]
       },
       tooltipFields() {
           return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
@@ -183,9 +179,9 @@ export default {
                 // temp += (item.name +'：${properties.'+item.name+'}<br>')
             }
         })
-        // this.tooltipForm.tooltipTemplate = temp 
+        // this.tooltipForm.tooltipTemplate = temp
         this.$emit('onRefreshViewFields',this.view.viewFields)
-        
+
     },
   }
 }

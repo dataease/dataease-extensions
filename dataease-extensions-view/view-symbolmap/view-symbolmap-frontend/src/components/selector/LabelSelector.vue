@@ -6,7 +6,6 @@
           <el-checkbox v-model="labelForm.show" @change="changeLabelAttr">{{ $t('chart.show') }}</el-checkbox>
         </el-form-item>
         <div v-show="labelForm.show">
-          
           <el-form-item :label="$t('chart.text_fontsize')" class="form-item">
             <el-select v-model="labelForm.fontSize" :placeholder="$t('chart.text_fontsize')" size="mini" @change="changeLabelAttr">
               <el-option v-for="option in fontSize" :key="option.value" :label="option.name" :value="option.value" />
@@ -15,11 +14,8 @@
           <el-form-item :label="$t('chart.text_color')" class="form-item">
             <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors" @change="changeLabelAttr" />
           </el-form-item>
-          
-
           <el-form-item :label="$t('chart.label')" class="form-item">
             <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags @change="changeFields">
-    
                 <el-option-group
                     v-for="group in fieldOptions"
                     :key="group.label"
@@ -35,14 +31,13 @@
                 </el-option-group>
             </el-select>
           </el-form-item>
-          
           <el-form-item class="form-item">
             <span slot="label">
               <span class="span-box">
                 <span>{{ $t('chart.content_formatter') }}</span>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">
-                    可以${fieldName}形式读字段值，标签和提示中字段互相通用，内置经纬度相关字段（标签不支持换行）
+                    {{ $t('plugin_view_symbol_map.tooltip_format_tip') }}
                   </div>
                   <i class="el-icon-info" style="cursor: pointer;" />
                 </el-tooltip>
@@ -52,7 +47,7 @@
           </el-form-item>
         </div>
       </el-form>
-      
+
     </el-col>
   </div>
 </template>
@@ -105,7 +100,7 @@ export default {
               return item
             })
           }
-        ]            
+        ]
       },
       labelFields() {
           return this.view.viewFields && this.view.viewFields.filter(field => field.busiType === this.busiType)
@@ -197,9 +192,9 @@ export default {
               this.view.viewFields.push(item)
           }
       })
-              
+
       this.$emit('onRefreshViewFields',this.view.viewFields)
-        
+
     },
     initOptions() {
       const type = this.chart.type
