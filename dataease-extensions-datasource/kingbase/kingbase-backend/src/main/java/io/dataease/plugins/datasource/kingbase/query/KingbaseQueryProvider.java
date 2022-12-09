@@ -75,6 +75,9 @@ public class KingbaseQueryProvider extends QueryProvider {
             case "TIMESTAMP":
                 return 1;// 时间
             case "INT":
+            case "INT2":
+            case "INT4":
+            case "INT8":
             case "SMALLINT":
             case "MEDIUMINT":
             case "INTEGER":
@@ -82,6 +85,8 @@ public class KingbaseQueryProvider extends QueryProvider {
                 return 2;// 整型
             case "NUMBER":
             case "FLOAT":
+            case "FLOAT4":
+            case "FLOAT8":
             case "DOUBLE":
             case "DECIMAL":
             case "DEC":
