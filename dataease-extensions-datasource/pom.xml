@@ -15,6 +15,7 @@
         <module>dm</module>
         <module>mongo</module>
         <module>kylin</module>
+        <module>kingbase</module>
     </modules>
 
     <artifactId>dataease-extensions-datasource</artifactId>
