@@ -41,7 +41,7 @@ public class KylinService extends DatasourceService {
     @Override
     public DataSourceType getDataSourceType() {
         DataSourceType dataSourceType =  new DataSourceType("kylin", "Kylin" , true , "", DatasourceCalculationMode.DIRECT, true);
-        dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
+        dataSourceType.setDatabaseClassification(DatabaseClassification.DL);
         return dataSourceType;
     }
 

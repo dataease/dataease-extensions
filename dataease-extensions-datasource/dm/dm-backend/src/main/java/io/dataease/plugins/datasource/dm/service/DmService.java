@@ -46,7 +46,7 @@ public class DmService extends DatasourceService {
         dataSourceType.setKeywordSuffix("\"");
         dataSourceType.setAliasPrefix("\"");
         dataSourceType.setAliasSuffix("\"");
-        dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
+        dataSourceType.setDatabaseClassification(DatabaseClassification.OLTP);
         return dataSourceType;
     }
 

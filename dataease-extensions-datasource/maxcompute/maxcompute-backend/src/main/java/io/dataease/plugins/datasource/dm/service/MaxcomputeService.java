@@ -45,7 +45,7 @@ public class MaxcomputeService extends DatasourceService {
         dataSourceType.setKeywordSuffix("\"");
         dataSourceType.setAliasPrefix("\"");
         dataSourceType.setAliasSuffix("\"");
-        dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
+        dataSourceType.setDatabaseClassification(DatabaseClassification.DL);
         return dataSourceType;
     }
 

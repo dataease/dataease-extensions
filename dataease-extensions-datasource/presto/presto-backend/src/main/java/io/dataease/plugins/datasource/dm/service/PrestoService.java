@@ -41,7 +41,7 @@ public class PrestoService extends DatasourceService {
     @Override
     public DataSourceType getDataSourceType() {
         DataSourceType dataSourceType =  new DataSourceType("presto", "Presto" , true , "", DatasourceCalculationMode.DIRECT, true);
-        dataSourceType.setDatabaseClassification(DatabaseClassification.RDBMS);
+        dataSourceType.setDatabaseClassification(DatabaseClassification.OLAP);
         return dataSourceType;
     }
 

@@ -45,7 +45,7 @@ public class MongoService extends DatasourceService {
         dataSourceType.setKeywordSuffix("`");
         dataSourceType.setAliasPrefix("");
         dataSourceType.setAliasSuffix("");
-        dataSourceType.setDatabaseClassification(DatabaseClassification.NORDBMS);
+        dataSourceType.setDatabaseClassification(DatabaseClassification.OLTP);
         return dataSourceType;
     }
 
