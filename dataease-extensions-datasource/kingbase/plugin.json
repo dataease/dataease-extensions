@@ -5,7 +5,7 @@
     "cost":0,
     "category":"datasource",
     "descript":"人大金仓插件，值得拥有",
-    "version":"1.0-SNAPSHOT",
+    "version":"1.18.0",
     "creator":"DATAEASE",
     "moduleName":"kingbase-backend",
     "require":"1.17.0",
