@@ -5,7 +5,7 @@
     "cost":0,
     "category":"datasource",
     "descript":"Kylin 插件，值得拥有",
-    "version":"1.0-SNAPSHOT",
+    "version":"1.18.0",
     "creator":"DATAEASE",
     "moduleName":"kylin-backend",
     "require":"1.16.0",
