@@ -101,7 +101,10 @@
     },
     watch: {
       chart: {
-        handler(newVal, oldVla) {
+        handler(newVal, oldVal) {
+          if (newVal && oldVal && JSON.stringify(newVal) === JSON.stringify(oldVal)) {
+            return
+          }
           this.preDraw()
         },
         deep: true
