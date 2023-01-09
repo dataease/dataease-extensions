@@ -85,28 +85,10 @@ export const BASE_MAP = {
   },
 
   tooltip: {},
-  geo: [{
-      show: true,
-      map: 'BUDDLE_MAP_BORDER',
-      silent: true,
-      label: {
-        normal: {
-          show: false
-        },
-        emphasis: {
-          show: true
-        }
-      },
-      itemStyle: {
-        borderWidth: 2,
-        borderColor: '#d1d1d1',
-        borderType: 'solid'
-      },
-
-      roam: 'move'
-    },
+  geo: [
     {
       show: true,
+      roam: true,
       map: 'BUDDLE_MAP',
       label: {
         normal: {
@@ -120,9 +102,7 @@ export const BASE_MAP = {
         areaColor: '#f3f3f3',
         borderType: 'dashed',
         borderColor: '#fff'
-      },
-
-      roam: 'move'
+      }
     }
   ],
   series: [{
