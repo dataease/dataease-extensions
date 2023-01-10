@@ -6,7 +6,7 @@
 
     <groupId>io.dataease</groupId>
     <artifactId>dataease-extensions</artifactId>
-    <version>1.18.1</version>
+    <version>1.18.2</version>
     <packaging>pom</packaging>
 
 
