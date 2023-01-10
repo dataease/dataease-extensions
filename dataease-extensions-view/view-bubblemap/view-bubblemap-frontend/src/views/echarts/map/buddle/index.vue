@@ -82,6 +82,9 @@
       trackBarStyleTime() {
         return this.trackBarStyle
       },
+      active() {
+        return this.obj.active
+      },
       chart() {
         return this.obj.chart
       },
@@ -97,9 +100,14 @@
       terminalType() {
         return this.obj.terminalType || 'pc'
       }
-      
+
     },
     watch: {
+      active: {
+        handler(newVal, oldVla) {
+          this.scrollStatusChange(newVal)
+        }
+      },
       chart: {
         handler(newVal, oldVal) {
           if (newVal && oldVal && JSON.stringify(newVal) === JSON.stringify(oldVal)) {
@@ -133,6 +141,21 @@
       this.loadThemeStyle()
     },
     methods: {
+      scrollStatusChange() {
+          const opt = this.myChart.getOption()
+          this.adaptorOpt(opt)
+          this.myChart.setOption(opt)
+      },
+      adaptorOpt(opt) {
+        //地图
+        if (opt.geo) {
+          if (opt.geo instanceof Array) {
+            opt.geo[0].roam = this.active
+          } else {
+            opt.geo.roam = this.active
+          }
+        }
+      },
       executeAxios(url, type, data, callBack, hideMsg) {
         const param = {
           url: url,
@@ -232,7 +255,7 @@
               } else {
                 this.buttonTextColor = null
               }
-            } 
+            }
           } else {
             this.buttonTextColor = null
           }
@@ -243,7 +266,7 @@
       },
 
 
-      
+
       initMapChart(cCode, geoJson, chart) {
         this.$echarts.registerMap('BUDDLE_MAP', geoJson)
         const base_json = JSON.parse(JSON.stringify(BASE_MAP))
@@ -252,7 +275,7 @@
           return
         }
         let hasCenter = false
-        
+
         geoJson.features.map(function (item) {
           mapData[item.properties.name] = item.properties.centroid || item.properties.center || centerPointJson[item.properties.name]
           if (mapData[item.properties.name]) {
@@ -266,7 +289,7 @@
         let themeStyle = null
         if (this.themeStyle) {
           themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
-          
+
           if (themeStyle && themeStyle.backgroundColorSelect) {
             const panelColor = themeStyle.color
             if (panelColor !== '#FFFFFF') {
@@ -296,6 +319,7 @@
         }
       },
       myEcharts(option) {
+        this.adaptorOpt(option)
         const chart = this.myChart
         this.setBackGroundBorder()
         setTimeout(chart.setOption(option, true), 500)
