@@ -103,14 +103,11 @@
 
     },
     watch: {
-<<<<<<< HEAD
-=======
       active: {
         handler(newVal, oldVla) {
           this.scrollStatusChange(newVal)
         }
       },
->>>>>>> dev
       chart: {
         handler(newVal, oldVal) {
           if (newVal && oldVal && JSON.stringify(newVal) === JSON.stringify(oldVal)) {
