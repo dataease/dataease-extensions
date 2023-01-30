@@ -8,10 +8,12 @@ import io.dataease.plugins.view.service.ViewPluginBaseService;
 import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,11 +55,15 @@ public class SymbolMapStatHandler implements PluginViewStatHandler {
         String panelWheres = baseService.panelWhere(dsType, pluginViewParam.getPluginChartExtFilters(), tableObj);
         // 构建sql所有参数
 
+        String permissionWhere = baseService.permissionWhere(dsType, pluginViewParam.getRowPermissionsTree(), tableObj);
         List<String> wheres = new ArrayList<>();
         if (customWheres != null)
             wheres.add(customWheres);
         if (panelWheres != null)
             wheres.add(panelWheres);
+        if (StringUtils.isNotBlank(permissionWhere)) {
+            wheres.add(permissionWhere);
+        }
         List<PluginViewSQL> groups = new ArrayList<>();
         groups.addAll(xFields);
         // 外层再次套sql

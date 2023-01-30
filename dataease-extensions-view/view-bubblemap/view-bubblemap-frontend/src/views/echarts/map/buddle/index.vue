@@ -82,6 +82,9 @@
       trackBarStyleTime() {
         return this.trackBarStyle
       },
+      active() {
+        return this.obj.active
+      },
       chart() {
         return this.obj.chart
       },
@@ -97,9 +100,17 @@
       terminalType() {
         return this.obj.terminalType || 'pc'
       }
-      
+
     },
     watch: {
+<<<<<<< HEAD
+=======
+      active: {
+        handler(newVal, oldVla) {
+          this.scrollStatusChange(newVal)
+        }
+      },
+>>>>>>> dev
       chart: {
         handler(newVal, oldVal) {
           if (newVal && oldVal && JSON.stringify(newVal) === JSON.stringify(oldVal)) {
@@ -133,6 +144,21 @@
       this.loadThemeStyle()
     },
     methods: {
+      scrollStatusChange() {
+          const opt = this.myChart.getOption()
+          this.adaptorOpt(opt)
+          this.myChart.setOption(opt)
+      },
+      adaptorOpt(opt) {
+        //地图
+        if (opt.geo) {
+          if (opt.geo instanceof Array) {
+            opt.geo[0].roam = this.active
+          } else {
+            opt.geo.roam = this.active
+          }
+        }
+      },
       executeAxios(url, type, data, callBack, hideMsg) {
         const param = {
           url: url,
@@ -232,7 +258,7 @@
               } else {
                 this.buttonTextColor = null
               }
-            } 
+            }
           } else {
             this.buttonTextColor = null
           }
@@ -243,44 +269,16 @@
       },
 
 
+
       initMapChart(cCode, geoJson, chart) {
-        const geoBorderMap = !!localStorage.getItem('geoBorderMap') ? JSON.parse(localStorage.getItem('geoBorderMap')) :
-        {}
-
-        if (geoBorderMap[cCode]) {
-          this.setTwoMap(geoJson, geoBorderMap[cCode], chart, cCode)
-          return
-        }
-
-        const countryCode = cCode.substring(0, 3)
-        const url = '/geo/border/' + countryCode + '/' + cCode + '.json'
-        this.executeAxios(url, 'get', null, res => {
-          if (res && !(res instanceof Error) && Object.keys(res).length > 0) {
-            geoBorderMap[cCode] = res
-            localStorage.setItem("geoBorderMap", JSON.stringify(geoBorderMap))
-            this.setTwoMap(geoJson, geoBorderMap[cCode], chart, cCode)
-          } else {
-            this.setTwoMap(geoJson, null, chart, cCode)
-          }
-        }, true)
-      },
-      setTwoMap(geoJson, geoJsonBorder, chart, cCode) {
         this.$echarts.registerMap('BUDDLE_MAP', geoJson)
-        geoJsonBorder && this.$echarts.registerMap('BUDDLE_MAP_BORDER', geoJsonBorder)
         const base_json = JSON.parse(JSON.stringify(BASE_MAP))
-
-        if (!geoJsonBorder) {
-          base_json.geo = [base_json.geo[1]]
-        }
-        base_json.geo.forEach((item, index) => {
-          item.id = chart.id + '_' + index
-        })
         let mapData = {}
         if (!geoJson || !geoJson.features || !geoJson.features.length === 0) {
           return
         }
         let hasCenter = false
-        
+
         geoJson.features.map(function (item) {
           mapData[item.properties.name] = item.properties.centroid || item.properties.center || centerPointJson[item.properties.name]
           if (mapData[item.properties.name]) {
@@ -294,7 +292,7 @@
         let themeStyle = null
         if (this.themeStyle) {
           themeStyle = JSON.parse(JSON.stringify(this.themeStyle))
-          
+
           if (themeStyle && themeStyle.backgroundColorSelect) {
             const panelColor = themeStyle.color
             if (panelColor !== '#FFFFFF') {
@@ -322,45 +320,9 @@
           const center = opt.series[0].center
           this.mapCenter = center
         }
-        
-        if (chart_option.geo && chart_option.geo.length > 1) {
-          this.myChart.on('mouseover', params => {
-            if (params.componentType === 'geo' && params.geoIndex === 0) {
-              this.myChart.dispatchAction({
-                type: 'downplay',
-                geoIndex: 0
-              })
-              this.myChart.dispatchAction({
-                type: 'geoUnSelect',
-                geoIndex: 0
-              })
-            }
-          })
-
-          this.myChart.on('georoam', zoomParams => {
-            const curOptions = this.myChart.getOption()
-            if (zoomParams.zoom != null && zoomParams.zoom != undefined) {
-              curOptions.geo.forEach(item => {
-                if (zoomParams.zoom !== item.zoom) {
-                  item.zoom = zoomParams.zoom
-                }
-              })
-            }
-            const len = curOptions.geo.length
-            if (len > 1) {
-              for (let i = 0; i < len; i++) {
-                if (curOptions.geo[i].id === zoomParams.geoId) {
-                  const targetIndex = (i + 1) % 2
-                  curOptions.geo[targetIndex].center = curOptions.geo[i].center
-                }
-              }
-            }
-            this.myChart.setOption(curOptions)
-          })
-        }
-
       },
       myEcharts(option) {
+        this.adaptorOpt(option)
         const chart = this.myChart
         this.setBackGroundBorder()
         setTimeout(chart.setOption(option, true), 500)
