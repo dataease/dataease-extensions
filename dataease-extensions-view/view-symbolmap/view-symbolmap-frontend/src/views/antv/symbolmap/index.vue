@@ -21,9 +21,9 @@
       <div>
         <el-button :style="{'background': buttonTextColor ? 'none' : '', 'opacity': buttonTextColor ? '0.75': '', 'color': buttonTextColor, 'borderColor': buttonTextColor}" size="mini" icon="el-icon-minus" circle @click="roamMap(false)" />
       </div>
-      
+
     </div>
-    
+
 
   </div>
 </template>
@@ -134,7 +134,7 @@
       }
     },
     created() {
-      
+
       !this.$scene && (this.$scene = Scene)
       !this.$pointLayer && (this.$pointLayer = PointLayer)
       !this.$popup && (this.$popup = Popup)
@@ -161,13 +161,15 @@
       initMap() {
         if (!this.myChart) {
           let theme = this.getMapTheme(this.chart)
+          const lang = this.$i18n.locale.includes('zh') ? 'zh' : 'en'
           this.myChart = new this.$scene({
             id: this.chartId,
             map: new this.$gaodeMap({
+              lang: lang,
               pitch: 0,
               style: theme,
               center: [ 121.434765, 31.256735 ],
-              zoom: 6         
+              zoom: 6
             }),
             logoVisible: false
           })
@@ -292,7 +294,7 @@
                 layerStyle.strokeWidth = customAttr.size.symbolStrokeWidth
             }
         }
-        
+
 
         this.myChart.layerService.layerList && this.myChart.layerService.layerList.length && this.myChart.layerService.removeAllLayers()
         const data = chart.data && chart.data.data || []
