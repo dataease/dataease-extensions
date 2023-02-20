@@ -174,16 +174,16 @@ export default {
     justify-content: space-between;
     align-items: center;
   }
-.form-item-slider>>>.el-form-item__label{
-  font-size: 12px;
-  line-height: 38px;
-}
-.form-item>>>.el-form-item__label{
-  font-size: 12px;
-}
-.el-select-dropdown__item{
-  padding: 0 20px;
-}
+  .form-item-slider ::v-deep .el-form-item__label{
+    font-size: 12px;
+    line-height: 38px;
+  }
+  .form-item ::v-deep .el-form-item__label{
+    font-size: 12px;
+  }
+  .el-select-dropdown__item{
+    padding: 0 20px;
+  }
   span{
     font-size: 12px
   }

@@ -127,24 +127,24 @@ export default {
 </script>
 
 <style scoped>
-.shape-item{
-  padding: 6px;
-  border: none;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.form-item-slider>>>.el-form-item__label{
-  font-size: 12px;
-  line-height: 38px;
-}
-.form-item>>>.el-form-item__label{
-  font-size: 12px;
-}
-.el-select-dropdown__item{
-  padding: 0 20px;
-}
+  .shape-item{
+    padding: 6px;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .form-item-slider ::v-deep .el-form-item__label{
+    font-size: 12px;
+    line-height: 38px;
+  }
+  .form-item ::v-deep .el-form-item__label{
+    font-size: 12px;
+  }
+  .el-select-dropdown__item{
+    padding: 0 20px;
+  }
   span{
     font-size: 12px
   }
@@ -152,13 +152,13 @@ export default {
     margin-bottom: 6px;
   }
 
-.switch-style{
-  position: absolute;
-  right: 10px;
-  margin-top: -4px;
-}
-.color-picker-style{
-  cursor: pointer;
-  z-index: 1003;
-}
+  .switch-style{
+    position: absolute;
+    right: 10px;
+    margin-top: -4px;
+  }
+  .color-picker-style{
+    cursor: pointer;
+    z-index: 1003;
+  }
 </style>
