@@ -9,9 +9,6 @@
     <version>${dataease.version}</version>
     <packaging>pom</packaging>
 
-
-
-
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -22,6 +19,24 @@
     <properties>
         <dataease.version>1.18.5</dataease.version>
     </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.dataease</groupId>
+                <artifactId>dataease-plugin-datasource</artifactId>
+                <version>${dataease.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dataease</groupId>
+                <artifactId>dataease-plugin-view</artifactId>
+                <version>${dataease.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
 
     <modules>
         <module>dataease-extensions-view</module>

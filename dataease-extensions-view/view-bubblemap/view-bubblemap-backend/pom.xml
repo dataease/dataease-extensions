@@ -19,7 +19,6 @@
         <dependency>
             <groupId>io.dataease</groupId>
             <artifactId>dataease-plugin-view</artifactId>
-            <version>${dataease.version}</version>
         </dependency>
     </dependencies>
 
