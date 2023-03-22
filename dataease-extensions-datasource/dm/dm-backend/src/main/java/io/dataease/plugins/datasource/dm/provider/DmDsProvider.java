@@ -220,7 +220,7 @@ public class DmDsProvider extends DefaultJdbcProvider {
 
     @Override
     public String getSchemaSql(DatasourceRequest datasourceRequest) {
-        return "select * from all_users";
+        return "select OBJECT_NAME from dba_objects where object_type='SCH'";
     }
 
 }
