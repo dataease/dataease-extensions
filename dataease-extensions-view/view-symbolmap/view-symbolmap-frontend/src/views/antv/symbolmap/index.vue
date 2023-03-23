@@ -387,8 +387,14 @@
           if (customAttr.size && customAttr.size.scatterSymbolSize) {
               defaultSize = customAttr.size.scatterSymbolSize
           }
-
-          hasYaxis && this.pointLayer.size('busiValue', [10,25]) || this.pointLayer.size(defaultSize)
+          const baseSizeMap = this.calcStepBase(data)
+          if (hasYaxis && baseSizeMap) {            
+            this.pointLayer.size('busiValue', val => {
+              return Math.ceil(baseSizeMap.baseLine + (val - baseSizeMap.valMin) * baseSizeMap.step)
+            })       
+          } else {
+            this.pointLayer.size(defaultSize)
+          }
         }
         this.myChart.render()
         this.pointLayer && this.resetZoom()
@@ -398,6 +404,27 @@
           this.roamMap(true)
         }
 
+      },
+
+      calcStepBase(data) {
+        if (!data || data.length === 0) {
+          return null
+        }
+        const valueArray = data.map(item => item.busiValue || 0)
+        
+        const min = Math.min(...valueArray)
+        const max = Math.max(...valueArray)
+        if (max === min) {
+          return null
+        }
+        const baseMin = 5
+        const baseMax = 35
+        const step =  (baseMax - baseMin) / (max - min)
+        return {
+          baseLine: baseMin,
+          valMin: min,
+          step
+        }
       },
 
       getMapTheme(chart) {
