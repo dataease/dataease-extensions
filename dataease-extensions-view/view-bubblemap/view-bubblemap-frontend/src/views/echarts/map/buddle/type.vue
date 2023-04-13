@@ -2,7 +2,7 @@
     <el-radio :value="value" :label="value" border class="radio-style">
         <span :title="$t('plugin_view_buddle_map.type_title')">
             <!-- <svg-icon :icon-class="isDev ? svgName : dynamicSvgName" class="chart-icon" /> -->
-            <svg-icon icon-class="buddle-map" class="chart-icon" />
+            <svg-icon icon-class="buddle-map_mini" class="chart-icon" />
         </span>
         <p class="radio-label">{{$t('plugin_view_buddle_map.type_title')}}</p>
     </el-radio>
@@ -24,7 +24,7 @@ export default {
       return '/api/pluginCommon/staticInfo/' + this.value + '/svg'
     }
   },
-  created() {      
+  created() {
     this.$emit('on-add-languages', messages)
   }
 
