@@ -295,57 +295,56 @@
             }
         }
 
-
-        this.myChart.layerService.layerList && this.myChart.layerService.layerList.length && this.myChart.layerService.removeAllLayers()
-        const data = chart.data && chart.data.data || []
-        this.pointLayer = new this.$pointLayer({autoFit: true})
-        this.pointLayer.source(data, {
+        this.myChart.removeAllLayer().then(() => {
+          const data = chart.data && chart.data.data || []
+          this.pointLayer = new this.$pointLayer({autoFit: true})
+          this.pointLayer.source(data, {
             parser: {
-                type: 'json',
-                x: 'longitude',
-                y: 'latitude'
+              type: 'json',
+              x: 'longitude',
+              y: 'latitude'
             }
-        }).shape(defaultSymbol).active(true).style(layerStyle)
-        this.pointLayer.on('add', ev => {
-          setTimeout(() => {
-            this.loading = false
-          }, 500)
-        })
-        this.myChart.addLayer(this.pointLayer);
-        this.addTextLayer(data, chart)
-        this.pointLayer.on('click', ev => {
+          }).shape(defaultSymbol).active(true).style(layerStyle)
+          this.pointLayer.on('add', ev => {
+            setTimeout(() => {
+              this.loading = false
+            }, 500)
+          })
+          this.myChart.addLayer(this.pointLayer);
+          this.addTextLayer(data, chart)
+          this.pointLayer.on('click', ev => {
             const param = {...ev, ...{'data': ev.feature}}
             this.pointParam = param
             if (this.trackMenu.length < 2) { // 只有一个事件直接调用
-            this.trackClick(this.trackMenu[0])
+              this.trackClick(this.trackMenu[0])
             } else { // 视图关联多个事件
-            this.trackBarStyle.left = ev.target.offsetX + 'px'
-            this.trackBarStyle.top = (ev.target.offsetY - 15) + 'px'
-            this.$refs.viewTrack.trackButtonClick()
+              this.trackBarStyle.left = ev.target.offsetX + 'px'
+              this.trackBarStyle.top = (ev.target.offsetY - 15) + 'px'
+              this.$refs.viewTrack.trackButtonClick()
             }
-        })
+          })
 
-        this.pointLayer && this.pointLayer.off('mousemove')
+          this.pointLayer && this.pointLayer.off('mousemove')
 
-        const theme = this.getMapTheme(chart)
-        this.myChart && this.myChart.setMapStyle && this.myChart.setMapStyle(theme)
-        const colors = []
+          const theme = this.getMapTheme(chart)
+          this.myChart && this.myChart.setMapStyle && this.myChart.setMapStyle(theme)
+          const colors = []
 
-        if (customAttr) {
-          if (customAttr.color) {
-            const c = JSON.parse(JSON.stringify(customAttr.color))
-            c.colors.forEach(ele => {
-              colors.push(hexColorToRGBA(ele, c.alpha))
-            })
-            this.pointLayer.color(colors[0])
-          }
-          const yaxis = JSON.parse(chart.yaxis)
-          const hasYaxis =  yaxis && yaxis.length
+          if (customAttr) {
+            if (customAttr.color) {
+              const c = JSON.parse(JSON.stringify(customAttr.color))
+              c.colors.forEach(ele => {
+                colors.push(hexColorToRGBA(ele, c.alpha))
+              })
+              this.pointLayer.color(colors[0])
+            }
+            const yaxis = JSON.parse(chart.yaxis)
+            const hasYaxis =  yaxis && yaxis.length
 
 
-          if (customAttr.tooltip) {
-            const t = JSON.parse(JSON.stringify(customAttr.tooltip))
-            if (t.show) {
+            if (customAttr.tooltip) {
+              const t = JSON.parse(JSON.stringify(customAttr.tooltip))
+              if (t.show) {
                 const fontSize = t.textStyle.fontSize
                 const fontColor = t.textStyle.color
 
@@ -355,49 +354,76 @@
                 const templateWithField = getDefaultTemplate(chart, 'tooltipAxis', true, true)
 
                 this.pointLayer.on('mousemove', event => {
-                    if (!t.show) {
-                        return
-                    }
-                    let content = event.feature.longitude + ',' + event.feature.latitude
-                    if (event.feature.properties && (customAttr.tooltip.tooltipTemplate || templateWithField)) {
-                        const properties = event.feature.properties
-                        const tooltipTemplate = customAttr.tooltip.tooltipTemplate || templateWithField
-                        try {
-                            content = this.fillStrTemplate(tooltipTemplate, properties)
-                        } catch (error) {
+                  if (!t.show) {
+                    return
+                  }
+                  let content = event.feature.longitude + ',' + event.feature.latitude
+                  if (event.feature.properties && (customAttr.tooltip.tooltipTemplate || templateWithField)) {
+                    const properties = event.feature.properties
+                    const tooltipTemplate = customAttr.tooltip.tooltipTemplate || templateWithField
+                    try {
+                      content = this.fillStrTemplate(tooltipTemplate, properties)
+                    } catch (error) {
 
-                        }
-                        content = content || event.feature.longitude + ',' + event.feature.latitude
                     }
-                    content = content.replaceAll('\n', '<br>')
-                    const innerHtml = htmlPrefix + content + htmlSuffix
-                    const popup = new this.$popup({
-                        offsets: [ 0, 0 ],
-                        closeButton: false
-                    }).setHTML(innerHtml);
-                    popup.setLnglat(event.lngLat)
-                    this.myChart.addPopup(popup)
+                    content = content || event.feature.longitude + ',' + event.feature.latitude
+                  }
+                  content = content.replaceAll('\n', '<br>')
+                  const innerHtml = htmlPrefix + content + htmlSuffix
+                  const popup = new this.$popup({
+                    offsets: [ 0, 0 ],
+                    closeButton: false
+                  }).setHTML(innerHtml);
+                  popup.setLnglat(event.lngLat)
+                  this.myChart.addPopup(popup)
                 })
                 this.pointLayer.on('mouseout', event => {
-                    this.myChart.popupService.popup && this.myChart.popupService.popup.remove()
+                  this.myChart.popupService.popup && this.myChart.popupService.popup.remove()
                 })
+              }
+            }
+            let defaultSize = 15
+            if (customAttr.size && customAttr.size.scatterSymbolSize) {
+              defaultSize = customAttr.size.scatterSymbolSize
+            }
+            const baseSizeMap = this.calcStepBase(data)
+            if (hasYaxis && baseSizeMap) {
+              this.pointLayer.size('busiValue', val => {
+                return Math.ceil(baseSizeMap.baseLine + (val - baseSizeMap.valMin) * baseSizeMap.step)
+              })
+            } else {
+              this.pointLayer.size(defaultSize)
             }
           }
-          let defaultSize = 15
-          if (customAttr.size && customAttr.size.scatterSymbolSize) {
-              defaultSize = customAttr.size.scatterSymbolSize
+          this.myChart.render()
+          this.pointLayer && this.resetZoom()
+          // 自动放大两级
+          let index = 2
+          while (index--) {
+            this.roamMap(true)
           }
+        })
+      },
 
-          hasYaxis && this.pointLayer.size('busiValue', [10,25]) || this.pointLayer.size(defaultSize)
+      calcStepBase(data) {
+        if (!data || data.length === 0) {
+          return null
         }
-        this.myChart.render()
-        this.pointLayer && this.resetZoom()
-        // 自动放大两级
-        let index = 2
-        while (index--) {
-          this.roamMap(true)
-        }
+        const valueArray = data.map(item => item.busiValue || 0)
 
+        const min = Math.min(...valueArray)
+        const max = Math.max(...valueArray)
+        if (max === min) {
+          return null
+        }
+        const baseMin = 5
+        const baseMax = 35
+        const step =  (baseMax - baseMin) / (max - min)
+        return {
+          baseLine: baseMin,
+          valMin: min,
+          step
+        }
       },
 
       getMapTheme(chart) {
