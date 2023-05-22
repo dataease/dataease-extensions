@@ -379,7 +379,7 @@
                 })
                 this.pointLayer.on('mouseout', event => {
                   const popups = this.myChart.popupService.popups
-                  popups?.forEach(popup => {
+                  popups.forEach(popup => {
                     popup.remove()
                   })
                 })
