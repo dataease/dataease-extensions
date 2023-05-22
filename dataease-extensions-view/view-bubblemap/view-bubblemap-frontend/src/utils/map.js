@@ -188,8 +188,8 @@ export function baseMapOption(chart_option, chart, mapData, terminal = 'pc', the
       chart_option.tooltip = tooltip
     }
   }
-  if (chart.data) {
-    chart_option.title.text = chart.title
+  chart_option.title.text = chart.title
+  if (chart.data) {    
     if (chart.data.series && chart.data.series.length > 0) {
       chart_option.series[0].name = chart.data.series[0].name
       if (customAttr.label) {
