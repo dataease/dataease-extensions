@@ -378,7 +378,10 @@
                   this.myChart.addPopup(popup)
                 })
                 this.pointLayer.on('mouseout', event => {
-                  this.myChart.popupService.popup && this.myChart.popupService.popup.remove()
+                  const popups = this.myChart.popupService.popups
+                  popups.forEach(popup => {
+                    popup.remove()
+                  })
                 })
               }
             }
