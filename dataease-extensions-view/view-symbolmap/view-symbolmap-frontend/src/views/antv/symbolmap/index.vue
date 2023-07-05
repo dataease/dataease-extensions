@@ -153,6 +153,7 @@
         this.pointLayer.layerService.sceneService.rendererService = {
           destroy: () => {}
         }
+        this.pointLayer.layerService.sceneService._events = {}
       }
 
       if (this.textLayer) {
@@ -170,6 +171,7 @@
           this.textLayer.layerService.sceneService.rendererService = {
             destroy: () => {}
           }
+          this.textLayer.layerService.sceneService._events = {}
         }
       }
 
