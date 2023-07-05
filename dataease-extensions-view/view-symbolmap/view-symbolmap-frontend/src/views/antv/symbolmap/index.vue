@@ -136,7 +136,7 @@
     mounted() {
       this.preDraw()
     },
-    destroyed() {
+    beforeDestroy() {
       window.removeEventListener('resize', this.calcHeightDelay)
 
       this.pointLayer.mapService.map.clearMap()
