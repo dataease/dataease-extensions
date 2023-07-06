@@ -179,12 +179,12 @@
       this.myChart.destroy()
       this.pointLayer.layerPickService.layer.textureService.destroy()
       this.pointLayer.layerPickService.layer.textureService.rendererService.destroy()
-      this.pointLayer.layerModel.dataTexture.texture._texture.unbind()
+      this.pointLayer.layerModel.dataTexture?.texture?._texture?.unbind?.()
 
       if (this.textLayer) {
         this.textLayer.layerPickService.layer.textureService.destroy()
         this.textLayer.layerPickService.layer.textureService.rendererService.destroy()
-        this.textLayer.layerModel.dataTexture.texture._texture.unbind()
+        this.textLayer.layerModel.dataTexture?.texture?._texture?.unbind?.()
       }
 
 
