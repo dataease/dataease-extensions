@@ -1,16 +1,32 @@
 <template>
-  <div ref="chartContainer" style="padding: 0;width: 100%;height: 100%;overflow: hidden;" :style="bg_class">
+  <div ref="chartContainer"
+       style="padding: 0; width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column;"
+       :style="bg_class">
     <view-track-bar ref="viewTrack" :track-menu="trackMenu" class="track-bar" :style="trackBarStyleTime"
                     @trackClick="trackClick"/>
-    <div v-if="chart.type && antVRenderStatus" v-show="title_show" ref="title" :style="titleClass"
-         style="cursor: default;display: block;">
-      <p
-        style="padding:6px 4px 0;margin: 0;overflow: hidden;white-space: pre;text-overflow: ellipsis;display: inline;">
-        {{ chart.title }}
-      </p>
-      <title-remark v-if="remarkCfg.show" style="text-shadow: none!important;" :remark-cfg="remarkCfg"/>
-    </div>
-    <div :id="chartId" style="width: 100%;overflow: hidden;" :style="{height:chartHeight}"/>
+
+    <span
+      v-if="chart.type && antVRenderStatus"
+      v-show="title_show"
+      ref="title"
+      :style="title_class"
+      style="cursor: default;display: block;"
+    >
+          <div style="padding:4px 4px 0;margin: 0;">
+            <chart-title-update
+              :title-class="title_class"
+              :chart-info="chartInfo"
+              :bus="bus"
+              :axios-request="axiosRequest"
+            />
+            <title-remark
+              v-if="remarkCfg.show"
+              style="text-shadow: none!important;margin-left: 4px;"
+              :remark-cfg="remarkCfg"
+            />
+          </div>
+        </span>
+    <div :id="chartId" style="width: 100%; overflow: hidden; flex: 1"/>
 
   </div>
 </template>
@@ -20,11 +36,14 @@ import {Sankey} from '@antv/g2plot'
 import {uuid, hexColorToRGBA} from '@/utils/sankey'
 import ViewTrackBar from '@/components/views/ViewTrackBar'
 import {getRemark} from "@/components/views/utils";
+import {DEFAULT_TITLE_STYLE} from '@/utils/map';
+import ChartTitleUpdate from '@/components/views/ChartTitleUpdate';
 import _ from 'lodash';
+import {clear} from 'size-sensor'
 
 export default {
   name: 'ChartComponent',
-  components: {ViewTrackBar},
+  components: {ViewTrackBar, ChartTitleUpdate},
   props: {
     chart: {
       type: Object,
@@ -58,7 +77,17 @@ export default {
       type: Object,
       required: false,
       default: null
-    }
+    },
+    bus: {
+      type: Object,
+      required: false,
+      default: null
+    },
+    axiosRequest: {
+      type: Function | Object,
+      required: false,
+      default: null
+    },
   },
   data() {
     return {
@@ -74,7 +103,6 @@ export default {
       pointParam: null,
       dynamicAreaCode: null,
       borderRadius: '0px',
-      chartHeight: '100%',
       title_show: true,
       antVRenderStatus: false,
       remarkCfg: {
@@ -103,6 +131,8 @@ export default {
         fontWeight: 'normal',
         background: ''
       },
+      linkageActiveParam: null,
+      linkageActiveHistory: false,
     }
   },
 
@@ -118,12 +148,21 @@ export default {
     chartInfo() {
       const {id, title} = this.chart
       return {id, title}
+    },
+    titleHeight() {
+      if (this.$refs.title) {
+        return this.$refs.title.offsetHeight + 'px';
+      } else {
+        return '0px';
+      }
+    },
+    chartStyle() {
+      return {height: `calc(100% - ${this.titleHeight})`};
     }
   },
   watch: {
     chart: {
       handler(newVal, oldVla) {
-        this.calcHeightDelay()
         new Promise((resolve) => {
           resolve()
         }).then(() => {
@@ -145,19 +184,45 @@ export default {
   },
   methods: {
     preDraw() {
-      this.calcHeightDelay()
-
       this.myChart = new this.$sankey(this.chartId, this.getParam())
+
+      this.myChart.off('edge:click')
+      this.myChart.on('edge:click', this.antVAction)
 
       this.myChart.render();
 
       this.initTitle();
 
       const that = this;
-      window.onresize = function () {
-        that.calcHeightDelay()
-      }
 
+
+    },
+
+    antVAction(param) {
+      switch (this.chart.type) {
+        case 'treemap':
+          this.pointParam = param.data.data
+          break
+        case 'word-cloud':
+          this.pointParam = {
+            data: param.data.data.datum
+          }
+          break
+        default:
+          this.pointParam = param.data
+          break
+      }
+      this.linkageActiveParam = {
+        category: this.pointParam.data.category ? this.pointParam.data.category : 'NO_DATA',
+        name: this.pointParam.data.name ? this.pointParam.data.name : 'NO_DATA'
+      }
+      if (this.trackMenu.length < 2) { // 只有一个事件直接调用
+        this.trackClick(this.trackMenu[0])
+      } else { // 视图关联多个事件
+        this.trackBarStyle.left = param.x + 'px'
+        this.trackBarStyle.top = (param.y + 10) + 'px'
+        this.$refs.viewTrack.trackButtonClick()
+      }
     },
 
     initTitle() {
@@ -183,6 +248,24 @@ export default {
           this.titleClass.background = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
           this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
         }
+
+        if (customStyle.text) {
+          this.title_show = customStyle.text.show
+          this.title_class.fontSize = customStyle.text.fontSize + 'px'
+          this.title_class.color = customStyle.text.color
+          this.title_class.textAlign = customStyle.text.hPosition
+          this.title_class.fontStyle = customStyle.text.isItalic ? 'italic' : 'normal'
+          this.title_class.fontWeight = customStyle.text.isBolder ? 'bold' : 'normal'
+
+          this.title_class.fontFamily = customStyle.text.fontFamily ? customStyle.text.fontFamily : DEFAULT_TITLE_STYLE.fontFamily
+          this.title_class.letterSpacing = (customStyle.text.letterSpace ? customStyle.text.letterSpace : DEFAULT_TITLE_STYLE.letterSpace) + 'px'
+          this.title_class.textShadow = customStyle.text.fontShadow ? '2px 2px 4px' : 'none'
+        }
+        if (customStyle.background) {
+          this.title_class.background = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
+          this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
+        }
+
       }
       this.initRemark()
     },
@@ -191,7 +274,12 @@ export default {
     },
 
     getParam() {
-      let _data = this.chart.data ? _.cloneDeep(this.chart.data.tableRow) : undefined;
+      let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(this.chart.data.tableRow, (t, _index) => {
+        const obj = t;
+        obj.dimensionList = this.chart.data.data[0].data[_index].dimensionList;
+        obj.quotaList = this.chart.data.data[0].data[_index].quotaList;
+        return obj;
+      }) : undefined;
 
       let _source = null, _target = null, _value = null;
 
@@ -208,11 +296,11 @@ export default {
         sourceField: _source,
         targetField: _target,
         weightField: _value,
+        rawFields: ['dimensionList', 'quotaList'],
       };
 
       if (this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr);
-        console.log(customAttr)
         if (customAttr.color) {
           params.color = customAttr.color.colors;
 
@@ -254,9 +342,10 @@ export default {
             showMarkers: false,
             shared: false,
             // 内置：node 不显示 tooltip，edge 显示 tooltip
-            // showContent: function (items) {
-            //   return !Object(_antv_util__WEBPACK_IMPORTED_MODULE_1__["get"])(items, [0, 'data', 'isNode']);
-            // },
+            showContent: function (items) {
+              //return !Object(_antv_util__WEBPACK_IMPORTED_MODULE_1__["get"])(items, [0, 'data', 'isNode']);
+              return customAttr.tooltip.show && items.length > 0 && items[0].value !== undefined;
+            },
             formatter: function (datum) {
               let source = datum.source, target = datum.target, value = datum.value;
               return {
@@ -264,7 +353,7 @@ export default {
                 value: value,
               };
             },
-            showContent: customAttr.tooltip.show,
+            //showContent: customAttr.tooltip.show,
             domStyles: {
               'g2-tooltip': {
                 fontSize: customAttr.tooltip.textStyle.fontSize + 'px',
@@ -286,10 +375,45 @@ export default {
 
       this.myChart.update(param);
 
-      console.log(this.myChart)
-
     },
 
+    reDrawView() {
+      this.linkageActiveHistory = false
+      this.myChart.render()
+    },
+    linkageActivePre() {
+      if (this.linkageActiveHistory) {
+        this.reDrawView()
+      }
+      this.$nextTick(() => {
+        this.linkageActive()
+      })
+    },
+    linkageActive() {
+      this.linkageActiveHistory = true
+      this.myChart.setState('active', (param) => {
+        if (Array.isArray(param)) {
+          return false
+        } else {
+          if (this.checkSelected(param)) {
+            return true
+          }
+        }
+      })
+      this.myChart.setState('inactive', (param) => {
+        if (Array.isArray(param)) {
+          return false
+        } else {
+          if (!this.checkSelected(param)) {
+            return true
+          }
+        }
+      })
+    },
+    checkSelected(param) {
+      return (this.linkageActiveParam.name === param.name || (this.linkageActiveParam.name === 'NO_DATA' && !param.name)) &&
+        (this.linkageActiveParam.category === param.category)
+    },
 
     trackClick(trackAction) {
       const param = this.pointParam
@@ -300,23 +424,28 @@ export default {
         }
         return
       }
+      const quotaList = this.pointParam.data.quotaList
+      quotaList[0]['value'] = this.pointParam.data.value
       const linkageParam = {
         option: 'linkage',
+        name: this.pointParam.data.name,
         viewId: this.chart.id,
         dimensionList: this.pointParam.data.dimensionList,
-        quotaList: this.pointParam.data.quotaList
+        quotaList: quotaList
       }
       const jumpParam = {
         option: 'jump',
+        name: this.pointParam.data.name,
         viewId: this.chart.id,
         dimensionList: this.pointParam.data.dimensionList,
-        quotaList: this.pointParam.data.quotaList
+        quotaList: quotaList
       }
       switch (trackAction) {
         case 'drill':
           this.$emit('onChartClick', this.pointParam)
           break
         case 'linkage':
+          this.linkageActivePre()
           this.$store.commit('addViewTrackFilter', linkageParam)
           break
         case 'jump':
@@ -327,21 +456,40 @@ export default {
       }
     },
 
-    calcHeightRightNow() {
-      this.$nextTick(() => {
-        if (this.$refs.chartContainer) {
-          const currentHeight = this.$refs.chartContainer.offsetHeight
-          if (this.$refs.title) {
-            const titleHeight = this.$refs.title.offsetHeight
-            this.chartHeight = (currentHeight - titleHeight) + 'px'
-          }
+    beforeDestroy() {
+      if (this.myChart.container) {
+        if (typeof this.myChart.container.getAttribute === 'function') {
+          clear(this.myChart.container)
         }
-      })
-    },
-    calcHeightDelay() {
-      setTimeout(() => {
-        this.calcHeightRightNow()
-      }, 100)
+      }
+      if (this.myChart) {
+        if (this.myChart.clear) {
+          this.myChart.clear()
+        }
+        if (this.myChart.unbindSizeSensor) {
+          this.myChart.unbindSizeSensor()
+        }
+        if (this.myChart.unbind) {
+          this.myChart.unbind()
+        }
+        if (this.myChart.destroy) {
+          this.myChart.destroy()
+        }
+      }
+      if (this.myChart) {
+        for (const key in this.myChart.chart) {
+          this.myChart.chart[key] = null
+          this.$delete(this.myChart.chart, key)
+        }
+        for (const key in this.myChart) {
+          this.myChart[key] = null
+          this.$delete(this.myChart, key)
+        }
+      }
+      for (const key in this.pointParam) {
+        this.$delete(this.pointParam, key)
+      }
+      this.myChart = null
     },
 
 

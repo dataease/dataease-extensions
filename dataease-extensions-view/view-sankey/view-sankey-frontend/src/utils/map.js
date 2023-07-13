@@ -102,11 +102,17 @@ export const DEFAULT_TOOLTIP = {
 export const DEFAULT_TITLE_STYLE = {
   show: true,
   fontSize: '18',
-  color: '#303133',
-  hPosition: 'center',
+  color: '#000000',
+  hPosition: 'left',
   vPosition: 'top',
   isItalic: false,
-  isBolder: false
+  isBolder: true,
+  remarkShow: false,
+  remark: '',
+  remarkBackgroundColor: '#ffffffff',
+  fontFamily: 'Microsoft YaHei',
+  letterSpace: '0',
+  fontShadow: false
 }
 export const DEFAULT_LEGEND_STYLE = {
   show: true,
@@ -192,6 +198,30 @@ export const BASE_MAP = {
     }
   ]
 }
+
+export const compareItem = {
+  type: 'none', // year-yoy/month-yoy等
+  resultData: 'percent', // 对比差sub，百分比percent等
+  field: '',
+  custom: {
+    field: '',
+    calcType: '0', // 0-增长值，1-增长率
+    timeType: '0', // 0-固定日期，1-日期区间
+    currentTime: '',
+    compareTime: '',
+    currentTimeRange: [],
+    compareTimeRange: []
+  }
+}
+
+export const formatterItem = {
+  type: 'auto', // auto,value,percent
+  unit: 1, // 换算单位
+  suffix: '', // 单位后缀
+  decimalCount: 2, // 小数位数
+  thousandSeparator: true// 千分符
+}
+
 const convertData = (mapData, chart) => {
   let maxVal = 0
   const k = terminalType === 'pc' ? 30 : 15

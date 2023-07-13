@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SankeyService extends ViewPluginService {
@@ -29,12 +31,30 @@ public class SankeyService extends ViewPluginService {
     private static final String VIEW_STYLE = VIEW_TYPE_VALUE + STYLE;
     private static final String VIEW_VIEW = VIEW_TYPE_VALUE + VIEW;
 
+    private static final String[] VIEW_STYLE_PROPERTIES = {
+            "color-selector",
+            "label-selector",
+            "tooltip-selector-ant-v",
+            "title-selector-ant-v"
+    };
+
+    private static final Map<String, String[]> VIEW_STYLE_PROPERTY_INNER = new HashMap<>();
+
+    static {
+        VIEW_STYLE_PROPERTY_INNER.put("color-selector", new String[]{"value"});
+        VIEW_STYLE_PROPERTY_INNER.put("label-selector", new String[]{"show", "fontSize", "color"});
+        VIEW_STYLE_PROPERTY_INNER.put("tooltip-selector-ant-v", new String[]{"show", "fontSize", "color", "backgroundColor"});
+        VIEW_STYLE_PROPERTY_INNER.put("title-selector-ant-v", new String[]{"show", "title", "fontSize", "color", "hPosition", "vPosition", "isItalic", "isBolder"});
+    }
+
     @Override
     public PluginViewType viewType() {
         PluginViewType pluginViewType = new PluginViewType();
         pluginViewType.setRender("antv");
         pluginViewType.setCategory("chart.chart_type_relation");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
+        pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
+        pluginViewType.setPropertyInner(VIEW_STYLE_PROPERTY_INNER);
         return pluginViewType;
     }
 
@@ -80,13 +100,23 @@ public class SankeyService extends ViewPluginService {
 
     @Override
     public String generateSQL(PluginViewParam param) {
+        System.out.println("************* generateSQL **************");
         List<PluginViewField> xAxis = param.getFieldsByType("xAxis");
         List<PluginViewField> yAxis = param.getFieldsByType("yAxis");
-        if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)){
+        if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)) {
             return null;
         }
         return super.generateSQL(param);
 
+    }
+
+    @Override
+    public Map<String, Object> formatResult(PluginViewParam pluginViewParam, List<String[]> data, Boolean isDrill) {
+        Map<String, Object> map = super.formatResult(pluginViewParam, data, isDrill);
+
+        map.put("data", map.get("series"));
+
+        return map;
     }
 
 }

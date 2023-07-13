@@ -9,7 +9,7 @@
             <svg-icon v-if="item.deType === 1" icon-class="field_time" class="field-icon-time" />
             <svg-icon v-if="item.deType === 2 || item.deType === 3" icon-class="field_value" class="field-icon-value" />
             <svg-icon v-if="item.deType === 5" icon-class="field_location" class="field-icon-location" />
-            
+
             <svg-icon v-if="item.sort === 'asc'" icon-class="sort-asc" class-name="field-icon-sort" />
             <svg-icon v-if="item.sort === 'desc'" icon-class="sort-desc" class-name="field-icon-sort" />
           </span>
@@ -59,8 +59,8 @@
             </el-dropdown>
           </el-dropdown-item>
 
-          
-          
+
+
           <el-dropdown-item icon="el-icon-files" :command="beforeClickItem('filter')">
             <span>{{ $t('chart.filter') }}...</span>
           </el-dropdown-item>
@@ -78,10 +78,10 @@
 
 <script>
 import { compareItem } from '@/utils/compare'
-import { getItemType } from './utils'
+import { getItemType, getOriginFieldName } from './utils'
 import FieldErrorTips from './FieldErrorTips'
 export default {
-  name: 'QuotaItem',
+  name: 'SankeyQuotaItem',
   components: { FieldErrorTips },
   props: {
     param: {
@@ -232,6 +232,7 @@ export default {
     showRename() {
       this.item.index = this.index
       this.item.renameType = 'quota'
+      this.item.dsFieldName = getOriginFieldName(this.dimensionData, this.quotaData, this.item)
       this.$emit('onNameEdit', this.item)
     },
     removeItem() {
@@ -250,7 +251,7 @@ export default {
       this.item.calcType = 'quota'
       this.$emit('editItemCompare', this.item)
     },
-    
+
     getItemTagType() {
       this.tagType = getItemType(this.dimensionData, this.quotaData, this.item)
     }
