@@ -11,14 +11,15 @@
     "buildPlugin": "node --openssl-legacy-provider build/build-async-plugins.js"
   },
   "dependencies": {
-    "@antv/g2plot": "^2.4.9",
+    "@antv/g2plot": "^2.4.31",
     "@riophae/vue-treeselect": "0.4.0",
     "lodash": "^4.17.21",
-    "vue": "^2.5.2",
+    "vue": "2.6.10",
     "vue-i18n": "7.3.2",
     "vue-router": "^3.0.1",
     "vue-uuid": "2.0.2",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^2.24.3",
+    "vuex": "3.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -56,7 +57,7 @@
     "url-loader": "^0.5.8",
     "vue-loader": "^15.6.4",
     "vue-style-loader": "^4.1.2",
-    "vue-template-compiler": "^2.5.2",
+    "vue-template-compiler": "2.6.10",
     "webpack": "^4.8.1",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-dev-server": "^3.1.11",

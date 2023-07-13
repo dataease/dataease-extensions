@@ -1,9 +1,22 @@
 <template>
   <div>
-    <el-dropdown trigger="click">
-      <input id="input" ref="trackButton" type="button" hidden>
-      <el-dropdown-menu class="track-menu" :append-to-body="false">
-        <el-dropdown-item v-for="(item, key) in trackMenu" :key="key" @click.native="trackMenuClick(item)"><span class="menu-item">{{ i18n_map[item] }}</span></el-dropdown-item>
+    <el-dropdown
+      trigger="click">
+      <input
+        id="input"
+        ref="trackButton"
+        type="button"
+        hidden
+      >
+      <el-dropdown-menu
+        class="track-menu"
+        :append-to-body="false"
+      >
+        <el-dropdown-item
+          v-for="(item, key) in trackMenu"
+          :key="key"
+          @click.native="trackMenuClick(item)"
+        ><span class="menu-item">{{ i18n_map[item] }}</span></el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -44,16 +57,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .menu-item {
-    font-size: 12px;
-  }
+.menu-item {
+  font-size: 12px;
+}
 
-  ::v-deep ul {
-    width: 80px;
-  }
+::v-deep ul {
+  width: 80px;
+}
 
-  .track-menu {
-    border: #3a8ee6 1px solid;
-  }
+::v-deep.el-popper[x-placement^=bottom] .popper__arrow {
+  display: none;
+}
+
+::v-deep.el-popper[x-placement^=bottom] {
+  margin-top: -80px !important;
+}
+
+.track-menu {
+  border: #3a8ee6 1px solid;
+}
 
 </style>

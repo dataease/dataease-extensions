@@ -19,7 +19,7 @@ Vue.use(ElementUI, {
 Vue.component('Treeselect', Treeselect)
 Vue.component('draggable', draggable)
 Vue.prototype.hasDataPermission = function(pTarget, pSource) {
-  
+
   if (pSource && pTarget) {
     return pSource.indexOf(pTarget) > -1
   }

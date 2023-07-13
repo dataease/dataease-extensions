@@ -8,9 +8,18 @@
       <draggable v-model="source" group="drag" animation="300" :move="onMove" class="drag-block-style"
                  @add="addSource" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <sankey-dimension-item v-for="(item,index) in source" :key="item.id" :param="param" :index="index"
-                                 :item="item" :dimension-data="dimensionData" :quota-data="quotaData"
-                                 @onItemRemove="locationItemRemove" @onNameEdit="showRename" dimension-name="source"/>
+          <sankey-dimension-item v-for="(item,index) in source" :key="index"
+                                 :param="param"
+                                 :index="0"
+                                 :item="item"
+                                 :dimension-data="dimension"
+                                 :quota-data="quotaData"
+                                 :chart="chart"
+                                 @onDimensionItemRemove="locationItemRemove"
+                                 @onNameEdit="showRename"
+                                 dimension-name="source"
+                                 :bus="bus"
+          />
         </transition-group>
       </draggable>
       <div v-if="!source || source.length === 0" class="drag-placeholder-style">
@@ -26,9 +35,18 @@
       <draggable v-model="target" group="drag" animation="300" :move="onMove" class="drag-block-style"
                  @add="addTarget" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <sankey-dimension-item v-for="(item,index) in target" :key="item.id" :param="param" :index="index"
-                                 :item="item" :chart="chart" :dimension-data="dimensionData" :quota-data="quotaData"
-                                 @onItemRemove="locationItemRemove" @onNameEdit="showRename" dimension-name="target"/>
+          <sankey-dimension-item v-for="(item,index) in target" :key="index"
+                                 :param="param"
+                                 :index="1"
+                                 :item="item"
+                                 :dimension-data="dimension"
+                                 :quota-data="quotaData"
+                                 :chart="chart"
+                                 @onDimensionItemRemove="locationItemRemove"
+                                 @onNameEdit="showRename"
+                                 dimension-name="target"
+                                 :bus="bus"
+          />
         </transition-group>
       </draggable>
       <div v-if="!target || target.length === 0" class="drag-placeholder-style">
@@ -40,18 +58,18 @@
     <el-row class="padding-lr" style="margin-top: 6px;">
       <span style="width: 80px;text-align: right;">
         <span>{{ $t('plugin_view_sankey.mark_size') }}</span>/<span>{{ $t('chart.quota') }}</span>
-        <el-tooltip class="item" effect="dark" placement="bottom">
+<!--        <el-tooltip class="item" effect="dark" placement="bottom">
             <div slot="content">
               {{ $t('plugin_view_sankey.mark_size_tip') }}
             </div>
             <i class="el-icon-info" style="cursor: pointer;color: #606266;"/>
-        </el-tooltip>
+        </el-tooltip>-->
       </span>
       <draggable v-model="view.yaxis" group="drag" animation="300" :move="onMove" class="drag-block-style"
                  @add="addYaxis" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <quota-item v-for="(item,index) in view.yaxis" :key="item.id" :param="param" :index="index" :item="item"
-                      :chart="chart" :dimension-data="dimensionData" :quota-data="quotaData"
+          <sankey-quota-item v-for="(item,index) in view.yaxis" :key="item.id" :param="param" :index="index" :item="item"
+                      :chart="chart" :dimension-data="dimension" :quota-data="quota"
                       @onQuotaItemChange="quotaItemChange"
                       @onQuotaItemRemove="quotaItemRemove" @editItemFilter="showQuotaEditFilter"
                       @onNameEdit="showRename"
@@ -72,7 +90,7 @@
                  @add="addCustomFilter" @update="calcData(true)">
         <transition-group class="draggable-group">
           <filter-item v-for="(item,index) in view.customFilter" :key="item.id" :param="param" :index="index"
-                       :item="item" :dimension-data="dimensionData" :quota-data="quotaData"
+                       :item="item" :dimension-data="dimension" :quota-data="quota"
                        @onFilterItemRemove="filterItemRemove"
                        @editItemFilter="showEditFilter"/>
         </transition-group>
@@ -87,22 +105,26 @@
 
 <script>
 import SankeyDimensionItem from '@/components/views/SankeyDimensionItem'
-import QuotaItem from '@/components/views/QuotaItem'
+import SankeyQuotaItem from '@/components/views/SankeyQuotaItem'
 import FilterItem from '@/components/views/FilterItem'
 import messages from '@/de-base/lang/messages'
 
 export default {
   props: {
-
     obj: {
       type: Object,
       default: () => {
       }
-    }
+    },
+    bus: {
+      type: Object,
+      required: false,
+      default: null
+    },
   },
   components: {
     SankeyDimensionItem,
-    QuotaItem,
+    SankeyQuotaItem,
     FilterItem
   },
   data() {
@@ -137,9 +159,35 @@ export default {
     dimensionData() {
       return this.obj.dimensionData
     },
+    dimension() {
+      return this.obj.dimension
+    },
+    quota() {
+      return this.obj.quota
+    },
     quotaData() {
       return this.obj.quotaData
-    }
+    },
+    /*source: {
+      // getter
+      get: function () {
+        return this.view.xaxis && this.view.xaxis.length && [this.view.xaxis[0]] ? [this.view.xaxis[0]] : [];
+      },
+      // setter
+      set: function (newValue) {
+        this.view.xaxis = [...newValue, ...this.target]
+      }
+    },
+    target: {
+      // getter
+      get: function () {
+        return this.view.xaxis && this.view.xaxis.length && [this.view.xaxis[1]] ? [this.view.xaxis[1]] : [];
+      },
+      // setter
+      set: function (newValue) {
+        this.view.xaxis = [...this.source, ...newValue]
+      }
+    }*/
   },
   created() {
     this.source = this.view.xaxis && this.view.xaxis.length && [this.view.xaxis[0]] || []
@@ -152,6 +200,16 @@ export default {
     },
     target(val) {
       this.view.xaxis = [...this.source, ...this.target]
+    },
+    'view.xaxis': function (val, oldVal) {
+      if (val) {
+        if (val[0] && this.source[0]) {
+          this.source[0].name = val[0].name;
+        }
+        if (val[1] && this.target[0]) {
+          this.target[0].name = val[1].name;
+        }
+      }
     }
   },
   methods: {
@@ -221,6 +279,7 @@ export default {
       this.calcData(true)
     },
     calcData(cache) {
+      console.log(cache)
       this.view.xaxis = [...this.source, ...this.target]
 
       this.$emit('plugin-call-back', {
@@ -232,10 +291,13 @@ export default {
     },
 
     locationItemRemove(item) {
+      console.log(item)
       if (item.removeType === 'source') {
-        this.source.splice(item.index, 1)
+        this.source.splice(0, 1)
+        //this.view.xaxis[0] = undefined;
       } else if (item.removeType === 'target') {
-        this.target.splice(item.index, 1)
+        this.target.splice(0, 1)
+        //this.view.xaxis[1] = undefined;
       }
       this.calcData(true)
     },
