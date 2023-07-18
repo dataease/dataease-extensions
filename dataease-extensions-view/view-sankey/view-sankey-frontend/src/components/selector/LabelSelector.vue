@@ -145,7 +145,6 @@ export default {
     initData() {
       const chart = JSON.parse(JSON.stringify(this.chart))
       if (chart.customAttr) {
-        let oldAttr = Object.prototype.toString.call(chart.customAttr) === '[object Object]' ? chart.customAttr : JSON.parse(chart.customAttr);
         let customAttr = null
         if (Object.prototype.toString.call(chart.customAttr) === '[object Object]') {
           customAttr = JSON.parse(JSON.stringify(chart.customAttr))
@@ -153,7 +152,7 @@ export default {
           customAttr = JSON.parse(chart.customAttr)
         }
         if (customAttr.label) {
-          if (!oldAttr.label.initialized && customAttr.label.initialized) {
+          if (customAttr.label.initialized) {
             this.labelForm = customAttr.label
           }
           if (this.labelForm.show) {
@@ -163,7 +162,7 @@ export default {
           if (!this.labelForm.labelLine) {
             this.labelForm.labelLine = JSON.parse(JSON.stringify(DEFAULT_LABEL.labelLine))
           }
-          if (!oldAttr.label.initialized) {
+          if (!customAttr.label.initialized) {
             this.changeLabelAttr();
           }
         }
