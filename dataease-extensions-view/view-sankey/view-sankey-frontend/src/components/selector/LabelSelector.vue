@@ -16,39 +16,39 @@
             <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors"
                              @change="changeLabelAttr"/>
           </el-form-item>
-<!--          <el-form-item :label="$t('chart.label')" class="form-item">
-            <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags
-                       @change="changeFields">
-              <el-option-group
-                v-for="group in fieldOptions"
-                :key="group.label"
-                :label="group.label"
-              >
-                <el-option
-                  v-for="item in group.options"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                  :disabled="item.disabled">
-                </el-option>
-              </el-option-group>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="form-item">
-            <span slot="label">
-              <span class="span-box">
-                <span>{{ $t('chart.content_formatter') }}</span>
-                <el-tooltip class="item" effect="dark" placement="bottom">
-                  <div slot="content">
-                    {{ $t('plugin_view_sankey.tooltip_format_tip') }}
-                  </div>
-                  <i class="el-icon-info" style="cursor: pointer;"/>
-                </el-tooltip>
-              </span>
-            </span>
-            <el-input v-model="labelForm.labelTemplate" type="textarea" :placeholder="defaultPlaceholder"
-                      :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr"/>
-          </el-form-item>-->
+          <!--          <el-form-item :label="$t('chart.label')" class="form-item">
+                      <el-select v-model="values" :placeholder="$t('commons.please_select')" multiple collapse-tags
+                                 @change="changeFields">
+                        <el-option-group
+                          v-for="group in fieldOptions"
+                          :key="group.label"
+                          :label="group.label"
+                        >
+                          <el-option
+                            v-for="item in group.options"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
+                            :disabled="item.disabled">
+                          </el-option>
+                        </el-option-group>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item class="form-item">
+                      <span slot="label">
+                        <span class="span-box">
+                          <span>{{ $t('chart.content_formatter') }}</span>
+                          <el-tooltip class="item" effect="dark" placement="bottom">
+                            <div slot="content">
+                              {{ $t('plugin_view_sankey.tooltip_format_tip') }}
+                            </div>
+                            <i class="el-icon-info" style="cursor: pointer;"/>
+                          </el-tooltip>
+                        </span>
+                      </span>
+                      <el-input v-model="labelForm.labelTemplate" type="textarea" :placeholder="defaultPlaceholder"
+                                :autosize="{ minRows: 4, maxRows: 4}" @blur="changeLabelAttr"/>
+                    </el-form-item>-->
         </div>
       </el-form>
 
@@ -144,7 +144,6 @@ export default {
   methods: {
     initData() {
       const chart = JSON.parse(JSON.stringify(this.chart))
-      console.log('chart.customAttr: ', chart.customAttr)
       if (chart.customAttr) {
         let customAttr = null
         if (Object.prototype.toString.call(chart.customAttr) === '[object Object]') {
@@ -162,6 +161,9 @@ export default {
           }
           if (!this.labelForm.labelLine) {
             this.labelForm.labelLine = JSON.parse(JSON.stringify(DEFAULT_LABEL.labelLine))
+          }
+          if (!customAttr.label.initialized) {
+            this.changeLabelAttr();
           }
         }
       }
