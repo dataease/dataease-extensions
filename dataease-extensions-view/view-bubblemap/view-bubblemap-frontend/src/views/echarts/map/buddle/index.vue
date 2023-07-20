@@ -348,7 +348,10 @@
         this.pointParam.viewId = this.chart.id
         const param = this.pointParam
         if (!param || !param.data || !param.data.dimensionList) {
-          this.$warning(this.$t('panel.no_drill_field'))
+          const zoom = this.myChart.getOption().geo[0].zoom
+          if (zoom <= 1) {
+            this.$warning(this.$t('panel.no_drill_field'))
+          }          
           return
         }
         const linkageParam = {
