@@ -17,9 +17,8 @@
     </parent>
 
     <properties>
-        <dataease.version>1.18.8</dataease.version>
+        <dataease.version>1.18.9</dataease.version>
     </properties>
-
 
     <dependencyManagement>
         <dependencies>
@@ -33,16 +32,11 @@
                 <artifactId>dataease-plugin-view</artifactId>
                 <version>${dataease.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
-
 
     <modules>
         <module>dataease-extensions-view</module>
         <module>dataease-extensions-datasource</module>
     </modules>
-
-
-
 </project>

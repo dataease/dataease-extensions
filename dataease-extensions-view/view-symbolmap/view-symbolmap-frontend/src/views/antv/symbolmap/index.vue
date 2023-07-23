@@ -133,17 +133,96 @@
         deep: true
       }
     },
-    created() {
-
-      !this.$scene && (this.$scene = Scene)
-      !this.$pointLayer && (this.$pointLayer = PointLayer)
-      !this.$popup && (this.$popup = Popup)
-    },
     mounted() {
       this.preDraw()
     },
-    destroyed() {
+    beforeDestroy() {
+      window.removeEventListener('resize', this.calcHeightDelay)
+
+      this.pointLayer.mapService.map.clearMap()
+      this.pointLayer.mapService.map.destroy()
+      this.pointLayer.destroy()
+      this.pointLayer.layerService.clear()
+      this.pointLayer.layerService.destroy()
+      if (this.pointLayer.layerService.sceneService) {
+        this.pointLayer.layerService.sceneService.destroy()
+        for (const key in this.pointLayer.layerService.sceneService) {
+          this.pointLayer.layerService.sceneService[key] = null
+          this.$delete(this.pointLayer.layerService.sceneService, key)
+        }
+        this.pointLayer.layerService.sceneService.rendererService = {
+          destroy: () => {}
+        }
+        this.pointLayer.layerService.sceneService._events = {}
+      }
+
+      if (this.textLayer) {
+        this.textLayer.mapService.map.clearMap()
+        this.textLayer.mapService.map.destroy()
+        this.textLayer.destroy()
+        this.textLayer.layerService.clear()
+        this.textLayer.layerService.destroy()
+        if (this.textLayer.layerService.sceneService) {
+          this.textLayer.layerService.sceneService.destroy()
+          for (const key in this.textLayer.layerService.sceneService) {
+            this.textLayer.layerService.sceneService[key] = null
+            this.$delete(this.textLayer.layerService.sceneService, key)
+          }
+          this.textLayer.layerService.sceneService.rendererService = {
+            destroy: () => {}
+          }
+          this.textLayer.layerService.sceneService._events = {}
+        }
+      }
+
+      
       this.myChart.destroy()
+      this.pointLayer.layerPickService.layer.textureService.destroy()
+      this.pointLayer.layerPickService.layer.textureService.rendererService.destroy()
+      this.pointLayer.layerModel.dataTexture && this.pointLayer.layerModel.dataTexture.texture._texture.unbind()
+
+      if (this.textLayer) {
+        this.textLayer.layerPickService.layer.textureService.destroy()
+        this.textLayer.layerPickService.layer.textureService.rendererService.destroy()
+        this.textLayer.layerModel.dataTexture && this.textLayer.layerModel.dataTexture.texture._texture.unbind()
+      }
+
+
+      for(let i of this.myChart.container.parent._bindingDictionary._map.keys()) {
+        this.myChart.container.parent._bindingDictionary._map.get(i).forEach(ele => {
+          ele.cache = null
+          ele.activated = false
+        })
+      }
+      this.myChart.container._bindingDictionary._map.clear()
+
+      this.pointLayer.configService.clean() // GlobalConfigService
+      if (this.textLayer) {
+        this.textLayer.configService.clean() // GlobalConfigService
+      }
+      
+      if (this.pointLayer) {
+        for (const key in this.pointLayer) {
+          this.pointLayer[key] = null
+          this.$delete(this.pointLayer, key)
+        }
+      }
+
+      if (this.textLayer) {
+        for (const key in this.textLayer) {
+          this.textLayer[key] = null
+          this.$delete(this.textLayer, key)
+        }
+      }
+      if (this.myChart) {
+        for (const key in this.myChart) {
+          this.myChart[key] = null
+          this.$delete(this.myChart, key)
+        }
+      }
+      this.myChart = null
+      this.textLayer = null
+      this.pointLayer = null
     },
     methods: {
       preDraw() {
@@ -151,18 +230,14 @@
         this.initTitle()
         this.calcHeightDelay()
         this.initMap()
-
-        const that = this
-        window.onresize = function() {
-          that.calcHeightDelay()
-        }
+        window.addEventListener('resize', this.calcHeightDelay)
 
       },
       initMap() {
         if (!this.myChart) {
           let theme = this.getMapTheme(this.chart)
           const lang = this.$i18n.locale.includes('zh') ? 'zh' : 'en'
-          this.myChart = new this.$scene({
+          this.myChart = new Scene({
             id: this.chartId,
             map: new this.$gaodeMap({
               lang: lang,
@@ -173,7 +248,7 @@
             }),
             logoVisible: false
           })
-          const chart = this.chart
+          const chart = JSON.parse(JSON.stringify(this.chart))
 
 
           this.antVRenderStatus = true
@@ -247,7 +322,7 @@
             item.labelResult = item.labelResult.replaceAll('\n', ' ')
         })
 
-        this.textLayer = new this.$pointLayer({})
+        this.textLayer = new PointLayer({})
             .source(originData,
             {
                 parser: {
@@ -297,7 +372,7 @@
 
         this.myChart.removeAllLayer().then(() => {
           const data = chart.data && chart.data.data || []
-          this.pointLayer = new this.$pointLayer({autoFit: true})
+          this.pointLayer = new PointLayer({autoFit: true})
           this.pointLayer.source(data, {
             parser: {
               type: 'json',
@@ -370,7 +445,7 @@
                   }
                   content = content.replaceAll('\n', '<br>')
                   const innerHtml = htmlPrefix + content + htmlSuffix
-                  const popup = new this.$popup({
+                  const popup = new Popup({
                     offsets: [ 0, 0 ],
                     closeButton: false
                   }).setHTML(innerHtml);
