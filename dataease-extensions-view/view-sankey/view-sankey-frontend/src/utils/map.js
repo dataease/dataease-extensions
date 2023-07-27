@@ -77,7 +77,7 @@ export const DEFAULT_LABEL = {
   show: true,
   position: 'middle',
   color: '#000000',
-  fontSize: '28',
+  fontSize: '10',
   formatter: '{c}',
   gaugeFormatter: '{value}',
   labelLine: {
