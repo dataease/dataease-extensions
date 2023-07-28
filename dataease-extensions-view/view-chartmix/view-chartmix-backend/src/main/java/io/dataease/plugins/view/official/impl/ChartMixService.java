@@ -3,6 +3,7 @@ package io.dataease.plugins.view.official.impl;
 import com.google.gson.Gson;
 import io.dataease.plugins.common.dto.StaticResource;
 import io.dataease.plugins.view.entity.*;
+import io.dataease.plugins.view.official.handler.DefaultViewStatHandler;
 import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 @Service
 public class ChartMixService extends ViewPluginService {
-    private static final String VIEW_TYPE_VALUE = "chartmix";
+    private static final String VIEW_TYPE_VALUE = "chart-mix";
 
     /* 下版这些常量移到sdk */
     private static final String TYPE = "-type";
@@ -102,10 +103,18 @@ public class ChartMixService extends ViewPluginService {
     public String generateSQL(PluginViewParam param) {
         List<PluginViewField> xAxis = param.getFieldsByType("xAxis");
         List<PluginViewField> yAxis = param.getFieldsByType("yAxis");
+        /*if (yAxis == null) {
+            yAxis = new ArrayList<>();
+        }
+        List<PluginViewField> yAxisExt = param.getFieldsByType("yAxisExt");
+        if (CollectionUtils.isNotEmpty(yAxisExt)) {
+            yAxis.addAll(yAxisExt);
+        }*/
+        System.out.println(new Gson().toJson(yAxis));
         if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)) {
             return null;
         }
-        String sql = super.generateSQL(param);
+        String sql = new DefaultViewStatHandler().build(param, this);
         System.out.println(sql);
         return sql;
 
@@ -116,7 +125,6 @@ public class ChartMixService extends ViewPluginService {
     public Map<String, Object> formatResult(PluginViewParam pluginViewParam, List<String[]> data, Boolean isDrill) {
         List<PluginViewField> xAxis = new ArrayList<>();
         List<PluginViewField> yAxis = new ArrayList<>();
-        List<PluginViewField> yAxisExt = new ArrayList<>();
 
         System.out.println("pluginViewParam: " + new Gson().toJson(pluginViewParam));
 
@@ -127,17 +135,12 @@ public class ChartMixService extends ViewPluginService {
             if (StringUtils.equals(pluginViewField.getTypeField(), "yAxis")) {
                 yAxis.add(pluginViewField);
             }
-            if (StringUtils.equals(pluginViewField.getTypeField(), "yAxisExt")) {
-                yAxisExt.add(pluginViewField);
-            }
         });
         Map<String, Object> map = new HashMap<>();
 
         List<PluginSeries> series = format(pluginViewParam.getPluginViewLimit().getType(), data, xAxis, yAxis);
-        List<PluginSeries> series2 = format(pluginViewParam.getPluginViewLimit().getType(), data, xAxis, yAxisExt);
 
         map.put("data", series);
-        map.put("dataExt", series2);
 
         System.out.println(new Gson().toJson(map));
 

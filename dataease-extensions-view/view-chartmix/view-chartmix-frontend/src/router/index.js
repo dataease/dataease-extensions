@@ -13,8 +13,8 @@ export default new Router({
       component: HelloWorld
     },
     {
-        path: '/chartmix',
-        name: 'chartmix',
+        path: '/chart-mix',
+        name: 'chart-mix',
         component: SymbolMap
     }
   ]

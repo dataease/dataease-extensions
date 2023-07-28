@@ -12,10 +12,10 @@ module.exports = {
     entry: {
 
     // PluginDemo: resolve('/src/views/PluginDemo.vue')
-    'chartmix-view': resolve('/src/views/antv/chartmix/index.vue'),
-    'chartmix-data': resolve('/src/views/antv/chartmix/data.vue'),
-    'chartmix-type': resolve('/src/views/antv/chartmix/type.vue'),
-    'chartmix-style': resolve('/src/views/antv/chartmix/style.vue')
+    'chart-mix-view': resolve('/src/views/antv/chartmix/index.vue'),
+    'chart-mix-data': resolve('/src/views/antv/chartmix/data.vue'),
+    'chart-mix-type': resolve('/src/views/antv/chartmix/type.vue'),
+    'chart-mix-style': resolve('/src/views/antv/chartmix/style.vue')
 
   },
   output: {

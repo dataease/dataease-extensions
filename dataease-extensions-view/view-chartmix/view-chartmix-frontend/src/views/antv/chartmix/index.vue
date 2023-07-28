@@ -273,10 +273,27 @@ export default {
       this.remarkCfg = getRemark(this.chart)
     },
 
+    getChartType(type) {
+      if (type === 'line') {
+        return 'line';
+      } else if (type === 'scatter') {
+        return 'scatter';
+      } else {
+        return 'column';
+      }
+    },
+
     getParam() {
-      let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(this.chart.data.data, (t, _index) => {
+      let yaxisList = this.chart.yaxis ? JSON.parse(this.chart.yaxis) : [];
+      let yaxisExtList = this.chart.yaxisExt ? JSON.parse(this.chart.yaxisExt) : [];
+
+      let yaxisCount = yaxisList.length;
+
+      let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(_.filter(this.chart.data.data, (c, _index) => {
+        return _index < yaxisCount;
+      }), (t, _index) => {
         return {
-          type: 'column',
+          type: this.getChartType(yaxisList[_index].chartType),
           name: t.name,
           options: {
             data: _.map(t.data, (v) => {
@@ -302,9 +319,11 @@ export default {
         }
       }) : [];
 
-      let _dataExt = this.chart.data && this.chart.data.dataExt && this.chart.data.dataExt.length > 0 ? _.map(this.chart.data.dataExt, (t, _index) => {
+      let _dataExt = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(_.filter(this.chart.data.data, (c, _index) => {
+        return _index >= yaxisCount;
+      }), (t, _index) => {
         return {
-          type: 'column',
+          type: this.getChartType(yaxisExtList[_index].chartType),
           name: t.name,
           options: {
             data: _.map(t.data, (v) => {

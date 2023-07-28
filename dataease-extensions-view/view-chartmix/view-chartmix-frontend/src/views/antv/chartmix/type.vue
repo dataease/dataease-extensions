@@ -13,7 +13,7 @@
   export default {
     data() {
       return {
-        value: 'chartmix'
+        value: 'chart-mix'
       }
     },
     computed: {

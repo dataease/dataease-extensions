@@ -55,22 +55,22 @@
         <span>{{ $t('plugin_view_chartmix.mark_size') }}</span>/<span>{{ $t('chart.quota') }}</span>
       </span>
       <draggable v-model="view.yaxisExt" group="drag" animation="300" :move="onMove" class="drag-block-style"
-                 @add="addYaxis" @update="calcData(true)">
+                 @add="addYaxisExt" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <quota-ext-item v-for="(item,index) in view.yaxisExt" :key="item.id" :param="param" :index="index" :item="item"
-                      :chart="chart" :dimension-data="dimension" :quota-data="quota"
-                      @onQuotaItemChange="quotaItemChange"
-                      @onQuotaItemRemove="quotaItemRemove"
-                      @editItemFilter="showQuotaEditFilter"
-                      @onNameEdit="showRename"
-                      @editItemCompare="showQuotaEditCompare"/>
+          <quota-ext-item v-for="(item,index) in view.yaxisExt" :key="item.id" :param="param" :index="index"
+                          :item="item"
+                          :chart="chart" :dimension-data="dimension" :quota-data="quota"
+                          @onQuotaItemChange="quotaItemChange"
+                          @onQuotaItemRemove="quotaItemRemove"
+                          @editItemFilter="showQuotaEditFilter"
+                          @onNameEdit="showRename"
+                          @editItemCompare="showQuotaEditCompare"/>
         </transition-group>
       </draggable>
       <div v-if="!view.yaxisExt || view.yaxisExt.length === 0" class="drag-placeholder-style">
         <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
       </div>
     </el-row>
-
 
 
     <!-- 结果过滤器 -->
@@ -127,10 +127,11 @@ export default {
       places: [],
       moveId: -1,
       showDrill: false,
-      options: [{
-        value: 'point',
-        label: '点'
-      },
+      options: [
+        {
+          value: 'point',
+          label: '点'
+        },
         {
           value: 'line',
           label: '线'
@@ -164,9 +165,7 @@ export default {
   created() {
     this.$emit('on-add-languages', messages)
   },
-  watch: {
-
-  },
+  watch: {},
   methods: {
     executeAxios(url, type, data, callBack) {
       const param = {
