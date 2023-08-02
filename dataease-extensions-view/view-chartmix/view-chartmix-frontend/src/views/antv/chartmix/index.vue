@@ -184,7 +184,9 @@ export default {
   },
   methods: {
     preDraw() {
-      this.myChart = new this.$chartmix(this.chartId, this.getParam())
+      const _params = this.getParam();
+
+      this.myChart = new this.$chartmix(this.chartId, _params)
 
       this.myChart.off('edge:click')
       this.myChart.on('edge:click', this.antVAction)
@@ -193,8 +195,7 @@ export default {
 
       this.initTitle();
 
-      const that = this;
-
+      this.myChart.update(_params);
 
     },
 
@@ -289,6 +290,30 @@ export default {
 
       let yaxisCount = yaxisList.length;
 
+      let customAttr = undefined;
+      let colors = undefined;
+      let labelSetting = undefined;
+      if (this.chart.customAttr) {
+        customAttr = JSON.parse(this.chart.customAttr);
+        if (customAttr) {
+          if (customAttr.color) {
+            colors = customAttr.color.colors;
+          }
+          if (customAttr.label) {
+            labelSetting = customAttr.label.show ? {
+              callback: function (x) {
+                return {
+                  style: {
+                    fill: customAttr.label.color,
+                    fontSize: parseInt(customAttr.label.fontSize),
+                  },
+                };
+              },
+            }: false
+          }
+        }
+      }
+
       let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(_.filter(this.chart.data.data, (c, _index) => {
         return _index < yaxisCount;
       }), (t, _index) => {
@@ -315,6 +340,8 @@ export default {
             yAxis: {
               position: 'left',
             },
+            color: colors && _index < colors.length ? colors[_index] : undefined,
+            label: labelSetting,
           }
         }
       }) : [];
@@ -345,15 +372,17 @@ export default {
             yAxis: {
               position: 'right',
             },
+            color: colors && (yaxisCount + _index) < colors.length ? colors[yaxisCount + _index] : undefined,
+            label: labelSetting,
           }
         }
       }) : [];
 
-      console.log(_data)
-      console.log(_dataExt)
+      //console.log(_data)
+      //console.log(_dataExt)
 
-      return {
-        tooltip: {shared: true},
+      const params = {
+        tooltip: false,
         syncViewPadding: true,
         plots: [
           ..._data,
@@ -361,86 +390,19 @@ export default {
         ]
       };
 
-      /*let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(this.chart.data.tableRow, (t, _index) => {
-        const obj = t;
-        obj.dimensionList = this.chart.data.data[0].data[_index].dimensionList;
-        obj.quotaList = this.chart.data.data[0].data[_index].quotaList;
-        return obj;
-      }) : undefined;*/
 
-      let _source = null, _target = null, _value = null;
-
-      if (_data === undefined || _data === null || this.chart.data.fields.length < 3) {
-        _data = [];
-      } else {
-        _source = this.chart.data.fields[0].dataeaseName
-        _target = this.chart.data.fields[1].dataeaseName
-        _value = this.chart.data.fields[2].dataeaseName
-      }
-
-      const params = {
-        data: _data,
-        sourceField: _source,
-        targetField: _target,
-        weightField: _value,
-        rawFields: ['dimensionList', 'quotaList'],
-      };
-
-      if (this.chart.customAttr) {
-        const customAttr = JSON.parse(this.chart.customAttr);
-        if (customAttr.color) {
-          params.color = customAttr.color.colors;
-
-          //透明度，设置了之后没有hover加深，看不出来选了啥
-          /*const alpha = customAttr.color.alpha / 100;
-          params.edgeStyle = {
-            fillOpacity: alpha,
-          }*/
-        }
-
-        if (customAttr.label) {
-          params.label = {
-            formatter: function (_a) {
-              let name = _a.name;
-              return name;
-            },
-            callback: function (x) {
-              let isLast = x[1] === 1; // 最后一列靠边的节点
-              return {
-                style: {
-                  fill: customAttr.label.show ? customAttr.label.color : 'transparent',
-                  fontSize: parseInt(customAttr.label.fontSize),
-                  textAlign: isLast ? 'end' : 'start',
-                },
-                offsetX: isLast ? -8 : 8,
-              };
-            },
-            layout: [
-              {
-                type: 'hide-overlap',
-              },
-            ],
-          }
-        }
+      if (customAttr) {
 
         if (customAttr.tooltip) {
           params.tooltip = customAttr.tooltip.show ? {
             showTitle: false,
             showMarkers: false,
-            shared: false,
+            shared: true,
             // 内置：node 不显示 tooltip，edge 显示 tooltip
             showContent: function (items) {
               //return !Object(_antv_util__WEBPACK_IMPORTED_MODULE_1__["get"])(items, [0, 'data', 'isNode']);
               return customAttr.tooltip.show && items.length > 0 && items[0].value !== undefined;
             },
-            formatter: function (datum) {
-              let source = datum.source, target = datum.target, value = datum.value;
-              return {
-                name: source + ' -> ' + target,
-                value: value,
-              };
-            },
-            //showContent: customAttr.tooltip.show,
             domStyles: {
               'g2-tooltip': {
                 fontSize: customAttr.tooltip.textStyle.fontSize + 'px',
