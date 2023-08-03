@@ -41,6 +41,7 @@
                       @onQuotaItemChange="quotaItemChange"
                       @onQuotaItemRemove="quotaItemRemove"
                       @editItemFilter="showQuotaEditFilter"
+                      @valueFormatter="valueFormatter"
                       @onNameEdit="showRename"
                       @editItemCompare="showQuotaEditCompare"/>
         </transition-group>
@@ -63,6 +64,7 @@
                           @onQuotaItemChange="quotaItemChange"
                           @onQuotaItemRemove="quotaItemRemove"
                           @editItemFilter="showQuotaEditFilter"
+                          @valueFormatter="valueFormatter"
                           @onNameEdit="showRename"
                           @editItemCompare="showQuotaEditCompare"/>
         </transition-group>
@@ -252,6 +254,13 @@ export default {
 
       this.$emit('plugin-call-back', {
         eventName: 'show-rename',
+        eventParam: item
+      })
+    },
+    valueFormatter(item) {
+
+      this.$emit('plugin-call-back', {
+        eventName: 'show-edit-formatter',
         eventParam: item
       })
     },

@@ -40,6 +40,7 @@ import {DEFAULT_TITLE_STYLE} from '@/utils/map';
 import ChartTitleUpdate from '@/components/views/ChartTitleUpdate';
 import _ from 'lodash';
 import {clear} from 'size-sensor'
+import {valueFormatter} from '@/utils/formatter'
 
 export default {
   name: 'ChartComponent',
@@ -309,7 +310,7 @@ export default {
                   },
                 };
               },
-            }: false
+            } : false
           }
         }
       }
@@ -317,6 +318,14 @@ export default {
       let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(_.filter(this.chart.data.data, (c, _index) => {
         return _index < yaxisCount;
       }), (t, _index) => {
+
+        const _labelSetting = _.cloneDeep(labelSetting);
+        if (_labelSetting && yaxisList[_index].formatterCfg) {
+          _labelSetting.formatter = function (x) {
+            return valueFormatter(x.value, yaxisList[_index].formatterCfg);
+          }
+        }
+
         return {
           type: this.getChartType(yaxisList[_index].chartType),
           name: t.name,
@@ -324,7 +333,9 @@ export default {
             data: _.map(t.data, (v) => {
               return {
                 key: _.join(_.map(v.dimensionList, (d) => d.value), "\n"),
-                value: v.value
+                value: v.value,
+                i: _index,
+                t: 'yaxis'
               }
             }),
             xField: 'key',
@@ -341,7 +352,7 @@ export default {
               position: 'left',
             },
             color: colors && _index < colors.length ? colors[_index] : undefined,
-            label: labelSetting,
+            label: _labelSetting,
           }
         }
       }) : [];
@@ -349,6 +360,14 @@ export default {
       let _dataExt = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(_.filter(this.chart.data.data, (c, _index) => {
         return _index >= yaxisCount;
       }), (t, _index) => {
+
+        const _labelSetting = _.cloneDeep(labelSetting);
+        if (_labelSetting && yaxisExtList[_index].formatterCfg) {
+          _labelSetting.formatter = function (x) {
+            return valueFormatter(x.value, yaxisExtList[_index].formatterCfg);
+          }
+        }
+
         return {
           type: this.getChartType(yaxisExtList[_index].chartType),
           name: t.name,
@@ -356,7 +375,9 @@ export default {
             data: _.map(t.data, (v) => {
               return {
                 key: _.join(_.map(v.dimensionList, (d) => d.value), "\n"),
-                value: v.value
+                value: v.value,
+                i: _index,
+                t: 'yaxisExt'
               }
             }),
             xField: 'key',
@@ -373,13 +394,11 @@ export default {
               position: 'right',
             },
             color: colors && (yaxisCount + _index) < colors.length ? colors[yaxisCount + _index] : undefined,
-            label: labelSetting,
+            label: _labelSetting,
           }
         }
       }) : [];
 
-      //console.log(_data)
-      //console.log(_dataExt)
 
       const params = {
         tooltip: false,
@@ -409,6 +428,18 @@ export default {
                 color: customAttr.tooltip.textStyle.color,
                 backgroundColor: customAttr.tooltip.backgroundColor,
               }
+            },
+            customItems: (originalItems) => {
+              // process originalItems,
+              originalItems.forEach(item => {
+                if (item.data.t === 'yaxis' && item.data.i !== undefined && item.data.i < yaxisList.length && yaxisList[item.data.i].formatterCfg) {
+                  item.value = valueFormatter(item.data.value, yaxisList[item.data.i].formatterCfg)
+                } else if (item.data.t === 'yaxisExt' && item.data.i !== undefined && item.data.i < yaxisExtList.length && yaxisExtList[item.data.i].formatterCfg) {
+                  item.value = valueFormatter(item.data.value, yaxisExtList[item.data.i].formatterCfg)
+                }
+              })
+
+              return originalItems;
             }
           } : false;
         }

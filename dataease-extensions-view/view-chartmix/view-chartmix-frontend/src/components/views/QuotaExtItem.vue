@@ -78,6 +78,13 @@
           <el-dropdown-item icon="el-icon-files" :command="beforeClickItem('filter')">
             <span>{{ $t('chart.filter') }}...</span>
           </el-dropdown-item>
+          <el-dropdown-item
+            icon="el-icon-notebook-2"
+            divided
+            :command="beforeClickItem('formatter')"
+          >
+            <span>{{ $t('chart.value_formatter') }}...</span>
+          </el-dropdown-item>
           <el-dropdown-item icon="el-icon-edit-outline" divided :command="beforeClickItem('rename')">
             <span>{{ $t('chart.show_name_set') }}</span>
           </el-dropdown-item>
@@ -186,6 +193,9 @@ export default {
         case 'filter':
           this.editFilter()
           break
+        case 'formatter':
+          this.valueFormatter()
+          break
         default:
           break
       }
@@ -262,6 +272,11 @@ export default {
       this.item.index = this.index
       this.item.filterType = 'quotaExt'
       this.$emit('editItemFilter', this.item)
+    },
+    valueFormatter() {
+      this.item.index = this.index
+      this.item.formatterType = 'quotaExt'
+      this.$emit('valueFormatter', this.item)
     },
 
     editCompare() {
