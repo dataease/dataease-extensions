@@ -74,6 +74,61 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-dropdown-item>
+          <!--同比/环比等快速计算-->
+          <el-dropdown-item v-show="!item.chartId && chart.type !== 'table-info'">
+            <el-dropdown
+              placement="right-start"
+              size="mini"
+              style="width: 100%"
+              @command="quickCalc"
+            >
+              <span class="el-dropdown-link inner-dropdown-menu">
+                <span>
+                  <i class="el-icon-s-grid"/>
+                  <span>{{ $t('chart.quick_calc') }}</span>
+                  <span class="summary-span-item">({{
+                      !item.compareCalc ? $t('chart.none') : $t('chart.' + item.compareCalc.type)
+                    }})</span>
+                </span>
+                <i class="el-icon-arrow-right el-icon--right"/>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :command="beforeQuickCalc('none')">{{ $t('chart.none') }}</el-dropdown-item>
+                <el-dropdown-item
+                  :disabled="disableEditCompare"
+                  :command="beforeQuickCalc('setting')"
+                >{{ $t('chart.yoy_label') }}...</el-dropdown-item>
+                <el-dropdown-item
+                  :disabled="quotaViews.indexOf(chart.type) > -1"
+                  :command="beforeQuickCalc('percent')"
+                >{{ $t('chart.percent') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-dropdown-item>
+
+          <el-dropdown-item :divided="!item.chartId && chart.type !== 'table-info'">
+            <el-dropdown
+              placement="right-start"
+              size="mini"
+              style="width: 100%"
+              @command="sort"
+            >
+              <span class="el-dropdown-link inner-dropdown-menu">
+                <span>
+                  <i class="el-icon-sort" />
+                  <span>{{ $t('chart.sort') }}</span>
+                  <span class="summary-span-item">({{ $t('chart.'+item.sort) }})</span>
+                </span>
+                <i class="el-icon-arrow-right el-icon--right" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :command="beforeSort('none')">{{ $t('chart.none') }}</el-dropdown-item>
+                <el-dropdown-item :command="beforeSort('asc')">{{ $t('chart.asc') }}</el-dropdown-item>
+                <el-dropdown-item :command="beforeSort('desc')">{{ $t('chart.desc') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-dropdown-item>
+
           <el-dropdown-item icon="el-icon-files" :command="beforeClickItem('filter')">
             <span>{{ $t('chart.filter') }}...</span>
           </el-dropdown-item>
@@ -98,7 +153,7 @@
 
 <script>
 import {compareItem} from '@/utils/compare'
-import {getItemType, getOriginFieldName} from './utils'
+import {getItemType, getOriginFieldName, resetValueFormatter, quotaViews} from './utils'
 import FieldErrorTips from './FieldErrorTips'
 
 export default {
@@ -134,7 +189,8 @@ export default {
     return {
       compareItem: compareItem,
       disableEditCompare: false,
-      tagType: 'success'
+      tagType: 'success',
+      quotaViews: quotaViews
     }
   },
   watch: {
@@ -227,16 +283,30 @@ export default {
     quickCalc(param) {
       switch (param.type) {
         case 'none':
+          // 选择占比外，设置自动
+          resetValueFormatter(this.item)
           this.item.compareCalc.type = 'none'
           this.$emit('onQuotaItemChange', this.item)
           break
         case 'setting':
+          // 选择占比外，设置自动
+          resetValueFormatter(this.item)
           this.editCompare()
+          break
+        case 'percent':
+          // 选择占比，自动将数值格式设置为百分比并保留2位小数
+          this.item.formatterCfg.type = 'percent'
+          this.item.formatterCfg.decimalCount = 2
+
+          this.item.compareCalc.type = 'percent'
+          this.$emit('onQuotaItemChange', this.item)
           break
         default:
           break
       }
     },
+
+
     beforeQuickCalc(type) {
       return {
         type: type

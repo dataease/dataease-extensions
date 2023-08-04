@@ -84,3 +84,16 @@ export function getOriginFieldName(dimensionList, quotaList, field) {
   return originName
 }
 
+export function resetValueFormatter(item) {
+  if (item) {
+    item.formatterCfg = {
+      type: 'auto', // auto,value,percent
+      unit: 1, // 换算单位
+      suffix: '', // 单位后缀
+      decimalCount: 2, // 小数位数
+      thousandSeparator: true// 千分符
+    }
+  }
+}
+
+export const quotaViews = ['label', 'richTextView', 'text', 'gauge', 'liquid']
