@@ -16,6 +16,7 @@
                                  :quota-data="quotaData"
                                  :chart="chart"
                                  @onDimensionItemRemove="locationItemRemove"
+                                 @onDimensionItemChange="dimensionItemChange"
                                  @onNameEdit="showRename"
                                  dimension-name="source"
                                  :bus="bus"
@@ -234,6 +235,10 @@ export default {
       }
     },
 
+    dimensionItemChange(item) {
+      this.calcData(true)
+    },
+
 
     onMove(e, originalEvent) {
       this.moveId = e.draggedContext.element.id
@@ -279,7 +284,6 @@ export default {
       this.calcData(true)
     },
     calcData(cache) {
-      console.log(cache)
       this.view.xaxis = [...this.source, ...this.target]
 
       this.$emit('plugin-call-back', {
@@ -291,7 +295,6 @@ export default {
     },
 
     locationItemRemove(item) {
-      console.log(item)
       if (item.removeType === 'source') {
         this.source.splice(0, 1)
         //this.view.xaxis[0] = undefined;
