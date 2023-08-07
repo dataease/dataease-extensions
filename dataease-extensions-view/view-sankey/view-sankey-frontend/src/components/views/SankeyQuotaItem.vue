@@ -59,6 +59,28 @@
             </el-dropdown>
           </el-dropdown-item>
 
+          <el-dropdown-item :divided="!item.chartId && chart.type !== 'table-info'">
+            <el-dropdown
+              placement="right-start"
+              size="mini"
+              style="width: 100%"
+              @command="sort"
+            >
+              <span class="el-dropdown-link inner-dropdown-menu">
+                <span>
+                  <i class="el-icon-sort" />
+                  <span>{{ $t('chart.sort') }}</span>
+                  <span class="summary-span-item">({{ $t('chart.'+item.sort) }})</span>
+                </span>
+                <i class="el-icon-arrow-right el-icon--right" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :command="beforeSort('none')">{{ $t('chart.none') }}</el-dropdown-item>
+                <el-dropdown-item :command="beforeSort('asc')">{{ $t('chart.asc') }}</el-dropdown-item>
+                <el-dropdown-item :command="beforeSort('desc')">{{ $t('chart.desc') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-dropdown-item>
 
 
           <el-dropdown-item icon="el-icon-files" :command="beforeClickItem('filter')">
