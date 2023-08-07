@@ -300,10 +300,23 @@ export default {
       };
 
       let xaxisList = this.chart.xaxis ? JSON.parse(this.chart.xaxis) : [];
+      let xNodeSort = undefined;
       if (xaxisList[0] && xaxisList[0].sort && (xaxisList[0].sort === 'asc' || xaxisList[0].sort === 'desc')) {
-        params.nodeSort = function (a, b) {
+        xNodeSort = function (a, b) {
           return xaxisList[0].sort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
         }
+      }
+      let yaxisList = this.chart.yaxis ? JSON.parse(this.chart.yaxis) : [];
+      let yNodeSort = undefined;
+      if (yaxisList[0] && yaxisList[0].sort && (yaxisList[0].sort === 'asc' || yaxisList[0].sort === 'desc')) {
+        yNodeSort = function (a, b) {
+          return yaxisList[0].sort === 'asc' ? a.value - b.value : b.value - a.value;
+        }
+      }
+      if (yNodeSort) {
+        params.nodeSort = yNodeSort;
+      } else if (yNodeSort === undefined && xNodeSort) {
+        params.nodeSort = xNodeSort;
       } else {
         params.nodeSort = undefined;
       }
