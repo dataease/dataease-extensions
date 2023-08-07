@@ -299,6 +299,15 @@ export default {
         rawFields: ['dimensionList', 'quotaList'],
       };
 
+      let xaxisList = this.chart.xaxis ? JSON.parse(this.chart.xaxis) : [];
+      if (xaxisList[0] && xaxisList[0].sort && (xaxisList[0].sort === 'asc' || xaxisList[0].sort === 'desc')) {
+        params.nodeSort = function (a, b) {
+          return xaxisList[0].sort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+        }
+      } else {
+        params.nodeSort = undefined;
+      }
+
       if (this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr);
         if (customAttr.color) {
