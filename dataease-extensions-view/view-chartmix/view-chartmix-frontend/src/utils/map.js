@@ -467,3 +467,129 @@ export const reverseColor = colorValue => {
   return '#' + str.substring(str.length - 6, str.length)
 }
 
+
+export const DEFAULT_XAXIS_STYLE = {
+  show: true,
+  position: 'bottom',
+  name: '',
+  nameTextStyle: {
+    color: '#333333',
+    fontSize: 12
+  },
+  axisLabel: {
+    show: true,
+    color: '#333333',
+    fontSize: '12',
+    rotate: 0,
+    formatter: '{value}'
+  },
+  axisLine: {
+    show: true,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  splitLine: {
+    show: false,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  axisValue: {
+    auto: true,
+    min: null,
+    max: null,
+    split: null,
+    splitCount: null
+  },
+  axisLabelFormatter: {
+    type: 'auto', // auto,value,percent
+    unit: 1, // 换算单位
+    suffix: '', // 单位后缀
+    decimalCount: 2, // 小数位数
+    thousandSeparator: true// 千分符
+  }
+}
+
+export const DEFAULT_YAXIS_STYLE = {
+  show: true,
+  position: 'left',
+  name: '',
+  nameTextStyle: {
+    color: '#333333',
+    fontSize: 12
+  },
+  axisLabel: {
+    show: true,
+    color: '#333333',
+    fontSize: '12',
+    rotate: 0,
+    formatter: '{value}'
+  },
+  axisLine: {
+    show: false,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  splitLine: {
+    show: true,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  axisValue: {
+    auto: true,
+    min: null,
+    max: null,
+    split: null,
+    splitCount: null
+  },
+  axisLabelFormatter: {
+    type: 'auto', // auto,value,percent
+    unit: 1, // 换算单位
+    suffix: '', // 单位后缀
+    decimalCount: 2, // 小数位数
+    thousandSeparator: true// 千分符
+  }
+}
+
+export function transAxisPosition(chart, axis) {
+  if (chart.type.includes('horizontal')) {
+    switch (axis.position) {
+      case 'top':
+        return 'left'
+      case 'bottom':
+        return 'right'
+      case 'left':
+        return 'bottom'
+      case 'right':
+        return 'top'
+      default:
+        return axis.position
+    }
+  } else {
+    return axis.position
+  }
+}
+
+export function getLineDash(type) {
+  switch (type) {
+    case 'solid':
+      return [0, 0]
+    case 'dashed':
+      return [10, 8]
+    case 'dotted':
+      return [2, 2]
+    default:
+      return [0, 0]
+  }
+}
