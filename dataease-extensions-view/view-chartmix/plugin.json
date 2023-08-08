@@ -1,7 +1,7 @@
 {
     "name": "AntV 组合图",
     "free": 0,
-    "store": "thirdpart",
+    "store": "default",
     "cost": 0,
     "category": "view",
     "descript": "AntV G2Plot 组合图插件",
