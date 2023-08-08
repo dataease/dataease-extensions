@@ -315,6 +315,8 @@ export default {
         }
       }
 
+      const names = [];
+
       let _data = this.chart.data && this.chart.data.data && this.chart.data.data.length > 0 ? _.map(_.filter(this.chart.data.data, (c, _index) => {
         return _index < yaxisCount;
       }), (t, _index) => {
@@ -325,6 +327,8 @@ export default {
             return valueFormatter(x.value, yaxisList[_index].formatterCfg);
           }
         }
+
+        names.push(t.name);
 
         return {
           type: this.getChartType(yaxisList[_index].chartType),
@@ -367,6 +371,8 @@ export default {
             return valueFormatter(x.value, yaxisExtList[_index].formatterCfg);
           }
         }
+
+        names.push(t.name);
 
         return {
           type: this.getChartType(yaxisExtList[_index].chartType),
@@ -438,10 +444,10 @@ export default {
                   item.value = valueFormatter(item.data.value, yaxisExtList[item.data.i].formatterCfg)
                 }
               })
-
+              console.log(originalItems)
               return _.filter(originalItems, (item) => {
                 const v = item.data.key;
-                if (item.title === v && item.title === item.value && item.name === "key") {
+                if (item.title === v && item.title === item.value && item.name === "key" || !names.includes(item.name)) {
                   return false;
                 }
                 return true;
