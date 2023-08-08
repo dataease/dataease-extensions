@@ -439,7 +439,14 @@ export default {
                 }
               })
 
-              return originalItems;
+              return _.filter(originalItems, (item) => {
+                const v = item.data.key;
+                if (item.title === v && item.title === item.value && item.name === "key") {
+                  return false;
+                }
+                return true;
+              })
+
             }
           } : false;
         }
