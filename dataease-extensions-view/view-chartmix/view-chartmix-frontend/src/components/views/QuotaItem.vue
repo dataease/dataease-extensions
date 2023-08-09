@@ -115,11 +115,11 @@
             >
               <span class="el-dropdown-link inner-dropdown-menu">
                 <span>
-                  <i class="el-icon-sort" />
+                  <i class="el-icon-sort"/>
                   <span>{{ $t('chart.sort') }}</span>
-                  <span class="summary-span-item">({{ $t('chart.'+item.sort) }})</span>
+                  <span class="summary-span-item">({{ $t('chart.' + item.sort) }})</span>
                 </span>
-                <i class="el-icon-arrow-right el-icon--right" />
+                <i class="el-icon-arrow-right el-icon--right"/>
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="beforeSort('none')">{{ $t('chart.none') }}</el-dropdown-item>
@@ -281,6 +281,10 @@ export default {
     },
 
     quickCalc(param) {
+      if (param && param.formatterCfg === undefined) {
+        resetValueFormatter(this.item)
+      }
+
       switch (param.type) {
         case 'none':
           // 选择占比外，设置自动
