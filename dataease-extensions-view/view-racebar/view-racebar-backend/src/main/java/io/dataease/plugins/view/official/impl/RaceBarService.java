@@ -2,7 +2,9 @@ package io.dataease.plugins.view.official.impl;
 
 import com.google.gson.Gson;
 import io.dataease.plugins.common.dto.StaticResource;
-import io.dataease.plugins.view.entity.*;
+import io.dataease.plugins.view.entity.PluginViewField;
+import io.dataease.plugins.view.entity.PluginViewParam;
+import io.dataease.plugins.view.entity.PluginViewType;
 import io.dataease.plugins.view.official.handler.DefaultViewStatHandler;
 import io.dataease.plugins.view.service.ViewPluginService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,11 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RaceBarService extends ViewPluginService {
@@ -35,23 +34,23 @@ public class RaceBarService extends ViewPluginService {
     private static final String[] VIEW_STYLE_PROPERTIES = {
             "color-selector",
             "label-selector",
-            "tooltip-selector-ant-v",
-            "title-selector-ant-v"
+            "tooltip-selector",
+            "title-selector",
     };
 
     private static final Map<String, String[]> VIEW_STYLE_PROPERTY_INNER = new HashMap<>();
 
     static {
-        VIEW_STYLE_PROPERTY_INNER.put("color-selector", new String[]{"value"});
-        VIEW_STYLE_PROPERTY_INNER.put("label-selector", new String[]{"show", "fontSize", "color"});
-        VIEW_STYLE_PROPERTY_INNER.put("tooltip-selector-ant-v", new String[]{"show", "fontSize", "color", "backgroundColor"});
-        VIEW_STYLE_PROPERTY_INNER.put("title-selector-ant-v", new String[]{"show", "title", "fontSize", "color", "hPosition", "vPosition", "isItalic", "isBolder"});
+        VIEW_STYLE_PROPERTY_INNER.put("color-selector", new String[]{"value", "alpha"});
+        VIEW_STYLE_PROPERTY_INNER.put("label-selector", new String[]{"show", "fontSize", "color", "position", "formatter"});
+        VIEW_STYLE_PROPERTY_INNER.put("tooltip-selector", new String[]{"show", "textStyle", "formatter"});
+        VIEW_STYLE_PROPERTY_INNER.put("title-selector", new String[]{"show", "title", "fontSize", "color", "hPosition", "vPosition", "isItalic", "isBolder"});
     }
 
     @Override
     public PluginViewType viewType() {
         PluginViewType pluginViewType = new PluginViewType();
-        pluginViewType.setRender("antv");
+        pluginViewType.setRender("echarts");
         pluginViewType.setCategory("chart.chart_type_trend");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
         pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
@@ -101,92 +100,75 @@ public class RaceBarService extends ViewPluginService {
 
     @Override
     public String generateSQL(PluginViewParam param) {
+
         List<PluginViewField> xAxis = param.getFieldsByType("xAxis");
         List<PluginViewField> yAxis = param.getFieldsByType("yAxis");
-        /*if (yAxis == null) {
-            yAxis = new ArrayList<>();
-        }
-        List<PluginViewField> yAxisExt = param.getFieldsByType("yAxisExt");
-        if (CollectionUtils.isNotEmpty(yAxisExt)) {
-            yAxis.addAll(yAxisExt);
-        }*/
-        System.out.println(new Gson().toJson(yAxis));
+
         if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)) {
             return null;
         }
         String sql = new DefaultViewStatHandler().build(param, this);
-        System.out.println(sql);
         return sql;
 
     }
 
-
     @Override
     public Map<String, Object> formatResult(PluginViewParam pluginViewParam, List<String[]> data, Boolean isDrill) {
-        List<PluginViewField> xAxis = new ArrayList<>();
-        List<PluginViewField> yAxis = new ArrayList<>();
+        return format(pluginViewParam, data, isDrill);
+    }
+
+
+    public Map format(PluginViewParam pluginViewParam, List<String[]> data, boolean isDrill) {
 
         System.out.println("pluginViewParam: " + new Gson().toJson(pluginViewParam));
 
-        pluginViewParam.getPluginViewFields().forEach(pluginViewField -> {
-            if (StringUtils.equals(pluginViewField.getTypeField(), "xAxis")) {
-                xAxis.add(pluginViewField);
-            }
-            if (StringUtils.equals(pluginViewField.getTypeField(), "yAxis")) {
-                yAxis.add(pluginViewField);
-            }
-        });
         Map<String, Object> map = new HashMap<>();
 
-        List<PluginSeries> series = format(pluginViewParam.getPluginViewLimit().getType(), data, xAxis, yAxis);
+        map.put("data", data);
 
-        map.put("data", series);
+        Map<String, Integer> encode = new HashMap<>();
 
-        System.out.println(new Gson().toJson(map));
+        for (int i = 0; i < pluginViewParam.getPluginViewFields().size(); i++) {
+            PluginViewField p = pluginViewParam.getPluginViewFields().get(i);
+            if (StringUtils.equals(p.getTypeField(), "yAxis")) {
+                encode.put("x", i);
+            } else if (StringUtils.equals(p.getTypeField(), "xAxis")) {
+                if (p.getExtField() == 1) {
+                    map.put("extIndex", i);
+                } else {
+                    encode.put("y", i);
+                }
+            }
+        }
+        map.put("encode", encode);
+
+        Set<Object> xs = new HashSet<>();
+        data.forEach(ss-> {
+            xs.add(ss[encode.get("y")]);
+        });
+
+        Map<String, List<String[]>> groupData = data.stream().collect(Collectors.toMap(
+                k -> k[(Integer) map.get("extIndex")],
+                v -> {
+                    List<String[]> list = new ArrayList<>();
+                    list.add(v);
+                    return list;
+                },
+                (oldList, newList) -> {
+                    oldList.addAll(newList);
+                    return oldList;
+                })
+        );
+
+        map.put("groupData", groupData);
+
+        map.put("extXs", new ArrayList<>(groupData.keySet()).stream().sorted().collect(Collectors.toList()));
+
+        map.put("xs", new ArrayList<>(xs).stream().sorted().collect(Collectors.toList()));
+
+        System.out.println("result: " + new Gson().toJson(map));
 
         return map;
-    }
-
-    private List<PluginSeries> format(String type, List<String[]> data, List<PluginViewField> xAxis, List<PluginViewField> yAxis) {
-        List<PluginSeries> series = new ArrayList<>();
-        for (PluginViewField y : yAxis) {
-            PluginSeries series1 = new PluginSeries();
-            series1.setName(y.getName());
-            series1.setType(type);
-            series1.setData(new ArrayList<>());
-            series.add(series1);
-        }
-        for (int i1 = 0; i1 < data.size(); i1++) {
-            String[] d = data.get(i1);
-
-            for (int i = xAxis.size(); i < xAxis.size() + yAxis.size(); i++) {
-                List<PluginChartDimension> dimensionList = new ArrayList<>();
-                List<PluginChartQuota> quotaList = new ArrayList<>();
-                PluginAxisChartData axisChartDataDTO = new PluginAxisChartData();
-
-                for (int j = 0; j < xAxis.size(); j++) {
-                    PluginChartDimension chartDimensionDTO = new PluginChartDimension();
-                    chartDimensionDTO.setId(xAxis.get(j).getId());
-                    chartDimensionDTO.setValue(d[j]);
-                    dimensionList.add(chartDimensionDTO);
-                }
-                axisChartDataDTO.setDimensionList(dimensionList);
-
-                int j = i - xAxis.size();
-                PluginChartQuota chartQuotaDTO = new PluginChartQuota();
-                chartQuotaDTO.setId(yAxis.get(j).getId());
-                quotaList.add(chartQuotaDTO);
-                axisChartDataDTO.setQuotaList(quotaList);
-                try {
-                    axisChartDataDTO.setValue(StringUtils.isEmpty(d[i]) ? null : new BigDecimal(d[i]));
-                } catch (Exception e) {
-                    axisChartDataDTO.setValue(new BigDecimal(0));
-                }
-                series.get(j).getData().add(axisChartDataDTO);
-            }
-
-        }
-        return series;
     }
 
 }

@@ -8,7 +8,7 @@
       <draggable v-model="view.xaxis" group="drag" animation="300" :move="onMove" class="drag-block-style"
                  @add="addXaxis" @update="calcData(true)">
         <transition-group class="draggable-group">
-          <sankey-dimension-item v-for="(item,index) in view.xaxis" :key="index"
+          <dimension-item v-for="(item,index) in view.xaxis" :key="index"
                                  :param="param"
                                  :index="0"
                                  :item="item"
@@ -25,6 +25,42 @@
         </transition-group>
       </draggable>
       <div v-if="!view.xaxis || view.xaxis.length === 0" class="drag-placeholder-style">
+        <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
+      </div>
+    </el-row>
+
+    <el-row class="padding-lr">
+      <span style="width: 80px;text-align: right;">
+        <span>{{ $t('plugin_view_racebar.source') }}</span>/<span>{{ $t('chart.dimension') }}</span>
+      </span>
+      <draggable
+        v-model="view.xaxisExt"
+        group="drag"
+        animation="300"
+        :move="onMove"
+        class="drag-block-style"
+        @add="addXaxisExt"
+        @update="calcData(true)"
+      >
+        <transition-group class="draggable-group">
+          <dimension-ext-item
+            v-for="(item,index) in view.xaxisExt"
+            :key="item.id"
+            :param="param"
+            :index="index"
+            :item="item"
+            :dimension-data="dimension"
+            :quota-data="quotaData"
+            :chart="chart"
+            @onDimensionItemChange="dimensionItemChange"
+            @onDimensionItemRemove="dimensionItemRemove"
+            @editItemFilter="showDimensionEditFilter"
+            @onNameEdit="showRename"
+            :bus="bus"
+          />
+        </transition-group>
+      </draggable>
+      <div v-if="!view.xaxisExt || view.xaxisExt.length === 0" class="drag-placeholder-style">
         <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
       </div>
     </el-row>
@@ -47,29 +83,6 @@
         </transition-group>
       </draggable>
       <div v-if="!view.yaxis || view.yaxis.length === 0" class="drag-placeholder-style">
-        <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
-      </div>
-    </el-row>
-
-    <el-row class="padding-lr" style="margin-top: 6px;">
-      <span style="width: 80px;text-align: right;">
-        <span>{{ $t('plugin_view_racebar.mark_size') }}</span>/<span>{{ $t('chart.quota') }}</span>
-      </span>
-      <draggable v-model="view.yaxisExt" group="drag" animation="300" :move="onMove" class="drag-block-style"
-                 @add="addYaxisExt" @update="calcData(true)">
-        <transition-group class="draggable-group">
-          <quota-ext-item v-for="(item,index) in view.yaxisExt" :key="item.id" :param="param" :index="index"
-                          :item="item"
-                          :chart="chart" :dimension-data="dimension" :quota-data="quota"
-                          @onQuotaItemChange="quotaItemChange"
-                          @onQuotaItemRemove="quotaItemRemove"
-                          @editItemFilter="showQuotaEditFilter"
-                          @valueFormatter="valueFormatter"
-                          @onNameEdit="showRename"
-                          @editItemCompare="showQuotaEditCompare"/>
-        </transition-group>
-      </draggable>
-      <div v-if="!view.yaxisExt || view.yaxisExt.length === 0" class="drag-placeholder-style">
         <span class="drag-placeholder-style-span">{{ $t('chart.placeholder_field') }}</span>
       </div>
     </el-row>
@@ -98,9 +111,9 @@
 </template>
 
 <script>
-import SankeyDimensionItem from '@/components/views/SankeyDimensionItem'
+import DimensionItem from '@/components/views/DimensionItem'
+import DimensionExtItem from '@/components/views/DimensionExtItem'
 import QuotaItem from '@/components/views/QuotaItem'
-import QuotaExtItem from '@/components/views/QuotaExtItem'
 import FilterItem from '@/components/views/FilterItem'
 import messages from '@/de-base/lang/messages'
 
@@ -118,9 +131,9 @@ export default {
     },
   },
   components: {
-    SankeyDimensionItem,
+    DimensionItem,
+    DimensionExtItem,
     QuotaItem,
-    QuotaExtItem,
     FilterItem
   },
   data() {
@@ -197,11 +210,14 @@ export default {
     },
 
     addXaxis(e) {
-
       this.dragMoveDuplicate(this.view.xaxis, e)
       /*if (this.view.xaxis.length > 1) {
         this.view.xaxis = [this.view.xaxis[0]]
       }*/
+      this.calcData(true)
+    },
+    addXaxisExt(e) {
+      this.dragMoveDuplicate(this.view.xaxisExt, e)
       this.calcData(true)
     },
     addYaxis(e) {

@@ -11,7 +11,6 @@
     "buildPlugin": "node --openssl-legacy-provider build/build-async-plugins.js"
   },
   "dependencies": {
-    "@antv/g2plot": "^2.4.31",
     "@riophae/vue-treeselect": "0.4.0",
     "lodash": "^4.17.21",
     "vue": "2.6.10",

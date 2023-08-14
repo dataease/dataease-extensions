@@ -70,7 +70,7 @@
           />
         </el-tag>
         <el-dropdown-menu slot="dropdown">
-<!--          <el-dropdown-item>
+          <el-dropdown-item>
             <el-dropdown
               placement="right-start"
               size="mini"
@@ -83,7 +83,7 @@
                   <span>{{ $t('chart.sort') }}</span>
                   <span class="summary-span-item">({{ $t('chart.' + item.sort) }})</span>
                 </span>
-                <i class="el-icon-arrow-right el-icon&#45;&#45;right"/>
+                <i class="el-icon-arrow-right el-icon--right"/>
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="beforeSort('none')">{{ $t('chart.none') }}</el-dropdown-item>
@@ -95,8 +95,8 @@
                 >{{ $t('chart.custom_sort') }}...</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </el-dropdown-item>-->
-<!--          <el-dropdown-item
+          </el-dropdown-item>
+          <el-dropdown-item
             v-show="item.deType === 1"
             divided
           >
@@ -112,7 +112,7 @@
                   <span>{{ $t('chart.dateStyle') }}</span>
                   <span class="summary-span-item">({{ $t('chart.' + item.dateStyle) }})</span>
                 </span>
-                <i class="el-icon-arrow-right el-icon&#45;&#45;right"/>
+                <i class="el-icon-arrow-right el-icon--right"/>
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="beforeDateStyle('y')">{{ $t('chart.y') }}</el-dropdown-item>
@@ -150,7 +150,7 @@
                   <span>{{ $t('chart.datePattern') }}</span>
                   <span class="summary-span-item">({{ $t('chart.' + item.datePattern) }})</span>
                 </span>
-                <i class="el-icon-arrow-right el-icon&#45;&#45;right"/>
+                <i class="el-icon-arrow-right el-icon--right"/>
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="beforeDatePattern('date_sub')">{{
@@ -164,15 +164,16 @@
           </el-dropdown-item>
 
           <el-dropdown-item
-            v-if="chart && chart.render === 'antv' && chart.type.includes('table') && item.groupType === 'q'"
+            v-if="chart.render === 'antv' && chart.type.includes('table') && item.groupType === 'q'"
             icon="el-icon-notebook-2"
             divided
             :command="beforeClickItem('formatter')"
           >
             <span>{{ $t('chart.value_formatter') }}...</span>
-          </el-dropdown-item>-->
+          </el-dropdown-item>
           <el-dropdown-item
             icon="el-icon-edit-outline"
+            divided
             :command="beforeClickItem('rename')"
           >
             <span>{{ $t('chart.show_name_set') }}</span>
@@ -193,7 +194,7 @@
 <script>
 import {getItemType, getOriginFieldName} from './utils'
 import FieldErrorTips from './FieldErrorTips'
-import {formatterItem} from '@/utils/map'
+import {formatterItem} from '../../utils/map'
 
 export default {
   name: 'DimensionItem',
@@ -221,10 +222,6 @@ export default {
     },
     quotaData: {
       type: Array,
-      required: true
-    },
-    dimensionName: {
-      type: String,
       required: true
     },
     bus: {
@@ -336,12 +333,11 @@ export default {
       this.item.index = this.index
       this.item.renameType = 'dimension'
       this.item.dsFieldName = getOriginFieldName(this.dimensionData, this.quotaData, this.item)
-      console.log(this.item)
       this.$emit('onNameEdit', this.item)
     },
     removeItem() {
       this.item.index = this.index
-      this.item.removeType = this.dimensionName
+      this.item.removeType = 'dimension'
       this.$emit('onDimensionItemRemove', this.item)
     },
     getItemTagType() {

@@ -1,3 +1,5 @@
+import {valueFormatter} from "./formatter";
+
 export const DEFAULT_COLOR_CASE = {
   value: 'default',
   colors: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],
@@ -99,6 +101,13 @@ export const DEFAULT_TOOLTIP = {
   formatter: '',
   tooltipTemplate: '{busiValue}'
 }
+
+export const BASE_ECHARTS_SELECT = {
+  itemStyle: {
+    shadowBlur: 2
+  }
+}
+
 export const DEFAULT_TITLE_STYLE = {
   show: true,
   fontSize: '18',
@@ -220,6 +229,215 @@ export const formatterItem = {
   suffix: '', // 单位后缀
   decimalCount: 2, // 小数位数
   thousandSeparator: true// 千分符
+}
+
+export const DEFAULT_XAXIS_STYLE = {
+  show: true,
+  position: 'bottom',
+  name: '',
+  nameTextStyle: {
+    color: '#333333',
+    fontSize: 12
+  },
+  axisLabel: {
+    show: true,
+    color: '#333333',
+    fontSize: '12',
+    rotate: 0,
+    formatter: '{value}'
+  },
+  axisLine: {
+    show: true,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  splitLine: {
+    show: false,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  axisValue: {
+    auto: true,
+    min: null,
+    max: null,
+    split: null,
+    splitCount: null
+  },
+  axisLabelFormatter: {
+    type: 'auto', // auto,value,percent
+    unit: 1, // 换算单位
+    suffix: '', // 单位后缀
+    decimalCount: 2, // 小数位数
+    thousandSeparator: true// 千分符
+  }
+}
+
+export const DEFAULT_YAXIS_STYLE = {
+  show: true,
+  position: 'left',
+  name: '',
+  nameTextStyle: {
+    color: '#333333',
+    fontSize: 12
+  },
+  axisLabel: {
+    show: true,
+    color: '#333333',
+    fontSize: '12',
+    rotate: 0,
+    formatter: '{value}'
+  },
+  axisLine: {
+    show: false,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  splitLine: {
+    show: true,
+    lineStyle: {
+      color: '#cccccc',
+      width: 1,
+      style: 'solid'
+    }
+  },
+  axisValue: {
+    auto: true,
+    min: null,
+    max: null,
+    split: null,
+    splitCount: null
+  },
+  axisLabelFormatter: {
+    type: 'auto', // auto,value,percent
+    unit: 1, // 换算单位
+    suffix: '', // 单位后缀
+    decimalCount: 2, // 小数位数
+    thousandSeparator: true// 千分符
+  }
+}
+
+export const HORIZONTAL_BAR = {
+  title: {
+    text: '',
+    textStyle: {
+      fontWeight: 'normal'
+    }
+  },
+  grid: {
+    containLabel: true
+  },
+  tooltip: {},
+  legend: {
+    show: true,
+    type: 'scroll',
+    itemWidth: 10,
+    itemHeight: 10,
+    icon: 'rect',
+    data: []
+  },
+  xAxis: {
+    max: 'dataMax',
+    axisLabel: {
+      formatter: function (n) {
+        return Math.round(n) + '';
+      }
+    }
+  },
+  yAxis: {
+    type: 'category',
+    inverse: true,
+    max: 10,
+    animationDuration: 300,
+    animationDurationUpdate: 300
+  },
+  dataset: {
+    source: []
+  },
+  series: [
+    {
+      realtimeSort: true,
+      seriesLayoutBy: 'column',
+      type: 'bar',
+    }
+  ],
+  // Disable init animation.
+  animationDuration: 0,
+  animationDurationUpdate: 2000,
+  animationEasing: 'linear',
+  animationEasingUpdate: 'linear',
+  graphic: {
+    elements: [
+      {
+        type: 'text',
+        right: 160,
+        bottom: 60,
+        style: {
+          font: 'bolder 80px monospace',
+          fill: 'rgba(100, 100, 100, 0.25)'
+        },
+        z: 100
+      }
+    ]
+  },
+  dataZoom: [
+    {
+      type: 'slider',
+      show: false,
+      xAxisIndex: [0],
+      start: 0,
+      end: 100
+    },
+    {
+      type: 'slider',
+      show: false,
+      yAxisIndex: [0],
+      left: '93%',
+      start: 0,
+      end: 100
+    },
+    {
+      type: 'inside',
+      disabled: true,
+      xAxisIndex: [0],
+      start: 0,
+      end: 100
+    },
+    {
+      type: 'inside',
+      disabled: true,
+      yAxisIndex: [0],
+      start: 0,
+      end: 100
+    }
+  ]
+}
+
+export function transAxisPosition(chart, axis) {
+  if (chart.type.includes('horizontal')) {
+    switch (axis.position) {
+      case 'top':
+        return 'left'
+      case 'bottom':
+        return 'right'
+      case 'left':
+        return 'bottom'
+      case 'right':
+        return 'top'
+      default:
+        return axis.position
+    }
+  } else {
+    return axis.position
+  }
 }
 
 const convertData = (mapData, chart) => {
@@ -465,5 +683,141 @@ export const reverseColor = colorValue => {
   colorValue = '0x' + colorValue.replace(/#/g, '')
   const str = '000000' + (0xFFFFFF - colorValue).toString(16)
   return '#' + str.substring(str.length - 6, str.length)
+}
+
+export function seniorCfg(chart_option, chart) {
+  if (chart.senior && chart.type && (chart.type.includes('bar') || chart.type.includes('line') || chart.type.includes('mix'))) {
+    const senior = JSON.parse(chart.senior)
+    if (senior.functionCfg) {
+      if (senior.functionCfg.sliderShow) {
+        chart_option.dataZoom = [
+          {
+            type: 'inside',
+            start: parseInt(senior.functionCfg.sliderRange[0]),
+            end: parseInt(senior.functionCfg.sliderRange[1])
+          },
+          {
+            type: 'slider',
+            start: parseInt(senior.functionCfg.sliderRange[0]),
+            end: parseInt(senior.functionCfg.sliderRange[1])
+          }
+        ]
+        if (senior.functionCfg.sliderBg) {
+          chart_option.dataZoom[1].dataBackground = {
+            lineStyle: { color: hexToRgba(senior.functionCfg.sliderBg, 0.5) },
+            areaStyle: { color: hexToRgba(senior.functionCfg.sliderBg, 0.5) }
+          }
+          chart_option.dataZoom[1].borderColor = hexToRgba(senior.functionCfg.sliderBg, 0.3)
+        }
+        if (senior.functionCfg.sliderFillBg) {
+          chart_option.dataZoom[1].selectedDataBackground = {
+            lineStyle: { color: senior.functionCfg.sliderFillBg },
+            areaStyle: { color: senior.functionCfg.sliderFillBg }
+          }
+          const rgba = hexToRgba(senior.functionCfg.sliderFillBg, 0.2)
+          chart_option.dataZoom[1].fillerColor = rgba
+        }
+        if (senior.functionCfg.sliderTextClolor) {
+          chart_option.dataZoom[1].textStyle = { color: senior.functionCfg.sliderTextClolor }
+          const rgba = hexToRgba(senior.functionCfg.sliderTextClolor, 0.5)
+          chart_option.dataZoom[1].handleStyle = { color: rgba }
+        }
+
+        if (chart.type.includes('horizontal')) {
+          chart_option.dataZoom[0].yAxisIndex = [0]
+          chart_option.dataZoom[1].yAxisIndex = [0]
+          chart_option.dataZoom[1].left = '10px'
+        }
+      }
+    }
+    // begin mark line settings
+    if (chart_option.series && chart_option.series.length > 0) {
+      chart_option.series[0].markLine = {
+        symbol: 'none',
+        data: []
+      }
+    }
+    if (senior.assistLine && senior.assistLine.length > 0) {
+      if (chart_option.series && chart_option.series.length > 0) {
+        const customStyle = JSON.parse(chart.customStyle)
+        let xAxis, yAxis, axisFormatterCfg
+        if (customStyle.xAxis) {
+          xAxis = JSON.parse(JSON.stringify(customStyle.xAxis))
+          if (chart.type.includes('horizontal')) {
+            axisFormatterCfg = xAxis.axisLabelFormatter ? xAxis.axisLabelFormatter : DEFAULT_XAXIS_STYLE.axisLabelFormatter
+          }
+        }
+        if (customStyle.yAxis) {
+          yAxis = JSON.parse(JSON.stringify(customStyle.yAxis))
+          if (!chart.type.includes('horizontal')) {
+            axisFormatterCfg = yAxis.axisLabelFormatter ? yAxis.axisLabelFormatter : DEFAULT_YAXIS_STYLE.axisLabelFormatter
+          }
+        }
+
+        const fixedLines = senior.assistLine.filter(ele => ele.field === '0')
+        const dynamicLines = chart.data.dynamicAssistLines
+        const lines = fixedLines.concat(dynamicLines)
+
+        lines.forEach(ele => {
+          if (chart.type.includes('horizontal')) {
+            chart_option.series[0].markLine.data.push({
+              symbol: 'none',
+              xAxis: parseFloat(ele.value),
+              name: ele.name,
+              lineStyle: {
+                color: ele.color,
+                type: ele.lineType
+              },
+              label: {
+                show: true,
+                color: ele.color,
+                fontSize: ele.fontSize ? parseInt(ele.fontSize) : 10,
+                position: xAxis.position === 'bottom' ? 'insideStartTop' : 'insideEndTop',
+                formatter: function(param) {
+                  return ele.name + ' : ' + valueFormatter(param.value, axisFormatterCfg)
+                }
+              },
+              tooltip: {
+                show: false
+              }
+            })
+          } else {
+            chart_option.series[0].markLine.data.push({
+              symbol: 'none',
+              yAxis: parseFloat(ele.value),
+              name: ele.name,
+              lineStyle: {
+                color: ele.color,
+                type: ele.lineType
+              },
+              label: {
+                show: true,
+                color: ele.color,
+                fontSize: ele.fontSize ? parseInt(ele.fontSize) : 10,
+                position: yAxis.position === 'left' ? 'insideStartTop' : 'insideEndTop',
+                formatter: function(param) {
+                  return ele.name + ' : ' + valueFormatter(param.value, axisFormatterCfg)
+                }
+              },
+              tooltip: {
+                show: false
+              }
+            })
+          }
+        })
+      }
+    }
+  }
+}
+
+const hexToRgba = (hex, opacity) => {
+  let rgbaColor = ''
+  const reg = /^#[\da-f]{6}$/i
+  if (reg.test(hex)) {
+    rgbaColor = `rgba(${parseInt('0x' + hex.slice(1, 3))},${parseInt(
+      '0x' + hex.slice(3, 5)
+    )},${parseInt('0x' + hex.slice(5, 7))},${opacity})`
+  }
+  return rgbaColor
 }
 
