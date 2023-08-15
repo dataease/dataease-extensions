@@ -8,11 +8,11 @@
       <span class="padding-lr">{{ $t('chart.shape_attr') }}</span>
       <el-collapse v-model="attrActiveNames" class="style-collapse">
         <el-collapse-item name="color" :title="$t('chart.color')">
-          <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange" />
+          <color-selector :param="param" class="attr-selector" :chart="chart" @onColorChange="onColorChange"/>
         </el-collapse-item>
 
 
-        <el-collapse-item name="label" :title="$t('chart.label')" >
+        <el-collapse-item name="label" :title="$t('chart.label')">
           <label-selector
             :param="param"
             class="attr-selector"
@@ -25,8 +25,8 @@
           />
         </el-collapse-item>
 
-        <el-collapse-item name="tooltip" :title="$t('chart.tooltip')" >
-          <tooltip-selector-ant-v
+        <el-collapse-item name="tooltip" :title="$t('chart.tooltip')">
+          <tooltip-selector
             :param="param"
             class="attr-selector"
             :chart="chart"
@@ -34,6 +34,19 @@
             :dimension-data="dimensionData"
             :quota-data="quotaData"
             @onTooltipChange="onTooltipChange"
+            @onRefreshViewFields="onRefreshViewFields"
+          />
+        </el-collapse-item>
+
+        <el-collapse-item name="tooltip" :title="$t('plugin_view_racebar.slider')">
+          <slider-setting
+            :param="param"
+            class="attr-selector"
+            :chart="chart"
+            :view="view"
+            :dimension-data="dimensionData"
+            :quota-data="quotaData"
+            @onChange="onSliderChange"
             @onRefreshViewFields="onRefreshViewFields"
           />
         </el-collapse-item>
@@ -59,117 +72,128 @@
 </template>
 
 <script>
-  import ColorSelector from '@/components/selector/ColorSelector'
-  import TitleSelector from '@/components/selector/TitleSelector'
-  import TooltipSelectorAntV from '@/components/selector/TooltipSelectorAntV'
-  import LabelSelector from '@/components/selector/LabelSelector.vue'
-  import messages from '@/de-base/lang/messages'
-  export default {
-    components: {
-      ColorSelector,
-      TitleSelector,
-      TooltipSelectorAntV,
-      LabelSelector
-    },
-    data() {
-      return {
-        attrActiveNames: [],
-        styleActiveNames: [],
-      }
-    },
-    props: {
+import ColorSelector from '@/components/selector/ColorSelector'
+import TitleSelector from '@/components/selector/TitleSelector'
+import TooltipSelector from '@/components/selector/TooltipSelector'
+import SliderSetting from '@/components/selector/SliderSetting'
+import LabelSelector from '@/components/selector/LabelSelector.vue'
+import messages from '@/de-base/lang/messages'
 
-      obj: {
-        type: Object,
-        default: () => {}
-      }
-    },
-
-    computed: {
-      param() {
-        return this.obj.param
-      },
-      view() {
-        return this.obj.view
-      },
-      chart() {
-        return this.obj.chart
-      },
-      dimensionData() {
-        return this.obj.dimensionData
-      },
-      quotaData() {
-        return this.obj.quotaData
-      }
-    },
-    created() {
-      this.$emit('on-add-languages', messages)
-    },
-    methods: {
-      onColorChange(val) {
-        this.view.customAttr.color = val
-        this.calcStyle()
-      },
-      onRefreshViewFields(val) {
-        this.view.viewFields = val
-        // this.calcStyle()
-        this.calcData()
-      },
-      onLabelChange(val) {
-        this.view.customAttr.label = val
-        this.calcStyle()
-      },
-
-      onTooltipChange(val) {
-        this.view.customAttr.tooltip = val
-        this.calcStyle()
-      },
-      onTextChange(val) {
-        this.view.customStyle.text = val
-        this.view.title = val.title
-        this.calcStyle()
-      },
-      onChangeBaseMapForm(val) {
-        this.view.customStyle.baseMapStyle = val
-        this.calcStyle()
-      },
-      onChangeBackgroundForm(val) {
-        this.view.customStyle.background = val
-        this.calcStyle()
-      },
-      onLegendChange(val) {
-        this.view.customStyle.legend = val
-        this.calcStyle()
-      },
-      calcStyle() {
-        this.$emit('plugin-call-back', {
-          eventName: 'plugins-calc-style',
-          eventParam: this.view
-        })
-      },
-      calcData(cache) {
-        this.$emit('plugin-call-back', {
-          eventName: 'calc-data',
-          eventParam: {
-            cache
-          }
-        })
-      },
+export default {
+  components: {
+    ColorSelector,
+    TitleSelector,
+    TooltipSelector,
+    LabelSelector,
+    SliderSetting
+  },
+  data() {
+    return {
+      attrActiveNames: [],
+      styleActiveNames: [],
     }
+  },
+  props: {
+
+    obj: {
+      type: Object,
+      default: () => {
+      }
+    }
+  },
+
+  computed: {
+    param() {
+      return this.obj.param
+    },
+    view() {
+      return this.obj.view
+    },
+    chart() {
+      return this.obj.chart
+    },
+    dimensionData() {
+      return this.obj.dimensionData
+    },
+    quotaData() {
+      return this.obj.quotaData
+    }
+  },
+  created() {
+    this.$emit('on-add-languages', messages)
+  },
+  methods: {
+    onColorChange(val) {
+      this.view.customAttr.color = val
+      this.calcStyle()
+    },
+    onRefreshViewFields(val) {
+      this.view.viewFields = val
+      // this.calcStyle()
+      this.calcData()
+    },
+    onLabelChange(val) {
+      this.view.customAttr.label = val
+      this.calcStyle()
+    },
+
+    onTooltipChange(val) {
+      this.view.customAttr.tooltip = val
+      this.calcStyle()
+    },
+    onSliderChange(val) {
+      this.view.customAttr.slider = val
+      this.calcStyle()
+    },
+    onTextChange(val) {
+      this.view.customStyle.text = val
+      this.view.title = val.title
+      this.calcStyle()
+    },
+    onChangeBaseMapForm(val) {
+      this.view.customStyle.baseMapStyle = val
+      this.calcStyle()
+    },
+    onChangeBackgroundForm(val) {
+      this.view.customStyle.background = val
+      this.calcStyle()
+    },
+    onLegendChange(val) {
+      this.view.customStyle.legend = val
+      this.calcStyle()
+    },
+    calcStyle() {
+      this.$emit('plugin-call-back', {
+        eventName: 'plugins-calc-style',
+        eventParam: this.view
+      })
+    },
+    calcData(cache) {
+      this.$emit('plugin-call-back', {
+        eventName: 'calc-data',
+        eventParam: {
+          cache
+        }
+      })
+    },
   }
+}
 </script>
 
 <style lang="scss" scoped>
-  .padding-lr {
-    padding: 0 6px;
-  }
-  span {
-    font-size: 12px;
-  }
-  .el-radio {
-    margin: 5px;
-  }
-  .radio-span > > > .el-radio__label {
-    margin-left: 2px;
-  }
+.padding-lr {
+  padding: 0 6px;
+}
+
+span {
+  font-size: 12px;
+}
+
+.el-radio {
+  margin: 5px;
+}
+
+.radio-span > > > .el-radio__label {
+  margin-left: 2px;
+}
 </style>

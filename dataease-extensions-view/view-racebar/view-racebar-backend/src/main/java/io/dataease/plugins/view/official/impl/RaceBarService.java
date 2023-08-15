@@ -104,7 +104,7 @@ public class RaceBarService extends ViewPluginService {
         List<PluginViewField> xAxis = param.getFieldsByType("xAxis");
         List<PluginViewField> yAxis = param.getFieldsByType("yAxis");
 
-        if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis)) {
+        if (CollectionUtils.isEmpty(xAxis) || CollectionUtils.isEmpty(yAxis) || xAxis.size() < 2) {
             return null;
         }
         String sql = new DefaultViewStatHandler().build(param, this);
@@ -143,7 +143,7 @@ public class RaceBarService extends ViewPluginService {
         map.put("encode", encode);
 
         Set<Object> xs = new HashSet<>();
-        data.forEach(ss-> {
+        data.forEach(ss -> {
             xs.add(ss[encode.get("y")]);
         });
 

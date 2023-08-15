@@ -75,6 +75,12 @@ export const COLOR_PANEL = [
   '#FFFFFF'
 ]
 
+export const DEFAULT_SLIDER = {
+  show: false,
+  auto: false,
+  repeat: false,
+}
+
 export const DEFAULT_LABEL = {
   show: true,
   position: 'middle',
@@ -378,7 +384,7 @@ export const HORIZONTAL_BAR = {
     elements: [
       {
         type: 'text',
-        right: 160,
+        right: 60,
         bottom: 60,
         style: {
           font: 'bolder 80px monospace',
@@ -704,23 +710,23 @@ export function seniorCfg(chart_option, chart) {
         ]
         if (senior.functionCfg.sliderBg) {
           chart_option.dataZoom[1].dataBackground = {
-            lineStyle: { color: hexToRgba(senior.functionCfg.sliderBg, 0.5) },
-            areaStyle: { color: hexToRgba(senior.functionCfg.sliderBg, 0.5) }
+            lineStyle: {color: hexToRgba(senior.functionCfg.sliderBg, 0.5)},
+            areaStyle: {color: hexToRgba(senior.functionCfg.sliderBg, 0.5)}
           }
           chart_option.dataZoom[1].borderColor = hexToRgba(senior.functionCfg.sliderBg, 0.3)
         }
         if (senior.functionCfg.sliderFillBg) {
           chart_option.dataZoom[1].selectedDataBackground = {
-            lineStyle: { color: senior.functionCfg.sliderFillBg },
-            areaStyle: { color: senior.functionCfg.sliderFillBg }
+            lineStyle: {color: senior.functionCfg.sliderFillBg},
+            areaStyle: {color: senior.functionCfg.sliderFillBg}
           }
           const rgba = hexToRgba(senior.functionCfg.sliderFillBg, 0.2)
           chart_option.dataZoom[1].fillerColor = rgba
         }
         if (senior.functionCfg.sliderTextClolor) {
-          chart_option.dataZoom[1].textStyle = { color: senior.functionCfg.sliderTextClolor }
+          chart_option.dataZoom[1].textStyle = {color: senior.functionCfg.sliderTextClolor}
           const rgba = hexToRgba(senior.functionCfg.sliderTextClolor, 0.5)
-          chart_option.dataZoom[1].handleStyle = { color: rgba }
+          chart_option.dataZoom[1].handleStyle = {color: rgba}
         }
 
         if (chart.type.includes('horizontal')) {
@@ -773,7 +779,7 @@ export function seniorCfg(chart_option, chart) {
                 color: ele.color,
                 fontSize: ele.fontSize ? parseInt(ele.fontSize) : 10,
                 position: xAxis.position === 'bottom' ? 'insideStartTop' : 'insideEndTop',
-                formatter: function(param) {
+                formatter: function (param) {
                   return ele.name + ' : ' + valueFormatter(param.value, axisFormatterCfg)
                 }
               },
@@ -795,7 +801,7 @@ export function seniorCfg(chart_option, chart) {
                 color: ele.color,
                 fontSize: ele.fontSize ? parseInt(ele.fontSize) : 10,
                 position: yAxis.position === 'left' ? 'insideStartTop' : 'insideEndTop',
-                formatter: function(param) {
+                formatter: function (param) {
                   return ele.name + ' : ' + valueFormatter(param.value, axisFormatterCfg)
                 }
               },

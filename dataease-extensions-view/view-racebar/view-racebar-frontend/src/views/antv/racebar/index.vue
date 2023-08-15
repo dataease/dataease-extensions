@@ -15,6 +15,18 @@
       style="width: 100%;height: 100%;overflow: hidden;"
       :style="{ borderRadius: borderRadius}"
     />
+    <div style="padding: 0 25px; margin: 0 20px 20px"
+         v-if="sliderShow">
+      <el-slider
+        v-model="currentIndex"
+        show-stops
+        :min="0"
+        :max="maxIndex"
+        :format-tooltip="formatSliderTooltip"
+        :marks="chart.data? chart.data.extXs : undefined"
+        @change="onSliderChange"
+      />
+    </div>
 
   </div>
 </template>
@@ -159,6 +171,37 @@ export default {
     chartStyle() {
       return {height: `calc(100% - ${this.titleHeight})`};
     },
+    maxIndex() {
+      if (this.chart && this.chart.data && this.chart.data.extXs && this.chart.data.extXs.length > 0) {
+        return this.chart.data.extXs.length - 1;
+      } else {
+        return 0;
+      }
+    },
+    sliderShow() {
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        return customAttr.slider && customAttr.slider.show;
+      } else {
+        return false;
+      }
+    },
+    sliderAuto() {
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        return customAttr.slider && customAttr.slider.auto;
+      } else {
+        return false;
+      }
+    },
+    sliderRepeat() {
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        return customAttr.slider && customAttr.slider.repeat;
+      } else {
+        return false;
+      }
+    },
     ...mapState([
       'canvasStyleData'
     ])
@@ -190,6 +233,16 @@ export default {
     this.loadThemeStyle()
   },
   methods: {
+    onSliderChange(val) {
+      this.updateX(true, val);
+    },
+    formatSliderTooltip(val) {
+      if (this.chart && this.chart.data && this.chart.data.extXs) {
+        return this.chart.data.extXs[val];
+      } else {
+        return undefined;
+      }
+    },
     scrollStatusChange() {
       if (this.haveScrollType.includes(this.chart.type)) {
         const opt = this.myChart.getOption()
@@ -320,37 +373,42 @@ export default {
 
       this.currentIndex = 0;
 
-      const extX = chart.data ? chart.data.extXs[this.currentIndex] : undefined;
+      const extX = chart.data && chart.data.extXs ? chart.data.extXs[this.currentIndex] : undefined;
 
       chart_option = this.horizontalBarOption(JSON.parse(JSON.stringify(HORIZONTAL_BAR)), chart, extX);
 
-      chart_option.series[0].data = chart.data.groupData[extX];
-      chart_option.graphic.elements[0].style.text = extX;
-
-      console.log(chart_option)
-
       this.myEcharts(chart_option)
       this.$nextTick(() => (this.linkageActive()))
-
 
       if (this.intervalID) {
         clearInterval(this.intervalID)
       }
       this.intervalID = setInterval(() => {
-        console.log(chart_option);
-        this.updateX(chart_option);
+        this.updateX();
       }, 2000);
 
 
     },
 
-    updateX(chart_option) {
+    updateX(skipAdd, _index) {
       const chart = this.chart
       const _chart = this.myChart;
-      console.log(_chart)
+      const chart_option = this.myOptions;
       if (chart.data && _chart) {
-        this.currentIndex++;
-        if (this.currentIndex >= chart.data.extXs.length) {
+        if (!skipAdd && this.sliderAuto) {
+          if (!(!this.sliderRepeat && this.currentIndex === chart.data.extXs.length - 1)) {
+            this.currentIndex++;
+          } else if (this.sliderRepeat && this.currentIndex === chart.data.extXs.length - 1) {
+            this.currentIndex = 0;
+          }
+        } else if (_index !== undefined) {
+          if (_index >= chart.data.extXs.length || _index < 0) {
+            this.currentIndex = 0;
+          } else {
+            this.currentIndex = _index;
+          }
+        }
+        if (this.currentIndex === undefined || this.currentIndex >= chart.data.extXs.length || this.currentIndex < 0) {
           this.currentIndex = 0;
         }
         chart_option.series[0].data = chart.data.groupData[chart.data.extXs[this.currentIndex]];
@@ -380,8 +438,6 @@ export default {
       }
       // 处理data
       if (chart.data) {
-        console.log(chart.data)
-
         chart_option.title.text = chart.title
 
         chart_option.series[0].encode = chart.data.encode;
@@ -441,8 +497,6 @@ export default {
       if (chart_option.tooltip) {
         chart_option.tooltip.appendToBody = true
       }
-
-      console.log(chart_option);
 
       return chart_option;
     },
