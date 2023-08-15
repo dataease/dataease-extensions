@@ -1,11 +1,12 @@
 export default {
   plugin_view_racebar: {
     type_title: '动态排序图',
-    source: '源',
-    target: '目标',
+    source: '主轴',
+    sourceExt: '副轴',
+    target: '值',
     map_type: '类型',
     link_line: '连线',
-    mark_size: '权重',
+    mark_size: '值',
     angle: '符号',
     marker: '标记',
     pentagon: '五角形',

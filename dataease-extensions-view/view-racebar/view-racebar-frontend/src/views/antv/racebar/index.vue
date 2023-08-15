@@ -448,6 +448,10 @@ export default {
           if (chart_option.series[0].label.show) {
             chart_option.series[0].label.position = 'right';
             chart_option.series[0].label.valueAnimation = true;
+            chart_option.series[0].label.precision = 1;
+            chart_option.series[0].label.formatter = function (v) {
+              return v.value[chart.data.encode.x];
+            }
           }
         }
 

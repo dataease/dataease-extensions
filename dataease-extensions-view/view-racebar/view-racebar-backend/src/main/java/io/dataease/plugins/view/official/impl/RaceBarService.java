@@ -51,7 +51,7 @@ public class RaceBarService extends ViewPluginService {
     public PluginViewType viewType() {
         PluginViewType pluginViewType = new PluginViewType();
         pluginViewType.setRender("echarts");
-        pluginViewType.setCategory("chart.chart_type_trend");
+        pluginViewType.setCategory("chart.chart_type_compare");
         pluginViewType.setValue(VIEW_TYPE_VALUE);
         pluginViewType.setProperties(VIEW_STYLE_PROPERTIES);
         pluginViewType.setPropertyInner(VIEW_STYLE_PROPERTY_INNER);
@@ -120,8 +120,6 @@ public class RaceBarService extends ViewPluginService {
 
     public Map format(PluginViewParam pluginViewParam, List<String[]> data, boolean isDrill) {
 
-        System.out.println("pluginViewParam: " + new Gson().toJson(pluginViewParam));
-
         Map<String, Object> map = new HashMap<>();
 
         map.put("data", data);
@@ -165,8 +163,6 @@ public class RaceBarService extends ViewPluginService {
         map.put("extXs", new ArrayList<>(groupData.keySet()).stream().sorted().collect(Collectors.toList()));
 
         map.put("xs", new ArrayList<>(xs).stream().sorted().collect(Collectors.toList()));
-
-        System.out.println("result: " + new Gson().toJson(map));
 
         return map;
     }

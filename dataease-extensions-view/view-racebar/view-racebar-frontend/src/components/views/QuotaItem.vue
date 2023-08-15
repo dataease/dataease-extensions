@@ -30,22 +30,7 @@
           <i class="el-icon-arrow-down el-icon--right" style="position: absolute;top: 6px;right: 10px;"/>
         </el-tag>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-show="chart.type ==='race-bar'">
-            <el-dropdown placement="right-start" size="mini" style="width: 100%" @command="switchChartType">
-              <span class="el-dropdown-link inner-dropdown-menu">
-                <span>
-                  <i class="el-icon-s-data"/>
-                  <span>{{ $t('chart.chart_type') }}</span>
-                </span>
-                <i class="el-icon-arrow-right el-icon--right"/>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item :command="beforeSwitch('bar')">{{ $t('chart.chart_bar') }}</el-dropdown-item>
-                <el-dropdown-item :command="beforeSwitch('line')">{{ $t('chart.chart_line') }}</el-dropdown-item>
-                <el-dropdown-item :command="beforeSwitch('scatter')">{{ $t('chart.chart_scatter') }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-dropdown-item>
+
           <el-dropdown-item :divided="chart.type === 'race-bar'">
             <el-dropdown placement="right-start" size="mini" style="width: 100%" @command="summary">
               <span class="el-dropdown-link inner-dropdown-menu">
@@ -75,7 +60,7 @@
             </el-dropdown>
           </el-dropdown-item>
           <!--同比/环比等快速计算-->
-          <el-dropdown-item v-show="!item.chartId && chart.type !== 'table-info'">
+<!--          <el-dropdown-item v-show="!item.chartId && chart.type !== 'table-info'">
             <el-dropdown
               placement="right-start"
               size="mini"
@@ -90,7 +75,7 @@
                       !item.compareCalc ? $t('chart.none') : $t('chart.' + item.compareCalc.type)
                     }})</span>
                 </span>
-                <i class="el-icon-arrow-right el-icon--right"/>
+                <i class="el-icon-arrow-right el-icon&#45;&#45;right"/>
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="beforeQuickCalc('none')">{{ $t('chart.none') }}</el-dropdown-item>
@@ -104,9 +89,9 @@
                 >{{ $t('chart.percent') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </el-dropdown-item>
+          </el-dropdown-item>-->
 
-          <el-dropdown-item :divided="!item.chartId && chart.type !== 'table-info'">
+<!--          <el-dropdown-item :divided="!item.chartId && chart.type !== 'table-info'">
             <el-dropdown
               placement="right-start"
               size="mini"
@@ -119,7 +104,7 @@
                   <span>{{ $t('chart.sort') }}</span>
                   <span class="summary-span-item">({{ $t('chart.'+item.sort) }})</span>
                 </span>
-                <i class="el-icon-arrow-right el-icon--right" />
+                <i class="el-icon-arrow-right el-icon&#45;&#45;right" />
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="beforeSort('none')">{{ $t('chart.none') }}</el-dropdown-item>
@@ -127,18 +112,18 @@
                 <el-dropdown-item :command="beforeSort('desc')">{{ $t('chart.desc') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </el-dropdown-item>
+          </el-dropdown-item>-->
 
           <el-dropdown-item icon="el-icon-files" :command="beforeClickItem('filter')">
             <span>{{ $t('chart.filter') }}...</span>
           </el-dropdown-item>
-          <el-dropdown-item
+<!--          <el-dropdown-item
             icon="el-icon-notebook-2"
             divided
             :command="beforeClickItem('formatter')"
           >
             <span>{{ $t('chart.value_formatter') }}...</span>
-          </el-dropdown-item>
+          </el-dropdown-item>-->
           <el-dropdown-item icon="el-icon-edit-outline" divided :command="beforeClickItem('rename')">
             <span>{{ $t('chart.show_name_set') }}</span>
           </el-dropdown-item>

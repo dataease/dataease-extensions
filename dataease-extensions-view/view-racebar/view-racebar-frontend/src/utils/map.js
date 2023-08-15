@@ -86,13 +86,10 @@ export const DEFAULT_LABEL = {
   position: 'middle',
   color: '#000000',
   fontSize: '10',
-  formatter: '{c}',
-  gaugeFormatter: '{value}',
   labelLine: {
     show: true
   },
   fields: null,
-  labelTemplate: '{busiValue}',
   initialized: true
 }
 export const DEFAULT_TOOLTIP = {
@@ -105,7 +102,6 @@ export const DEFAULT_TOOLTIP = {
   },
   backgroundColor: '#ffffff',
   formatter: '',
-  tooltipTemplate: '{busiValue}'
 }
 
 export const BASE_ECHARTS_SELECT = {

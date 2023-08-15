@@ -1,10 +1,11 @@
 export default {
   plugin_view_racebar: {
-    source: 'Source',
-    target: 'Target',
+    source: 'XAxis',
+    sourceExt: 'XAxisExt',
+    target: 'YAxis',
     map_type: 'Map Type',
     link_line: 'Link Line',
-    mark_size: 'Weight',
+    mark_size: 'YAxis',
     type_title: 'RaceBar',
     label: 'Area',
     angle: 'Symbol',
