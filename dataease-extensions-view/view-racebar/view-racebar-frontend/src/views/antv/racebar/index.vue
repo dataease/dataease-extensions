@@ -22,8 +22,9 @@
         show-stops
         :min="0"
         :max="maxIndex"
+        :show-tooltip="false"
         :format-tooltip="formatSliderTooltip"
-        :marks="chart.data? chart.data.extXs : undefined"
+        :marks="sliderMarks"
         @change="onSliderChange"
       />
     </div>
@@ -43,7 +44,7 @@ import {
   hexColorToRGBA,
   reverseColor,
   componentStyle,
-  seniorCfg
+  seniorCfg, DEFAULT_SLIDER
 } from '../../../utils/map';
 import ChartTitleUpdate from '../../../components/views/ChartTitleUpdate';
 import {mapState} from 'vuex'
@@ -201,6 +202,25 @@ export default {
       } else {
         return false;
       }
+    },
+    sliderMarks() {
+      const _list = this.chart.data ? this.chart.data.extXs : [];
+      const _setting = {fontSize: DEFAULT_SLIDER.fontSize, color: DEFAULT_SLIDER.color};
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        if (customAttr.slider && customAttr.slider.show) {
+          _setting['font-size'] = customAttr.slider.fontSize + 'px';
+          _setting.color = customAttr.slider.color;
+        }
+      }
+      const _result = {};
+      for (let i = 0; i < _list.length; i++) {
+        _result[i] = {
+          style: _setting,
+          label: this.$createElement('span', _list[i]),
+        }
+      }
+      return _result;
     },
     ...mapState([
       'canvasStyleData'

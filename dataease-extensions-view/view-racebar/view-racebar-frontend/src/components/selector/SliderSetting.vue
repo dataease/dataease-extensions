@@ -5,6 +5,18 @@
         <el-form-item :label="$t('chart.show')" class="form-item">
           <el-checkbox v-model="labelForm.show" @change="changeAttr">{{ $t('chart.show') }}</el-checkbox>
         </el-form-item>
+        <div v-show="labelForm.show">
+          <el-form-item :label="$t('chart.text_fontsize')" class="form-item">
+            <el-select v-model="labelForm.fontSize" :placeholder="$t('chart.text_fontsize')" size="mini"
+                       @change="changeAttr">
+              <el-option v-for="option in fontSize" :key="option.value" :label="option.name" :value="option.value"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('chart.text_color')" class="form-item">
+            <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors"
+                             @change="changeAttr"/>
+          </el-form-item>
+        </div>
         <el-form-item :label="$t('plugin_view_racebar.slider_auto')" class="form-item">
           <el-checkbox v-model="labelForm.auto" @change="changeAttr">{{
               $t('plugin_view_racebar.slider_auto')
@@ -23,7 +35,7 @@
 </template>
 
 <script>
-import {DEFAULT_SLIDER} from '../../utils/map'
+import {DEFAULT_SLIDER, COLOR_PANEL} from '../../utils/map'
 
 export default {
   name: 'SliderSetting',
@@ -41,6 +53,8 @@ export default {
     return {
       labelForm: JSON.parse(JSON.stringify(DEFAULT_SLIDER)),
       isSetting: false,
+      predefineColors: COLOR_PANEL,
+      fontSize: [],
     }
   },
   watch: {
@@ -51,6 +65,7 @@ export default {
     }
   },
   mounted() {
+    this.init()
     this.initData()
   },
   methods: {
@@ -69,6 +84,16 @@ export default {
           this.labelForm = JSON.parse(JSON.stringify(DEFAULT_SLIDER))
         }
       }
+    },
+    init() {
+      const arr = []
+      for (let i = 10; i <= 40; i = i + 2) {
+        arr.push({
+          name: i + '',
+          value: i + ''
+        })
+      }
+      this.fontSize = arr
     },
     changeAttr() {
       if (!this.labelForm.show) {

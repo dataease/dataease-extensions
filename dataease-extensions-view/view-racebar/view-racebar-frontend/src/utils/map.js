@@ -79,6 +79,8 @@ export const DEFAULT_SLIDER = {
   show: false,
   auto: false,
   repeat: false,
+  fontSize: '10',
+  color: '#000000',
 }
 
 export const DEFAULT_LABEL = {

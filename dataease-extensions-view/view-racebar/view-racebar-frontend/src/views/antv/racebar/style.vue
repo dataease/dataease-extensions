@@ -38,6 +38,13 @@
           />
         </el-collapse-item>
 
+
+      </el-collapse>
+    </el-row>
+
+    <el-row>
+      <span class="padding-lr">{{ $t('chart.module_style') }}</span>
+      <el-collapse v-model="styleActiveNames" class="style-collapse">
         <el-collapse-item name="tooltip" :title="$t('plugin_view_racebar.slider')">
           <slider-setting
             :param="param"
@@ -50,12 +57,6 @@
             @onRefreshViewFields="onRefreshViewFields"
           />
         </el-collapse-item>
-      </el-collapse>
-    </el-row>
-
-    <el-row>
-      <span class="padding-lr">{{ $t('chart.module_style') }}</span>
-      <el-collapse v-model="styleActiveNames" class="style-collapse">
 
         <el-collapse-item v-show="view.type" name="title" :title="$t('chart.title')">
           <title-selector
