@@ -16,26 +16,26 @@
             <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors"
                              @change="changeAttr"/>
           </el-form-item>
+          <el-form-item
+            :label="$t('chart.not_alpha')"
+            class="form-item form-item-slider"
+          >
+            <el-slider
+              v-model="labelForm.alpha"
+              show-input
+              :show-input-controls="false"
+              input-size="mini"
+              @change="changeAttr"
+            />
+          </el-form-item>
         </div>
-        <el-form-item :label="$t('plugin_view_racebar.slider_auto')" class="form-item">
-          <el-checkbox v-model="labelForm.auto" @change="changeAttr">{{
-              $t('plugin_view_racebar.slider_auto')
-            }}
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item :label="$t('plugin_view_racebar.slider_repeat')" class="form-item">
-          <el-checkbox v-model="labelForm.repeat" @change="changeAttr">{{
-              $t('plugin_view_racebar.slider_repeat')
-            }}
-          </el-checkbox>
-        </el-form-item>
       </el-form>
     </el-col>
   </div>
 </template>
 
 <script>
-import {DEFAULT_SLIDER, COLOR_PANEL} from '../../utils/map'
+import {DEFAULT_Graphic, COLOR_PANEL} from '../../utils/map'
 
 export default {
   name: 'SliderSetting',
@@ -51,7 +51,7 @@ export default {
   },
   data() {
     return {
-      labelForm: JSON.parse(JSON.stringify(DEFAULT_SLIDER)),
+      labelForm: JSON.parse(JSON.stringify(DEFAULT_Graphic)),
       isSetting: false,
       predefineColors: COLOR_PANEL,
       fontSize: [],
@@ -78,16 +78,16 @@ export default {
         } else {
           customAttr = JSON.parse(chart.customAttr)
         }
-        if (customAttr.slider) {
-          this.labelForm = customAttr.slider
+        if (customAttr.graphic) {
+          this.labelForm = customAttr.graphic
         } else {
-          this.labelForm = JSON.parse(JSON.stringify(DEFAULT_SLIDER))
+          this.labelForm = JSON.parse(JSON.stringify(DEFAULT_Graphic))
         }
       }
     },
     init() {
       const arr = []
-      for (let i = 10; i <= 40; i = i + 2) {
+      for (let i = 20; i <= 100; i = i + 2) {
         arr.push({
           name: i + '',
           value: i + ''

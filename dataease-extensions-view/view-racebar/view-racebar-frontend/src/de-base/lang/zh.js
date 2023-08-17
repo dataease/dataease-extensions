@@ -18,6 +18,7 @@ export default {
     dark: '暗色',
     label_format_tip: '可以${fieldName}的形式读取字段值，标签和提示中的字段互相通用，内置经纬度相关字段',
     tooltip_format_tip: '可以${fieldName}的形式读取字段值，标签和提示中的字段互相通用，内置经纬度相关字段（标签不支持换行）',
+    graphic: '副轴值',
     slider: '滑动条',
     slider_auto: '自动',
     slider_repeat: '重复',

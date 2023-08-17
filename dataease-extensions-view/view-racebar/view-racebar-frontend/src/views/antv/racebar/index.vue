@@ -22,8 +22,9 @@
         show-stops
         :min="0"
         :max="maxIndex"
+        :show-tooltip="false"
         :format-tooltip="formatSliderTooltip"
-        :marks="chart.data? chart.data.extXs : undefined"
+        :marks="sliderMarks"
         @change="onSliderChange"
       />
     </div>
@@ -43,7 +44,7 @@ import {
   hexColorToRGBA,
   reverseColor,
   componentStyle,
-  seniorCfg
+  seniorCfg, DEFAULT_SLIDER
 } from '../../../utils/map';
 import ChartTitleUpdate from '../../../components/views/ChartTitleUpdate';
 import {mapState} from 'vuex'
@@ -178,6 +179,14 @@ export default {
         return 0;
       }
     },
+    graphicShow() {
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        return customAttr.graphic && customAttr.graphic.show;
+      } else {
+        return false;
+      }
+    },
     sliderShow() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
@@ -201,6 +210,25 @@ export default {
       } else {
         return false;
       }
+    },
+    sliderMarks() {
+      const _list = this.chart.data ? this.chart.data.extXs : [];
+      const _setting = {fontSize: DEFAULT_SLIDER.fontSize, color: DEFAULT_SLIDER.color};
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        if (customAttr.slider && customAttr.slider.show) {
+          _setting['font-size'] = customAttr.slider.fontSize + 'px';
+          _setting.color = customAttr.slider.color;
+        }
+      }
+      const _result = {};
+      for (let i = 0; i < _list.length; i++) {
+        _result[i] = {
+          style: _setting,
+          label: this.$createElement('span', _list[i]),
+        }
+      }
+      return _result;
     },
     ...mapState([
       'canvasStyleData'
@@ -412,7 +440,16 @@ export default {
           this.currentIndex = 0;
         }
         chart_option.series[0].data = chart.data.groupData[chart.data.extXs[this.currentIndex]];
-        chart_option.graphic.elements[0].style.text = chart.data.extXs[this.currentIndex];
+        if (this.graphicShow) {
+          chart_option.graphic.elements[0].style.text = chart.data.extXs[this.currentIndex];
+        } else {
+          chart_option.graphic.elements[0].style.text = "";
+        }
+
+        /*if (this.chart.customStyle) {
+          console.log(this.chart.customStyle)
+        }*/
+
         _chart.setOption(chart_option);
       }
     },
@@ -480,8 +517,14 @@ export default {
         }
 
         chart_option.dataset.source = chart.data.groupData[extX];
-        chart_option.graphic.elements[0].style.text = extX;
 
+        if (customAttr.graphic && customAttr.graphic.show) {
+          chart_option.graphic.elements[0].style.text = extX;
+          chart_option.graphic.elements[0].style.fill = hexColorToRGBA(customAttr.graphic.color, customAttr.graphic.alpha);
+          chart_option.graphic.elements[0].style.font = 'bolder ' + customAttr.graphic.fontSize + 'px monospace';
+        } else {
+          chart_option.graphic.elements[0].style.text = "";
+        }
       }
       componentStyle(chart_option, chart);
       seniorCfg(chart_option, chart);
@@ -532,54 +575,6 @@ export default {
       chart.resize()
     },
 
-
-    initTitle() {
-      this.antVRenderStatus = true;
-
-      if (this.chart.customStyle) {
-        const customStyle = JSON.parse(this.chart.customStyle)
-
-        if (customStyle.text) {
-          this.title_show = customStyle.text.show
-          this.titleClass.fontSize = customStyle.text.fontSize + 'px'
-          this.titleClass.color = customStyle.text.color
-          this.titleClass.textAlign = customStyle.text.hPosition
-          this.titleClass.fontStyle = customStyle.text.isItalic ? 'italic' : 'normal'
-          this.titleClass.fontWeight = customStyle.text.isBolder ? 'bold' : 'normal'
-          this.titleClass.fontSize = customStyle.text.isBolder ? 'bold' : 'normal'
-
-          this.titleClass.fontFamily = customStyle.text.fontFamily ? customStyle.text.fontFamily : 'Microsoft YaHei'
-          this.titleClass.letterSpacing = (customStyle.text.letterSpace ? customStyle.text.letterSpace : '0') + 'px'
-          this.titleClass.textShadow = customStyle.text.fontShadow ? '2px 2px 4px' : 'none'
-        }
-        if (customStyle.background) {
-          this.titleClass.background = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
-          this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
-        }
-
-        if (customStyle.text) {
-          this.title_show = customStyle.text.show
-          this.title_class.fontSize = customStyle.text.fontSize + 'px'
-          this.title_class.color = customStyle.text.color
-          this.title_class.textAlign = customStyle.text.hPosition
-          this.title_class.fontStyle = customStyle.text.isItalic ? 'italic' : 'normal'
-          this.title_class.fontWeight = customStyle.text.isBolder ? 'bold' : 'normal'
-
-          this.title_class.fontFamily = customStyle.text.fontFamily ? customStyle.text.fontFamily : DEFAULT_TITLE_STYLE.fontFamily
-          this.title_class.letterSpacing = (customStyle.text.letterSpace ? customStyle.text.letterSpace : DEFAULT_TITLE_STYLE.letterSpace) + 'px'
-          this.title_class.textShadow = customStyle.text.fontShadow ? '2px 2px 4px' : 'none'
-        }
-        if (customStyle.background) {
-          this.title_class.background = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
-          this.borderRadius = (customStyle.background.borderRadius || 0) + 'px'
-        }
-
-      }
-      this.initRemark()
-    },
-    initRemark() {
-      this.remarkCfg = getRemark(this.chart)
-    },
 
 
     linkageActivePre() {
