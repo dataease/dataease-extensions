@@ -45,7 +45,7 @@
     <el-row>
       <span class="padding-lr">{{ $t('chart.module_style') }}</span>
       <el-collapse v-model="styleActiveNames" class="style-collapse">
-        <el-collapse-item name="tooltip" :title="$t('plugin_view_racebar.slider')">
+        <el-collapse-item name="slider" :title="$t('plugin_view_racebar.slider')">
           <slider-setting
             :param="param"
             class="attr-selector"
@@ -57,6 +57,28 @@
             @onRefreshViewFields="onRefreshViewFields"
           />
         </el-collapse-item>
+
+        <el-collapse-item name="graphic" :title="$t('plugin_view_racebar.graphic')">
+          <graphic-setting
+            :param="param"
+            class="attr-selector"
+            :chart="chart"
+            :view="view"
+            :dimension-data="dimensionData"
+            :quota-data="quotaData"
+            @onChange="onGraphicChange"
+            @onRefreshViewFields="onRefreshViewFields"
+          />
+        </el-collapse-item>
+
+<!--        <el-collapse-item name="xAxis" :title="$t('chart.xAxis')">
+          <x-axis-selector
+            :param="param"
+            class="attr-selector"
+            :chart="chart"
+            @onChangeXAxisForm="onChangeXAxisForm"
+          />
+        </el-collapse-item>-->
 
         <el-collapse-item v-show="view.type" name="title" :title="$t('chart.title')">
           <title-selector
@@ -77,7 +99,9 @@ import ColorSelector from '@/components/selector/ColorSelector'
 import TitleSelector from '@/components/selector/TitleSelector'
 import TooltipSelector from '@/components/selector/TooltipSelector'
 import SliderSetting from '@/components/selector/SliderSetting'
+import GraphicSetting from '@/components/selector/GraphicSetting'
 import LabelSelector from '@/components/selector/LabelSelector.vue'
+import XAxisSelector from '@/components/selector/XAxisSelector.vue'
 import messages from '@/de-base/lang/messages'
 
 export default {
@@ -86,7 +110,9 @@ export default {
     TitleSelector,
     TooltipSelector,
     LabelSelector,
-    SliderSetting
+    SliderSetting,
+    GraphicSetting,
+    XAxisSelector,
   },
   data() {
     return {
@@ -144,6 +170,14 @@ export default {
     },
     onSliderChange(val) {
       this.view.customAttr.slider = val
+      this.calcStyle()
+    },
+    onGraphicChange(val) {
+      this.view.customAttr.graphic = val
+      this.calcStyle()
+    },
+    onChangeXAxisForm(val) {
+      this.view.customStyle.xAxis = val
       this.calcStyle()
     },
     onTextChange(val) {
