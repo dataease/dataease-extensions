@@ -23,5 +23,6 @@ export default {
     slider_auto: '自动',
     slider_repeat: '重复',
     slider_timeout: '间隔',
+    slider_max: '显示个数',
   }
 }
