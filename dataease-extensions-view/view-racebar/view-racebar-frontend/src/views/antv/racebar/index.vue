@@ -15,19 +15,19 @@
       style="width: 100%;height: 100%;overflow: hidden;"
       :style="{ borderRadius: borderRadius}"
     />
-    <div style="padding: 0 25px; margin: 0 20px 20px"
-         v-if="sliderShow">
-      <el-slider
-        v-model="currentIndex"
-        show-stops
-        :min="0"
-        :max="maxIndex"
-        :show-tooltip="false"
-        :format-tooltip="formatSliderTooltip"
-        :marks="sliderMarks"
-        @change="onSliderChange"
-      />
-    </div>
+    <!--    <div style="padding: 0 25px; margin: 0 20px 20px"
+             v-if="sliderShow">
+          <el-slider
+            v-model="currentIndex"
+            show-stops
+            :min="0"
+            :max="maxIndex"
+            :show-tooltip="false"
+            :format-tooltip="formatSliderTooltip"
+            :marks="sliderMarks"
+            @change="onSliderChange"
+          />
+        </div>-->
 
   </div>
 </template>
@@ -44,7 +44,9 @@ import {
   hexColorToRGBA,
   reverseColor,
   componentStyle,
-  seniorCfg, DEFAULT_SLIDER
+  seniorCfg,
+  DEFAULT_SLIDER,
+  DEFAULT_Graphic,
 } from '../../../utils/map';
 import ChartTitleUpdate from '../../../components/views/ChartTitleUpdate';
 import {mapState} from 'vuex'
@@ -182,34 +184,49 @@ export default {
     graphicShow() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
-        return customAttr.graphic && customAttr.graphic.show;
-      } else {
-        return false;
+        if (customAttr.graphic) {
+          return customAttr.graphic.show;
+        }
       }
+      return DEFAULT_Graphic.show;
     },
     sliderShow() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
-        return customAttr.slider && customAttr.slider.show;
-      } else {
-        return false;
+        if (customAttr.slider) {
+          return customAttr.slider.show;
+        }
       }
+      return DEFAULT_SLIDER.show;
     },
     sliderAuto() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
-        return customAttr.slider && customAttr.slider.auto;
-      } else {
-        return false;
+        if (customAttr.slider) {
+          return customAttr.slider.auto;
+        }
       }
+      return DEFAULT_SLIDER.auto;
+
     },
     sliderRepeat() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
-        return customAttr.slider && customAttr.slider.repeat;
-      } else {
-        return false;
+        if (customAttr.slider) {
+          return customAttr.slider.repeat;
+        }
       }
+      return DEFAULT_SLIDER.repeat;
+
+    },
+    sliderTimeout() {
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        if (customAttr.slider && customAttr.slider.timeout && customAttr.slider.timeout > 0) {
+          return customAttr.slider.timeout * 1000;
+        }
+      }
+      return DEFAULT_SLIDER.timeout * 1000;
     },
     sliderMarks() {
       const _list = this.chart.data ? this.chart.data.extXs : [];
@@ -413,7 +430,7 @@ export default {
       }
       this.intervalID = setInterval(() => {
         this.updateX();
-      }, 2000);
+      }, this.sliderTimeout);
 
 
     },
@@ -518,14 +535,22 @@ export default {
 
         chart_option.dataset.source = chart.data.groupData[extX];
 
-        if (customAttr.graphic && customAttr.graphic.show) {
+        if (this.graphicShow) {
           chart_option.graphic.elements[0].style.text = extX;
-          chart_option.graphic.elements[0].style.fill = hexColorToRGBA(customAttr.graphic.color, customAttr.graphic.alpha);
-          chart_option.graphic.elements[0].style.font = 'bolder ' + customAttr.graphic.fontSize + 'px monospace';
+          if (customAttr.graphic) {
+            chart_option.graphic.elements[0].style.fill = hexColorToRGBA(customAttr.graphic.color, customAttr.graphic.alpha);
+            chart_option.graphic.elements[0].style.font = 'bolder ' + customAttr.graphic.fontSize + 'px monospace';
+          } else {
+            chart_option.graphic.elements[0].style.fill = hexColorToRGBA(DEFAULT_Graphic.color, DEFAULT_Graphic.alpha);
+            chart_option.graphic.elements[0].style.font = 'bolder ' + DEFAULT_Graphic.fontSize + 'px monospace';
+          }
         } else {
           chart_option.graphic.elements[0].style.text = "";
         }
       }
+
+      chart_option.animationDurationUpdate = this.sliderTimeout;
+
       componentStyle(chart_option, chart);
       seniorCfg(chart_option, chart);
 
@@ -574,7 +599,6 @@ export default {
       const chart = this.myChart
       chart.resize()
     },
-
 
 
     linkageActivePre() {

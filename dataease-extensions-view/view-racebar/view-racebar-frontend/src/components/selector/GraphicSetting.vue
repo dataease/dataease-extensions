@@ -82,6 +82,7 @@ export default {
           this.labelForm = customAttr.graphic
         } else {
           this.labelForm = JSON.parse(JSON.stringify(DEFAULT_Graphic))
+          setTimeout(this.changeAttr(), 600);
         }
       }
     },
