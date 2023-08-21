@@ -25,5 +25,6 @@ export default {
       slider_auto: '自動',
       slider_repeat: '重復',
       slider_timeout: '間隔',
+      slider_max: '顯示個數',
     }
 }

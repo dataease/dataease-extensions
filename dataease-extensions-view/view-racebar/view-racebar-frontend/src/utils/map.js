@@ -82,6 +82,7 @@ export const DEFAULT_SLIDER = {
   timeout: 2,
   fontSize: '10',
   color: '#000000',
+  max: 10,
 }
 export const DEFAULT_Graphic = {
   show: true,
@@ -594,7 +595,6 @@ export function componentStyle(chart_option, chart) {
         chart_option.legend.show = false
       }
     }
-
 
     if (customStyle.margin && customStyle.margin.marginModel && customStyle.margin.marginModel !== 'auto') {
       const unit = getMarginUnit(customStyle.margin)

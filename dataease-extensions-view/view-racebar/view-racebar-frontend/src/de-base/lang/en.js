@@ -24,5 +24,6 @@ export default {
     slider_auto: 'Auto',
     slider_repeat: 'Repeat',
     slider_timeout: 'Timeout',
+    slider_max: 'Max Number',
   }
 }

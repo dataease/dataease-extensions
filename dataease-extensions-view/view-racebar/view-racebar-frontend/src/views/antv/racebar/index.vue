@@ -228,6 +228,15 @@ export default {
       }
       return DEFAULT_SLIDER.timeout * 1000;
     },
+    sliderMax() {
+      if (this.chart && this.chart.customAttr) {
+        const customAttr = JSON.parse(this.chart.customAttr)
+        if (customAttr.slider && customAttr.slider.max && customAttr.slider.max > 0) {
+          return customAttr.slider.max - 1;
+        }
+      }
+      return DEFAULT_SLIDER.max - 1;
+    },
     sliderMarks() {
       const _list = this.chart.data ? this.chart.data.extXs : [];
       const _setting = {fontSize: DEFAULT_SLIDER.fontSize, color: DEFAULT_SLIDER.color};
@@ -556,6 +565,8 @@ export default {
           chart_option.graphic.elements[0].style.text = "";
         }
       }
+
+      chart_option.yAxis.max = this.sliderMax;
 
       chart_option.animationDurationUpdate = this.sliderTimeout;
 

@@ -36,6 +36,9 @@
             }}
           </el-checkbox>
         </el-form-item>
+        <el-form-item :label="$t('plugin_view_racebar.slider_max')" class="form-item">
+          <el-input-number :min="3" :step="1" v-model="labelForm.max" @change="changeAttr" />
+        </el-form-item>
       </el-form>
     </el-col>
   </div>
