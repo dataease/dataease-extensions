@@ -537,12 +537,20 @@ export default {
 
         if (this.graphicShow) {
           chart_option.graphic.elements[0].style.text = extX;
+          chart_option.graphic.elements[0].style.fill = hexColorToRGBA(DEFAULT_Graphic.color, DEFAULT_Graphic.alpha);
+          chart_option.graphic.elements[0].style.font = 'bolder ' + DEFAULT_Graphic.fontSize + 'px monospace';
+          chart_option.graphic.elements[0].right = DEFAULT_Graphic.right;
+          chart_option.graphic.elements[0].bottom = DEFAULT_Graphic.bottom;
+
           if (customAttr.graphic) {
             chart_option.graphic.elements[0].style.fill = hexColorToRGBA(customAttr.graphic.color, customAttr.graphic.alpha);
             chart_option.graphic.elements[0].style.font = 'bolder ' + customAttr.graphic.fontSize + 'px monospace';
-          } else {
-            chart_option.graphic.elements[0].style.fill = hexColorToRGBA(DEFAULT_Graphic.color, DEFAULT_Graphic.alpha);
-            chart_option.graphic.elements[0].style.font = 'bolder ' + DEFAULT_Graphic.fontSize + 'px monospace';
+            if (customAttr.graphic.right !== undefined) {
+              chart_option.graphic.elements[0].right = customAttr.graphic.right;
+            }
+            if (customAttr.graphic.bottom !== undefined) {
+              chart_option.graphic.elements[0].bottom = customAttr.graphic.bottom;
+            }
           }
         } else {
           chart_option.graphic.elements[0].style.text = "";
@@ -569,6 +577,9 @@ export default {
       if (chart_option.tooltip) {
         chart_option.tooltip.appendToBody = true
       }
+
+
+      console.log(chart_option)
 
       return chart_option;
     },

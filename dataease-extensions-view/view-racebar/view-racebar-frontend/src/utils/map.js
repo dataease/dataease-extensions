@@ -88,6 +88,8 @@ export const DEFAULT_Graphic = {
   fontSize: '60',
   color: '#000000',
   alpha: 25,
+  bottom: 90,
+  right: 60,
 }
 
 export const DEFAULT_LABEL = {
@@ -357,6 +359,14 @@ export const DEFAULT_YAXIS_STYLE = {
   }
 }
 
+export const DEFAULT_MARGIN_STYLE = {
+  marginModel: 'auto',
+  marginTop: 40,
+  marginBottom: 44,
+  marginLeft: 15,
+  marginRight: 10
+}
+
 export const HORIZONTAL_BAR = {
   title: {
     text: '',
@@ -365,10 +375,10 @@ export const HORIZONTAL_BAR = {
     }
   },
   grid: {
-    top: 40,
-    bottom: 44,
-    left: 15,
-    right: 40,
+    // top: 40,
+    // bottom: 44,
+    // left: 15,
+    // right: 40,
     containLabel: true
   },
   tooltip: {},
@@ -502,85 +512,35 @@ const convertData = (mapData, chart) => {
 
 let terminalType = 'pc'
 
-export function baseMapOption(chart_option, chart, mapData, terminal = 'pc') {
-  terminalType = terminal
-  // 处理shape attr
-  let customAttr = {}
-  if (chart.customAttr) {
-    customAttr = JSON.parse(chart.customAttr)
-    if (customAttr.color) {
-      chart_option.color = customAttr.color.colors
-    }
-    // tooltip
-    if (customAttr.tooltip) {
-      const tooltip = JSON.parse(JSON.stringify(customAttr.tooltip))
-      const reg = new RegExp('\n', 'g')
-      const text = tooltip.formatter.replace(reg, '<br/>')
-      tooltip.formatter = function (params) {
-        const a = params.seriesName
-        const b = params.name
-        const c = params.value ? params.value[2] : ''
-        return text.replace(new RegExp('{a}', 'g'), a).replace(new RegExp('{b}', 'g'), b).replace(new RegExp('{c}', 'g'), c)
-      }
-      chart_option.tooltip = tooltip
-    }
-  }
-  // 处理data
-  if (chart.data) {
-    chart_option.title.text = chart.title
-    if (chart.data.series && chart.data.series.length > 0) {
-      chart_option.series[0].name = chart.data.series[0].name
-      // label
-      if (customAttr.label) {
-        const text = customAttr.label.formatter
-        chart_option.series[0].label = customAttr.label
-        chart_option.series[0].label.formatter = function (params) {
-          const a = params.seriesName
-          const b = params.name
-          const c = params.value ? params.value[2] : ''
-          return text.replace(new RegExp('{a}', 'g'), a).replace(new RegExp('{b}', 'g'), b).replace(new RegExp('{c}', 'g'), c)
-        }
-        chart_option.series[0].labelLine = customAttr.label.labelLine
-      }
-
-      // visualMap
-      const valueArr = chart.data.series[0].data
-      if (valueArr && valueArr.length > 0) {
-        const values = []
-        valueArr.forEach(function (ele) {
-          values.push(ele.value)
-        })
-        chart_option.visualMap.min = Math.min(...values)
-        chart_option.visualMap.max = Math.max(...values)
-        if (chart_option.visualMap.min === chart_option.visualMap.max) {
-          chart_option.visualMap.min = 0
-        }
-      } else {
-        chart_option.visualMap.min = 0
-        chart_option.visualMap.max = 0
-      }
-      if (chart_option.visualMap.min === 0 && chart_option.visualMap.max === 0) {
-        chart_option.visualMap.max = 100
-      }
-      // color
-      if (customAttr.color && customAttr.color.colors) {
-        chart_option.visualMap.inRange.color = customAttr.color.colors
-        chart_option.visualMap.inRange.colorAlpha = customAttr.color.alpha / 100
-      }
-      // chart_option.visualMap = null
-
-      const convert = convertData(mapData, chart)
-      chart_option.series[0].data = convert.value
-      chart_option.series[0].symbolSize = val => val[2] * convert.rate
-
-    }
-  }
-  // console.log(chart_option);
-  componentStyle(chart_option, chart)
-  return chart_option
-}
 
 export function componentStyle(chart_option, chart) {
+  let xAxisLabelFormatter = null
+  let yAxisLabelFormatter = null
+  let yExtAxisLabelFormatter = null
+  const xFormatter = function (value) {
+    if (!xAxisLabelFormatter) {
+      return valueFormatter(value, formatterItem)
+    } else {
+      return valueFormatter(value, xAxisLabelFormatter)
+    }
+  }
+
+  const yFormatter = function (value) {
+    if (!yAxisLabelFormatter) {
+      return valueFormatter(value, formatterItem)
+    } else {
+      return valueFormatter(value, yAxisLabelFormatter)
+    }
+  }
+
+  const yExtFormatter = function (value) {
+    if (!yExtAxisLabelFormatter) {
+      return valueFormatter(value, formatterItem)
+    } else {
+      return valueFormatter(value, yExtAxisLabelFormatter)
+    }
+  }
+
   const padding = '8px'
   if (chart.customStyle) {
     const customStyle = JSON.parse(chart.customStyle)
@@ -630,9 +590,33 @@ export function componentStyle(chart_option, chart) {
       chart_option.legend.orient = customStyle.legend.orient
       chart_option.legend.icon = customStyle.legend.icon
       chart_option.legend.textStyle = customStyle.legend.textStyle
-
+      if (chart.type === 'treemap' || chart.type === 'gauge') {
+        chart_option.legend.show = false
+      }
     }
 
+
+    if (customStyle.margin && customStyle.margin.marginModel && customStyle.margin.marginModel !== 'auto') {
+      const unit = getMarginUnit(customStyle.margin)
+      const result = {containLabel: true}
+      const realUnit = (unit === '%' ? unit : '')
+      if (customStyle.margin.marginTop != null) {
+        result.top = customStyle.margin.marginTop + realUnit
+      }
+      if (customStyle.margin.marginBottom != null) {
+        result.bottom = customStyle.margin.marginBottom + realUnit
+      }
+      if (customStyle.margin.marginLeft != null) {
+        result.left = customStyle.margin.marginLeft + realUnit
+      }
+      if (customStyle.margin.marginRight != null) {
+        result.right = customStyle.margin.marginRight + realUnit
+      }
+      if (!chart_option.grid) {
+        chart_option.grid = {}
+      }
+      Object.assign(chart_option.grid, JSON.parse(JSON.stringify(result)))
+    }
     if (customStyle.background) {
       chart_option.backgroundColor = hexColorToRGBA(customStyle.background.color, customStyle.background.alpha)
     }
@@ -857,3 +841,9 @@ const hexToRgba = (hex, opacity) => {
   return rgbaColor
 }
 
+export const getMarginUnit = marginForm => {
+  if (!marginForm.marginModel || marginForm.marginModel === 'auto') return null
+  if (marginForm.marginModel === 'absolute') return 'px'
+  if (marginForm.marginModel === 'relative') return '%'
+  return null
+}

@@ -71,14 +71,14 @@
           />
         </el-collapse-item>
 
-<!--        <el-collapse-item name="xAxis" :title="$t('chart.xAxis')">
-          <x-axis-selector
-            :param="param"
-            class="attr-selector"
-            :chart="chart"
-            @onChangeXAxisForm="onChangeXAxisForm"
-          />
-        </el-collapse-item>-->
+        <!--        <el-collapse-item name="xAxis" :title="$t('chart.xAxis')">
+                  <x-axis-selector
+                    :param="param"
+                    class="attr-selector"
+                    :chart="chart"
+                    @onChangeXAxisForm="onChangeXAxisForm"
+                  />
+                </el-collapse-item>-->
 
         <el-collapse-item v-show="view.type" name="title" :title="$t('chart.title')">
           <title-selector
@@ -86,6 +86,16 @@
             class="attr-selector"
             :chart="chart"
             @onTextChange="onTextChange"
+          />
+        </el-collapse-item>
+
+
+        <el-collapse-item name="margin" :title="$t('panel.margin')">
+          <margin-selector
+            :param="param"
+            class="attr-selector"
+            :chart="chart"
+            @onMarginChange="onMarginChange"
           />
         </el-collapse-item>
 
@@ -102,6 +112,7 @@ import SliderSetting from '@/components/selector/SliderSetting'
 import GraphicSetting from '@/components/selector/GraphicSetting'
 import LabelSelector from '@/components/selector/LabelSelector.vue'
 import XAxisSelector from '@/components/selector/XAxisSelector.vue'
+import MarginSelector from '@/components/selector/MarginSelector.vue'
 import messages from '@/de-base/lang/messages'
 
 export default {
@@ -113,6 +124,7 @@ export default {
     SliderSetting,
     GraphicSetting,
     XAxisSelector,
+    MarginSelector,
   },
   data() {
     return {
@@ -183,6 +195,11 @@ export default {
     onTextChange(val) {
       this.view.customStyle.text = val
       this.view.title = val.title
+      this.calcStyle()
+    },
+    onMarginChange(val) {
+      this.view.customStyle.margin = val
+      console.log(val)
       this.calcStyle()
     },
     onChangeBaseMapForm(val) {
