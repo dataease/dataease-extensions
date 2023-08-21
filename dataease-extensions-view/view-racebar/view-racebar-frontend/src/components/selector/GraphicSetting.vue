@@ -28,6 +28,33 @@
               @change="changeAttr"
             />
           </el-form-item>
+
+          <el-form-item
+            :label="$t('chart.text_pos_bottom')"
+            class="form-item"
+            prop="marginBottom"
+          >
+            <el-input
+              v-model="labelForm.bottom"
+              type="number"
+              class="hide-icon-number"
+              @change="changeAttr"
+            />
+          </el-form-item>
+
+          <el-form-item
+            :label="$t('chart.text_pos_right')"
+            class="form-item"
+            prop="marginRight"
+          >
+            <el-input
+              v-model="labelForm.right"
+              type="number"
+              class="hide-icon-number"
+              @change="changeAttr"
+            />
+          </el-form-item>
+
         </div>
       </el-form>
     </el-col>
