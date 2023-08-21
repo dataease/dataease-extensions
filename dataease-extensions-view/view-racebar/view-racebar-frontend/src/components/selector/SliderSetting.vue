@@ -2,7 +2,7 @@
   <div style="width: 100%;">
     <el-col>
       <el-form v-show="chart.type" ref="labelForm" :model="labelForm" label-width="80px" size="mini">
-        <el-form-item :label="$t('chart.show')" class="form-item">
+<!--        <el-form-item :label="$t('chart.show')" class="form-item">
           <el-checkbox v-model="labelForm.show" @change="changeAttr">{{ $t('chart.show') }}</el-checkbox>
         </el-form-item>
         <div v-show="labelForm.show">
@@ -16,12 +16,19 @@
             <el-color-picker v-model="labelForm.color" class="color-picker-style" :predefine="predefineColors"
                              @change="changeAttr"/>
           </el-form-item>
-        </div>
-        <el-form-item :label="$t('plugin_view_racebar.slider_auto')" class="form-item">
+        </div>-->
+<!--        <el-form-item :label="$t('plugin_view_racebar.slider_auto')" class="form-item">
           <el-checkbox v-model="labelForm.auto" @change="changeAttr">{{
               $t('plugin_view_racebar.slider_auto')
             }}
           </el-checkbox>
+        </el-form-item>-->
+        <el-form-item :label="$t('plugin_view_racebar.slider_timeout')" class="form-item">
+          <el-input-number :min="1" :step="1" v-model="labelForm.timeout" @change="changeAttr">{{
+              $t('plugin_view_racebar.slider_timeout')
+            }}
+          </el-input-number>
+          s
         </el-form-item>
         <el-form-item :label="$t('plugin_view_racebar.slider_repeat')" class="form-item">
           <el-checkbox v-model="labelForm.repeat" @change="changeAttr">{{

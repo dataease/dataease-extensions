@@ -77,13 +77,14 @@ export const COLOR_PANEL = [
 
 export const DEFAULT_SLIDER = {
   show: false,
-  auto: false,
-  repeat: false,
+  auto: true,
+  repeat: true,
+  timeout: 2,
   fontSize: '10',
   color: '#000000',
 }
 export const DEFAULT_Graphic = {
-  show: false,
+  show: true,
   fontSize: '60',
   color: '#000000',
   alpha: 25,
@@ -119,24 +120,24 @@ export const BASE_ECHARTS_SELECT = {
 }
 
 export const CHART_FONT_FAMILY = [
-  { name: '微软雅黑', value: 'Microsoft YaHei' },
-  { name: '宋体', value: 'SimSun' },
-  { name: '黑体', value: 'SimHei' },
-  { name: '楷体', value: 'KaiTi' }
+  {name: '微软雅黑', value: 'Microsoft YaHei'},
+  {name: '宋体', value: 'SimSun'},
+  {name: '黑体', value: 'SimHei'},
+  {name: '楷体', value: 'KaiTi'}
 ]
 
 export const CHART_FONT_LETTER_SPACE = [
-  { name: '0px', value: '0' },
-  { name: '1px', value: '1' },
-  { name: '2px', value: '2' },
-  { name: '3px', value: '3' },
-  { name: '4px', value: '4' },
-  { name: '5px', value: '5' },
-  { name: '6px', value: '6' },
-  { name: '7px', value: '7' },
-  { name: '8px', value: '8' },
-  { name: '9px', value: '9' },
-  { name: '10px', value: '10' }
+  {name: '0px', value: '0'},
+  {name: '1px', value: '1'},
+  {name: '2px', value: '2'},
+  {name: '3px', value: '3'},
+  {name: '4px', value: '4'},
+  {name: '5px', value: '5'},
+  {name: '6px', value: '6'},
+  {name: '7px', value: '7'},
+  {name: '8px', value: '8'},
+  {name: '9px', value: '9'},
+  {name: '10px', value: '10'}
 ]
 
 export const DEFAULT_TITLE_STYLE = {
