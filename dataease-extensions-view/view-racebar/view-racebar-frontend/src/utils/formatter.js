@@ -26,6 +26,9 @@ export function valueFormatter(value, formatter) {
   if (value === null || value === undefined) {
     return null
   }
+  if(formatter == undefined){
+    return value;
+  }
   // 1.unit 2.decimal 3.thousand separator and suffix
   let result
   if (formatter.type === 'auto') {

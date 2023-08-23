@@ -51,6 +51,7 @@ import {
 import ChartTitleUpdate from '../../../components/views/ChartTitleUpdate';
 import {mapState} from 'vuex'
 import _ from 'lodash';
+import {valueFormatter} from '../../../utils/formatter'
 
 
 export default {
@@ -481,6 +482,8 @@ export default {
     horizontalBarOption(chart_option, chart, extX) {
       // 处理shape attr
       let customAttr = {}
+      let yaxisList = this.chart.yaxis ? JSON.parse(this.chart.yaxis) : [];
+
       if (chart.customAttr) {
         customAttr = JSON.parse(chart.customAttr)
         if (customAttr.color) {
@@ -488,8 +491,13 @@ export default {
         }
         if (customAttr.tooltip) {
           const tooltip = JSON.parse(JSON.stringify(customAttr.tooltip))
-          const reg = new RegExp('\n', 'g')
-          tooltip.formatter = tooltip.formatter.replace(reg, '<br/>')
+          //const reg = new RegExp('\n', 'g')
+          //tooltip.formatter = tooltip.formatter.replace(reg, '<br/>')
+
+          tooltip.formatter = function (v, s) {
+            return v.marker + v.name + ":&nbsp;&nbsp;&nbsp;" + valueFormatter(v.value[chart.data.encode.x], yaxisList[0].formatterCfg);
+          }
+
           chart_option.tooltip = tooltip
 
           const bgColor = tooltip.backgroundColor ? tooltip.backgroundColor : DEFAULT_TOOLTIP.backgroundColor
@@ -511,7 +519,7 @@ export default {
             chart_option.series[0].label.valueAnimation = true;
             chart_option.series[0].label.precision = 1;
             chart_option.series[0].label.formatter = function (v) {
-              return v.value[chart.data.encode.x];
+              return valueFormatter(v.value[chart.data.encode.x], yaxisList[0].formatterCfg);
             }
           }
         }
