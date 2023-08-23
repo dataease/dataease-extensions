@@ -231,7 +231,7 @@ export default {
     sliderMax() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
-        if (customAttr.slider && customAttr.slider.max && customAttr.slider.max > 0) {
+        if (customAttr.slider && customAttr.slider.max && customAttr.slider.max >= 3) {
           return customAttr.slider.max - 1;
         }
       }
@@ -425,9 +425,7 @@ export default {
       const chart = this.chart
       let chart_option = {}
 
-      this.currentIndex = 0;
-
-      const extX = chart.data && chart.data.extXs ? chart.data.extXs[this.currentIndex] : undefined;
+      const extX = chart.data && chart.data.extXs ? chart.data.extXs[0] : undefined;
 
       chart_option = this.horizontalBarOption(JSON.parse(JSON.stringify(HORIZONTAL_BAR)), chart, extX);
 
@@ -448,33 +446,33 @@ export default {
       const chart = this.chart
       const _chart = this.myChart;
       const chart_option = this.myOptions;
+      let _currentIndex = this.currentIndex;
       if (chart.data && _chart) {
         if (!skipAdd && this.sliderAuto) {
-          if (!(!this.sliderRepeat && this.currentIndex === chart.data.extXs.length - 1)) {
-            this.currentIndex++;
-          } else if (this.sliderRepeat && this.currentIndex === chart.data.extXs.length - 1) {
-            this.currentIndex = 0;
+          if (!(!this.sliderRepeat && _currentIndex === chart.data.extXs.length - 1)) {
+            _currentIndex++;
+          } else if (this.sliderRepeat && _currentIndex === chart.data.extXs.length - 1) {
+            _currentIndex = 0;
           }
         } else if (_index !== undefined) {
           if (_index >= chart.data.extXs.length || _index < 0) {
-            this.currentIndex = 0;
+            _currentIndex = 0;
           } else {
-            this.currentIndex = _index;
+            _currentIndex = _index;
           }
         }
-        if (this.currentIndex === undefined || this.currentIndex >= chart.data.extXs.length || this.currentIndex < 0) {
-          this.currentIndex = 0;
+        if (_currentIndex === undefined || _currentIndex >= chart.data.extXs.length || _currentIndex < 0) {
+          _currentIndex = 0;
         }
-        chart_option.series[0].data = chart.data.groupData[chart.data.extXs[this.currentIndex]];
+        chart_option.series[0].data = chart.data.groupData[chart.data.extXs[_currentIndex]];
+
         if (this.graphicShow) {
-          chart_option.graphic.elements[0].style.text = chart.data.extXs[this.currentIndex];
+          chart_option.graphic.elements[0].style.text = chart.data.extXs[_currentIndex];
         } else {
           chart_option.graphic.elements[0].style.text = "";
         }
 
-        /*if (this.chart.customStyle) {
-          console.log(this.chart.customStyle)
-        }*/
+        this.currentIndex = _currentIndex;
 
         _chart.setOption(chart_option);
       }
@@ -588,9 +586,6 @@ export default {
       if (chart_option.tooltip) {
         chart_option.tooltip.appendToBody = true
       }
-
-
-      console.log(chart_option)
 
       return chart_option;
     },

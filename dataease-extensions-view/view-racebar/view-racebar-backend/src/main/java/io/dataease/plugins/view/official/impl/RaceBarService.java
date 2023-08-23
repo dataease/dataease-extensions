@@ -126,10 +126,13 @@ public class RaceBarService extends ViewPluginService {
 
         Map<String, Integer> encode = new HashMap<>();
 
+        String type = null;
+
         for (int i = 0; i < pluginViewParam.getPluginViewFields().size(); i++) {
             PluginViewField p = pluginViewParam.getPluginViewFields().get(i);
             if (StringUtils.equals(p.getTypeField(), "yAxis")) {
                 encode.put("x", i);
+                type = p.getType();
             } else if (StringUtils.equals(p.getTypeField(), "xAxis")) {
                 if (p.getExtField() == 1) {
                     map.put("extIndex", i);
@@ -157,6 +160,19 @@ public class RaceBarService extends ViewPluginService {
                     return oldList;
                 })
         );
+
+        for (String key : groupData.keySet()) {
+            String finalType = type;
+            groupData.put(key, groupData.get(key).stream().sorted((o1, o2) -> {
+                if (StringUtils.equals(finalType, "LONG")) {
+                    return Long.valueOf(o2[encode.get("x")]).compareTo(Long.valueOf(o1[encode.get("x")]));
+                } else if (StringUtils.equals(finalType, "DOUBLE")) {
+                    return Double.valueOf(o2[encode.get("x")]).compareTo(Double.valueOf(o1[encode.get("x")]));
+                }
+                return o2[encode.get("x")].compareTo(o1[encode.get("x")]);
+            }).collect(Collectors.toList()));
+
+        }
 
         map.put("groupData", groupData);
 

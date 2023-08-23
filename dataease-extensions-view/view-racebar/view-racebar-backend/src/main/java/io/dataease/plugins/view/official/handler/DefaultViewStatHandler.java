@@ -49,7 +49,6 @@ public class DefaultViewStatHandler implements PluginViewStatHandler {
             fieldSQLMap.put(typeKey, lists);
         }
 
-        System.out.println("qqq: " + new Gson().toJson(pluginViewParam));
 
         List<PluginViewSQL> xFields = fieldSQLMap.getOrDefault("xAxis", new ArrayList<>()).stream().filter(singleField -> ObjectUtils.isNotEmpty(singleField.getField())).map(PluginSingleField::getField).collect(Collectors.toList());
 
@@ -79,8 +78,6 @@ public class DefaultViewStatHandler implements PluginViewStatHandler {
         if (permissionWhere != null) wheres.add(permissionWhere);
         List<PluginViewSQL> groups = new ArrayList<>();
         groups.addAll(xFields);
-
-        System.out.println(new Gson().toJson(groups));
 
         // 外层再次套sql
         List<String> aggWheres = new ArrayList<>();
