@@ -117,13 +117,13 @@
           <el-dropdown-item icon="el-icon-files" :command="beforeClickItem('filter')">
             <span>{{ $t('chart.filter') }}...</span>
           </el-dropdown-item>
-<!--          <el-dropdown-item
+          <el-dropdown-item
             icon="el-icon-notebook-2"
             divided
             :command="beforeClickItem('formatter')"
           >
             <span>{{ $t('chart.value_formatter') }}...</span>
-          </el-dropdown-item>-->
+          </el-dropdown-item>
           <el-dropdown-item icon="el-icon-edit-outline" divided :command="beforeClickItem('rename')">
             <span>{{ $t('chart.show_name_set') }}</span>
           </el-dropdown-item>

@@ -51,6 +51,7 @@ import {
 import ChartTitleUpdate from '../../../components/views/ChartTitleUpdate';
 import {mapState} from 'vuex'
 import _ from 'lodash';
+import {valueFormatter} from '../../../utils/formatter'
 
 
 export default {
@@ -231,7 +232,7 @@ export default {
     sliderMax() {
       if (this.chart && this.chart.customAttr) {
         const customAttr = JSON.parse(this.chart.customAttr)
-        if (customAttr.slider && customAttr.slider.max && customAttr.slider.max > 0) {
+        if (customAttr.slider && customAttr.slider.max && customAttr.slider.max >= 3) {
           return customAttr.slider.max - 1;
         }
       }
@@ -425,9 +426,7 @@ export default {
       const chart = this.chart
       let chart_option = {}
 
-      this.currentIndex = 0;
-
-      const extX = chart.data && chart.data.extXs ? chart.data.extXs[this.currentIndex] : undefined;
+      const extX = chart.data && chart.data.extXs ? chart.data.extXs[0] : undefined;
 
       chart_option = this.horizontalBarOption(JSON.parse(JSON.stringify(HORIZONTAL_BAR)), chart, extX);
 
@@ -448,33 +447,33 @@ export default {
       const chart = this.chart
       const _chart = this.myChart;
       const chart_option = this.myOptions;
+      let _currentIndex = this.currentIndex;
       if (chart.data && _chart) {
         if (!skipAdd && this.sliderAuto) {
-          if (!(!this.sliderRepeat && this.currentIndex === chart.data.extXs.length - 1)) {
-            this.currentIndex++;
-          } else if (this.sliderRepeat && this.currentIndex === chart.data.extXs.length - 1) {
-            this.currentIndex = 0;
+          if (!(!this.sliderRepeat && _currentIndex === chart.data.extXs.length - 1)) {
+            _currentIndex++;
+          } else if (this.sliderRepeat && _currentIndex === chart.data.extXs.length - 1) {
+            _currentIndex = 0;
           }
         } else if (_index !== undefined) {
           if (_index >= chart.data.extXs.length || _index < 0) {
-            this.currentIndex = 0;
+            _currentIndex = 0;
           } else {
-            this.currentIndex = _index;
+            _currentIndex = _index;
           }
         }
-        if (this.currentIndex === undefined || this.currentIndex >= chart.data.extXs.length || this.currentIndex < 0) {
-          this.currentIndex = 0;
+        if (_currentIndex === undefined || _currentIndex >= chart.data.extXs.length || _currentIndex < 0) {
+          _currentIndex = 0;
         }
-        chart_option.series[0].data = chart.data.groupData[chart.data.extXs[this.currentIndex]];
+        chart_option.series[0].data = chart.data.groupData[chart.data.extXs[_currentIndex]];
+
         if (this.graphicShow) {
-          chart_option.graphic.elements[0].style.text = chart.data.extXs[this.currentIndex];
+          chart_option.graphic.elements[0].style.text = chart.data.extXs[_currentIndex];
         } else {
           chart_option.graphic.elements[0].style.text = "";
         }
 
-        /*if (this.chart.customStyle) {
-          console.log(this.chart.customStyle)
-        }*/
+        this.currentIndex = _currentIndex;
 
         _chart.setOption(chart_option);
       }
@@ -483,6 +482,8 @@ export default {
     horizontalBarOption(chart_option, chart, extX) {
       // 处理shape attr
       let customAttr = {}
+      let yaxisList = this.chart.yaxis ? JSON.parse(this.chart.yaxis) : [];
+
       if (chart.customAttr) {
         customAttr = JSON.parse(chart.customAttr)
         if (customAttr.color) {
@@ -490,8 +491,13 @@ export default {
         }
         if (customAttr.tooltip) {
           const tooltip = JSON.parse(JSON.stringify(customAttr.tooltip))
-          const reg = new RegExp('\n', 'g')
-          tooltip.formatter = tooltip.formatter.replace(reg, '<br/>')
+          //const reg = new RegExp('\n', 'g')
+          //tooltip.formatter = tooltip.formatter.replace(reg, '<br/>')
+
+          tooltip.formatter = function (v, s) {
+            return v.marker + v.name + ":&nbsp;&nbsp;&nbsp;" + valueFormatter(v.value[chart.data.encode.x], yaxisList[0].formatterCfg);
+          }
+
           chart_option.tooltip = tooltip
 
           const bgColor = tooltip.backgroundColor ? tooltip.backgroundColor : DEFAULT_TOOLTIP.backgroundColor
@@ -513,7 +519,7 @@ export default {
             chart_option.series[0].label.valueAnimation = true;
             chart_option.series[0].label.precision = 1;
             chart_option.series[0].label.formatter = function (v) {
-              return v.value[chart.data.encode.x];
+              return valueFormatter(v.value[chart.data.encode.x], yaxisList[0].formatterCfg);
             }
           }
         }
@@ -588,9 +594,6 @@ export default {
       if (chart_option.tooltip) {
         chart_option.tooltip.appendToBody = true
       }
-
-
-      console.log(chart_option)
 
       return chart_option;
     },

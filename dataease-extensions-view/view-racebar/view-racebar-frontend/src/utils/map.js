@@ -380,7 +380,7 @@ export const HORIZONTAL_BAR = {
     // bottom: 44,
     // left: 15,
     // right: 40,
-    containLabel: true
+    //containLabel: true
   },
   tooltip: {},
   legend: {
